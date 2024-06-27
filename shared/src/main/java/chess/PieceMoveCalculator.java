@@ -58,22 +58,22 @@ public class PieceMoveCalculator {
             Collection<ChessMove> myMoves = new ArrayList<>();
 
             //
-            for (int i = col; i < 8; ++i) {
+            for (int i = col+1; i <= 8; ++i) {
                ChessPosition mySpot = new ChessPosition(row, i);
                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                myMoves.add(myMove);
             }
-            for (int i = col; i > 1; --i) {
+            for (int i = col-1; i >= 1; --i) {
                 ChessPosition mySpot = new ChessPosition(row, i);
                 ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                 myMoves.add(myMove);
             }
-            for (int i = row; i < 8; ++i) {
+            for (int i = row+1; i <= 8; ++i) {
                 ChessPosition mySpot = new ChessPosition(i, col);
                 ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                 myMoves.add(myMove);
             }
-            for (int i = row; i > 1; --i) {
+            for (int i = row-1; i >= 1; --i) {
                 ChessPosition mySpot = new ChessPosition(i, col);
                 ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                 myMoves.add(myMove);
