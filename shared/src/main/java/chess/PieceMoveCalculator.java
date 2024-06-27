@@ -21,8 +21,10 @@ public class PieceMoveCalculator {
     public Collection<ChessMove> possibleMoves() {
 //        Rook myRook = new Rook(board, currentPosition);
 //        return myRook.rookPossibleDirections();
-        Bishop myBishop = new Bishop(board, currentPosition);
-        return myBishop.bishopPossibleDirections();
+//        Bishop myBishop = new Bishop(board, currentPosition);
+//        return myBishop.bishopPossibleDirections();
+        Queen myQueen = new Queen(board, currentPosition);
+        return  myQueen.queenPossibleDirections();
     }
 
     @Override
@@ -117,10 +119,29 @@ public class PieceMoveCalculator {
                 ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                 myMoves.add(myMove);
             }
-
-
+            int i = 0;
+            int j = 0;
+            for (i = row+1, j = col+1; i <=8 && j <= 8; i++, j++) {
+                ChessPosition mySpot = new ChessPosition(i, j);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+            for (i = row-1, j = col-1; i >=1 && j >= 1; i--, j--) {
+                ChessPosition mySpot = new ChessPosition(i, j);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+            for (i = row+1, j = col-1; i <=8 && j >= 1; i++, j--) {
+                ChessPosition mySpot = new ChessPosition(i, j);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+            for (i = row-1, j = col+1; i >=1 && j <= 8; i--, j++) {
+                ChessPosition mySpot = new ChessPosition(i, j);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
             return myMoves;
-
         }
 
 }
