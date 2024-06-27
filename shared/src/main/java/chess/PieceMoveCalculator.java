@@ -22,23 +22,76 @@ public class PieceMoveCalculator {
         return myRook.rookPossibleDirections();
     }
 
-//    private class Bishop extends PieceMoveCalculator {
+
+    private class Bishop {//extends PieceMoveCalculator {
+
+
+        private final ChessBoard board;
+        private final ChessPosition currentPosition;
+        private Collection<ChessMove> possibleMoves;
+
+        private Bishop(ChessBoard board, ChessPosition currentPosition) {
+        //    super();
+            this.board = board;
+            this.currentPosition = currentPosition;
+        }
+
+        private Collection<ChessMove> bishopPossibleDirections() {
+            int row = currentPosition.getRow();
+            int col = currentPosition.getColumn();
+            Collection<ChessMove> myMoves = new ArrayList<>();
+
+//            for (int i = row+1 && int j = col+1; i<=8 && j <= 8; i++ && j++) {
 //
-//
-//        private final ChessBoard board;
-//        private final ChessPosition currentPosition;
-//        private Collection<ChessMove> possibleMoves;
-//
-//        private Bishop(ChessBoard board, ChessPosition currentPosition) {
-//            super();
-//            this.board = board;
-//            this.currentPosition = currentPosition;
-//        }
-//
-////        private Bishop possibleDirections() {
-////
-////        }
-//    }
+//            }
+            return myMoves;
+        }
+    }
+    private class Queen{
+        private final ChessBoard board;
+        private final ChessPosition currentPosition;
+        private Collection<ChessMove> possibleMoves;
+
+        private Queen(ChessBoard board, ChessPosition currentPosition) {
+            //super();
+            this.board = board;
+            this.currentPosition = currentPosition;
+        }
+
+        private Collection<ChessMove> queenPossibleDirections() {
+            int row = currentPosition.getRow();
+            int col = currentPosition.getColumn();
+            Collection<ChessMove> myMoves = new ArrayList<>();
+
+            for (int i = col+1; i <= 8; ++i) {
+                ChessPosition mySpot = new ChessPosition(row, i);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+            for (int i = col-1; i >= 1; --i) {
+                ChessPosition mySpot = new ChessPosition(row, i);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+            for (int i = row+1; i <= 8; ++i) {
+                ChessPosition mySpot = new ChessPosition(i, col);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+            for (int i = row-1; i >= 1; --i) {
+                ChessPosition mySpot = new ChessPosition(i, col);
+                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                myMoves.add(myMove);
+            }
+
+
+            return myMoves;
+
+        }
+
+}
+
+
 
     private class Rook{ //extends PieceMoveCalculator {
 
