@@ -23,8 +23,11 @@ public class PieceMoveCalculator {
 //        return myRook.rookPossibleDirections();
 //        Bishop myBishop = new Bishop(board, currentPosition);
 //        return myBishop.bishopPossibleDirections();
-        Queen myQueen = new Queen(board, currentPosition);
-        return  myQueen.queenPossibleDirections();
+//        Queen myQueen = new Queen(board, currentPosition);
+//       return myQueen.queenPossibleDirections();
+       King myKing = new King(board, currentPosition);
+       return myKing.kingPossibleDirections();
+
     }
 
     @Override
@@ -145,9 +148,6 @@ public class PieceMoveCalculator {
         }
 
 }
-
-
-
     private class Rook{ //extends PieceMoveCalculator {
 
         private final ChessBoard board;
@@ -189,6 +189,92 @@ public class PieceMoveCalculator {
             return myMoves;
         }
     }
+    private class King { //extends PieceMoveCalculator {
+
+        private final ChessBoard board;
+        private final ChessPosition currentPosition;
+        private Collection<ChessMove> possibleMoves;
+
+        private King(ChessBoard board, ChessPosition currentPosition) {
+            //super();
+            this.board = board;
+            this.currentPosition = currentPosition;
+        }
+        private Collection<ChessMove> kingPossibleDirections() {
+            int row = currentPosition.getRow();
+            int col = currentPosition.getColumn();
+            Collection<ChessMove> myMoves = new ArrayList<>();
+
+            if (currentPosition.getRow() + 1 <=8) {
+                if (currentPosition.getColumn()+1 <= 8) {
+                    ChessPosition mySpot = new ChessPosition(currentPosition.getRow() + 1, col+1);
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else if (currentPosition.getColumn()+1 <= 8) {
+                    ChessPosition mySpot = new ChessPosition(currentPosition.getRow()+1, currentPosition.getColumn()+1);
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else {
+                    ChessPosition mySpot = new ChessPosition(currentPosition.getRow()+1, col);
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+            }
+            else if (currentPosition.getRow()-1 >= 1) {
+                if (currentPosition.getColumn()-1 >= 1) {
+                    ChessPosition mySpot = new ChessPosition(currentPosition.getRow()-1, currentPosition.getColumn()-1);
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else if (currentPosition.getColumn()+1 <= 8) {
+                    ChessPosition mySpot = new ChessPosition(currentPosition.getRow()-1, currentPosition.getColumn()+1);
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else {
+                    ChessPosition mySpot = new ChessPosition(currentPosition.getRow()-1, col);
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+            }
+            return myMoves;
+        }
+    }
+
+    private class Knight() {
+        private final ChessBoard board;
+        private final ChessPosition currentPosition;
+
+        private Knight(ChessBoard board, ChessPosition currentPosition) {
+            this.board = board;
+            this.currentPosition = currentPosition;
+        }
+
+        private Collection<ChessMove> knightPossibleDirections() {
+            int row = currentPosition.getRow();
+            int col = currentPosition.getColumn();
+            Collection<ChessMove> myMoves = new ArrayList<>();
+
+            return myMoves;
+        }
+        /** while (morePossibleMoves) {
+         * if (row+2 <= 8 && col+1 <=8) {
+         *     ChessPosition mySpot = new ChessPosition(row+2, col+1);
+         *     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+         *     myMoves.add(myMove);
+         * }
+         * else if (row+2 <= 8 && col-1 >= 1) {
+         *     ChessPosition mySpot = new ChessPosition(row+2, col-1);
+         *     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+         *     myMoves.add(myMove);
+         * }
+         }
+         *
+         */
+    }
+
 }
 /** Things that need to happen
  * I need to get each piece that's on the board and show it's position
