@@ -21,14 +21,14 @@ public class PieceMoveCalculator {
     public Collection<ChessMove> possibleMoves() {
 //        Rook myRook = new Rook(board, currentPosition);
 //        return myRook.rookPossibleDirections();
-//        Bishop myBishop = new Bishop(board, currentPosition);
-//        return myBishop.bishopPossibleDirections();
+        Bishop myBishop = new Bishop(board, currentPosition, piece);
+        return myBishop.bishopPossibleDirections();
 //        Queen myQueen = new Queen(board, currentPosition);
 //       return myQueen.queenPossibleDirections();
 //       King myKing = new King(board, currentPosition);
 //       return myKing.kingPossibleDirections();
-        Pawn myPawn = new Pawn(board, currentPosition, piece);
-        return myPawn.findPawnMoves();
+//        Pawn myPawn = new Pawn(board, currentPosition, piece);
+//        return myPawn.findPawnMoves();
 
     }
 
@@ -50,13 +50,15 @@ public class PieceMoveCalculator {
 
 
         private final ChessBoard board;
+        private final ChessPiece piece;
         private final ChessPosition currentPosition;
         private Collection<ChessMove> possibleMoves;
 
-        private Bishop(ChessBoard board, ChessPosition currentPosition) {
+        private Bishop(ChessBoard board, ChessPosition currentPosition, ChessPiece piece) {
         //    super();
             this.board = board;
             this.currentPosition = currentPosition;
+            this.piece = piece;
         }
 
         private Collection<ChessMove> bishopPossibleDirections() {
@@ -67,23 +69,78 @@ public class PieceMoveCalculator {
             int j = 0;
             for (i = row+1, j = col+1; i <=8 && j <= 8; i++, j++) {
                 ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
+                if (board.getPiece(mySpot) == null) {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else if (piece.getTeamColor().equals(board.getPiece(mySpot).getTeamColor())) {
+                    break;
+                }
+                else {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                    break;
+                }
+//                if (!piece.getTeamColor().equals(board.getPiece(mySpot).getTeamColor())) {
+//                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                    myMoves.add(myMove);
+//                    break;
+//                }
+//                if (piece.getTeamColor().equals(board.getPiece(mySpot).getTeamColor())) {
+//                    break;
+////                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+////                    myMoves.add(myMove);
+//                }
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
             }
             for (i = row-1, j = col-1; i >=1 && j >= 1; i--, j--) {
+//                ChessPosition mySpot = new ChessPosition(i, j);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
                 ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
+                if (board.getPiece(mySpot) == null) {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else if (piece.getTeamColor().equals(board.getPiece(mySpot).getTeamColor())) {
+                    break;
+                }
+                else {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                    break;
+                }
             }
             for (i = row+1, j = col-1; i <=8 && j >= 1; i++, j--) {
                 ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
+                if (board.getPiece(mySpot) == null) {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else if (piece.getTeamColor().equals(board.getPiece(mySpot).getTeamColor())) {
+                    break;
+                }
+                else {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                    break;
+                }
             }
             for (i = row-1, j = col+1; i >=1 && j <= 8; i--, j++) {
                 ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
+                if (board.getPiece(mySpot) == null) {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                }
+                else if (piece.getTeamColor().equals(board.getPiece(mySpot).getTeamColor())) {
+                    break;
+                }
+                else {
+                    ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                    myMoves.add(myMove);
+                    break;
+                }
             }
             return myMoves;
         }
@@ -333,14 +390,7 @@ public class PieceMoveCalculator {
                                     myMoves.add(knightMove);
                             }
                         }
-
                     }
-//                if (board.getPiece() == null)
-////                if (row == 2) {
-////                    if (row)
-//                }
-          //      }
-
             }
                 else {
                     if (row == 7) {
