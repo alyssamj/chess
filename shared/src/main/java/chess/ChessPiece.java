@@ -51,8 +51,6 @@ public class ChessPiece {
         return pieceColor;
     }
 
-    // return 
-
     /**
      * @return which type of chess piece this piece is
      */

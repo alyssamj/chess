@@ -25,8 +25,10 @@ public class PieceMoveCalculator {
 //        return myBishop.bishopPossibleDirections();
 //        Queen myQueen = new Queen(board, currentPosition);
 //       return myQueen.queenPossibleDirections();
-       King myKing = new King(board, currentPosition);
-       return myKing.kingPossibleDirections();
+//       King myKing = new King(board, currentPosition);
+//       return myKing.kingPossibleDirections();
+        Pawn myPawn = new Pawn(board, currentPosition, piece);
+        return myPawn.findPawnMoves();
 
     }
 
@@ -148,47 +150,56 @@ public class PieceMoveCalculator {
         }
 
 }
-    private class Rook{ //extends PieceMoveCalculator {
-
-        private final ChessBoard board;
-        private final ChessPosition currentPosition;
-        private Collection<ChessMove> possibleMoves;
-
-        private Rook(ChessBoard board, ChessPosition currentPosition) {
-            //super();
-            this.board = board;
-            this.currentPosition = currentPosition;
-        }
-
-        private Collection<ChessMove> rookPossibleDirections() {
-            int row = currentPosition.getRow();
-            int col = currentPosition.getColumn();
-            Collection<ChessMove> myMoves = new ArrayList<>();
-
-            //
-            for (int i = col+1; i <= 8; ++i) {
-               ChessPosition mySpot = new ChessPosition(row, i);
-               ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-               myMoves.add(myMove);
-            }
-            for (int i = col-1; i >= 1; --i) {
-                ChessPosition mySpot = new ChessPosition(row, i);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (int i = row+1; i <= 8; ++i) {
-                ChessPosition mySpot = new ChessPosition(i, col);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (int i = row-1; i >= 1; --i) {
-                ChessPosition mySpot = new ChessPosition(i, col);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            return myMoves;
-        }
-    }
+//    private class Rook{ //extends PieceMoveCalculator {
+//
+//        private final ChessBoard board;
+//        private final ChessPosition currentPosition;
+//        private Collection<ChessMove> possibleMoves;
+//
+//        private Rook(ChessBoard board, ChessPosition currentPosition) {
+//            //super();
+//            this.board = board;
+//            this.currentPosition = currentPosition;
+//        }
+//
+//        private Collection<ChessMove> rookPossibleDirections() {
+//            int row = currentPosition.getRow();
+//            int col = currentPosition.getColumn();
+//            Collection<ChessMove> myMoves = new ArrayList<>();
+//
+//            //
+//            for (int i = col+1; i <= 8; ++i) {
+//                    ChessPosition mySpot = new ChessPosition(row, i);
+//                    if (board.getPiece(mySpot).getTeamColor() == null) {
+//                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                        myMoves.add(myMove);
+//                        continue;
+//                    } else if (board.getPiece(mySpot).getTeamColor() != piece.getTeamColor()) {
+//                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                        myMoves.add(myMove);
+//                    } else if (board.getPiece(mySpot).getTeamColor() == piece.getTeamColor()) {
+//                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                        break;
+//                    }
+//            }
+//            for (int i = col-1; i >= 1; --i) {
+//                ChessPosition mySpot = new ChessPosition(row, i);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (int i = row+1; i <= 8; ++i) {
+//                ChessPosition mySpot = new ChessPosition(i, col);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (int i = row-1; i >= 1; --i) {
+//                ChessPosition mySpot = new ChessPosition(i, col);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            return myMoves;
+//        }
+//    }
     private class King { //extends PieceMoveCalculator {
 
         private final ChessBoard board;
@@ -243,7 +254,7 @@ public class PieceMoveCalculator {
         }
     }
 
-    private class Knight() {
+    private class Knight {
         private final ChessBoard board;
         private final ChessPosition currentPosition;
 
@@ -274,6 +285,67 @@ public class PieceMoveCalculator {
          *
          */
     }
+    private class Pawn {
+        private final ChessBoard board;
+        private final ChessPosition currentPosition;
+        private final ChessPiece piece;
+
+        public Pawn(ChessBoard board, ChessPosition currentPosition, ChessPiece piece) {
+            this.board = board;
+            this.currentPosition = currentPosition;
+            this.piece = piece;
+        }
+
+        private Collection<ChessMove> findPawnMoves() {
+            int row = currentPosition.getRow();;
+            int col = currentPosition.getColumn();;
+            Collection<ChessMove> myMoves = new ArrayList<>();
+          //  for (int i = 0; i < 3; i++) {
+                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    if (row == 2) {
+                        ChessPosition mySpot = new ChessPosition(row+1, col);
+                        ChessPosition moveTwo = new ChessPosition(row+2, col);
+                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                        ChessMove secondMove = new ChessMove(currentPosition, moveTwo, null);
+                        myMoves.add(myMove);
+                        myMoves.add(secondMove);
+                    }
+                    if (row > 2 && row < 7) {
+                        ChessPosition mySpot = new ChessPosition(row+1, col);
+                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                        myMoves.add(myMove);
+                    }
+                    if (row == 7) {
+                        ChessPosition mySpot = new ChessPosition(row+1, col);
+                        for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                            switch (pieceType) {
+                                case BISHOP:
+                                    ChessMove bishopMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP);
+                                    myMoves.add(bishopMove);
+                                case QUEEN:
+                                    ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
+                                    myMoves.add(queenMove);
+                                case ROOK:
+                                    ChessMove rookMove =new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
+                                    myMoves.add(rookMove);
+                                case KNIGHT:
+                                    ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
+                                    myMoves.add(knightMove);
+                            }
+                        }
+
+                    }
+//                if (board.getPiece() == null)
+////                if (row == 2) {
+////                    if (row)
+//                }
+          //      }
+            }
+
+            return myMoves;
+        }
+
+    }
 
 }
 /** Things that need to happen
@@ -281,6 +353,9 @@ public class PieceMoveCalculator {
  * Check to see in each position if there's a piece there
  * If no piece, add position to collection
  * once there is a piece/hits edge, stop loop
+ *
+ * need to be able to identify what color a certain piece blocking the rook is
+ *
  *
  * while (board.getPiece
  */
