@@ -340,7 +340,42 @@ public class PieceMoveCalculator {
 ////                    if (row)
 //                }
           //      }
+
             }
+                else {
+                    if (row == 7) {
+                        ChessPosition firstSpot = new ChessPosition(row-1, col);
+                        ChessMove firstMove = new ChessMove(currentPosition, firstSpot, null);
+                        myMoves.add(firstMove);
+                        ChessPosition secondSpot = new ChessPosition(row-2, col);
+                        ChessMove secondMove = new ChessMove(currentPosition, secondSpot, null);
+                        myMoves.add(secondMove);
+                    }
+                    if (row > 2 && row < 7) {
+                        ChessPosition mySpot = new ChessPosition(row-1, col);
+                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                        myMoves.add(myMove);
+                    }
+                    if (row == 2) {
+                        ChessPosition mySpot = new ChessPosition(row-1, col);
+                        for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                            switch (pieceType) {
+                                case QUEEN :
+                                    ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
+                                    myMoves.add(queenMove);
+                                case ROOK:
+                                    ChessMove rookMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
+                                    myMoves.add(rookMove);
+                                case BISHOP:
+                                    ChessMove bishopMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP);
+                                    myMoves.add(bishopMove);
+                                case KNIGHT:
+                                    ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
+                                    myMoves.add(knightMove);
+                            }
+                        }
+                    }
+                }
 
             return myMoves;
         }
