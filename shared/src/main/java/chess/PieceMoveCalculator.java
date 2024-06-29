@@ -331,7 +331,9 @@ public class PieceMoveCalculator {
                         ChessMove myMove = new ChessMove(currentPosition, firstSpot, null);
                         myMoves.add(myMove);
                     } else {
-                      //  continue;
+                        if (board.getPiece(firstSpot).getTeamColor() != piece.getTeamColor()) {
+                            myMoves.add(new ChessMove(currentPosition, firstSpot, null));
+                        }
                     }
                     if (col-1 >= 1) {
                         ChessPosition secondSpot = new ChessPosition(row + 1, col-1);
@@ -339,12 +341,19 @@ public class PieceMoveCalculator {
                             ChessMove myMove = new ChessMove(currentPosition, secondSpot, null);
                             myMoves.add(myMove);
                         } else {
-                         //   continue;
+                            if (board.getPiece(secondSpot).getTeamColor() != piece.getTeamColor()) {
+                                //ChessMove myMove = new ChessMove(currentPosition, secondSpot, null);
+                                myMoves.add(new ChessMove(currentPosition, secondSpot, null));
+                            }
                         }
                         ChessPosition fourthSpot = new ChessPosition(row, col-1);
                         if (board.getPiece(fourthSpot) == null) {
                             ChessMove myMove = new ChessMove(currentPosition, fourthSpot, null);
                             myMoves.add(myMove);
+                        } else {
+                            if (board.getPiece(fourthSpot).getTeamColor() != piece.getTeamColor()) {
+                                myMoves.add(new ChessMove(currentPosition, fourthSpot, null));
+                            }
                         }
                     }
                     if (col+1 <= 8) {
@@ -353,14 +362,18 @@ public class PieceMoveCalculator {
                             ChessMove myMove = new ChessMove(currentPosition, thirdSpot, null);
                             myMoves.add(myMove);
                         } else {
-                         //   continue;
+                            if (board.getPiece(thirdSpot).getTeamColor() != piece.getTeamColor()) {
+                                myMoves.add(new ChessMove(currentPosition, thirdSpot, null));
+                            }
                         }
                         ChessPosition fifthSpot = new ChessPosition(row, col+1);
                         if (board.getPiece(fifthSpot)==null) {
                             ChessMove myMove = new ChessMove(currentPosition, fifthSpot, null);
                             myMoves.add(myMove);
                         } else {
-                         //   continue;
+                            if (board.getPiece(fifthSpot).getTeamColor() != piece.getTeamColor()) {
+                                myMoves.add(new ChessMove(currentPosition, fifthSpot, null));
+                            }
                         }
                     }
                 }
@@ -371,7 +384,9 @@ public class PieceMoveCalculator {
                             ChessMove myMove = new ChessMove(currentPosition, sixthSpot, null);
                             myMoves.add(myMove);
                         }else {
-                          //  continue;
+                            if (board.getPiece(sixthSpot).getTeamColor() != piece.getTeamColor()) {
+                                myMoves.add(new ChessMove(currentPosition, sixthSpot, null));
+                            }
                         }
                     }
                     if (col > 1) {
@@ -380,12 +395,18 @@ public class PieceMoveCalculator {
                             ChessMove myMove = new ChessMove(currentPosition, seventhSpot, null);
                             myMoves.add(myMove);
                         } else {
-                         //   continue;
+                            if (board.getPiece(seventhSpot).getTeamColor() != piece.getTeamColor()) {
+                                myMoves.add(new ChessMove(currentPosition, seventhSpot, null));
+                            }
                         }
                         ChessPosition eighthSpot = new ChessPosition(row-1, col-1);
                         if (board.getPiece(eighthSpot) == null) {
                             ChessMove myMove = new ChessMove(currentPosition, eighthSpot, null);
                             myMoves.add(myMove);
+                        } else {
+                            if (board.getPiece(eighthSpot).getTeamColor() != piece.getTeamColor()) {
+                                myMoves.add(new ChessMove(currentPosition, eighthSpot, null));
+                            }
                         }
                     }
                 }
