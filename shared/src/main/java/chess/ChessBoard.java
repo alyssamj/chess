@@ -13,7 +13,11 @@ public class ChessBoard {
     private ChessPiece[][] spots = new ChessPiece[8][8];
 
     public ChessBoard() {
-        
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                spots[i][j] = null; // Assuming null means no piece on the spot
+            }
+        }
     }
 
     /**
@@ -23,7 +27,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        spots[position.getRow()][position.getColumn()] = piece;
+        spots[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -34,7 +38,12 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return spots[position.getRow()][position.getColumn()];
+        int row = position.getRow()-1;
+        int col = position.getColumn()-1;
+        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+            return null;
+        }
+        return spots[row][col];
     }
 
 //    public boolean possiblePiece(ChessPosition position) {
