@@ -19,12 +19,12 @@ public class PieceMoveCalculator {
     }
 
     public Collection<ChessMove> possibleMoves() {
-//        Rook myRook = new Rook(board, currentPosition);
+//        Rook myRook = new Rook();
 //        return myRook.rookPossibleDirections();
-        Bishop myBishop = new Bishop(board, currentPosition, piece);
-        return myBishop.bishopPossibleDirections();
-//        Queen myQueen = new Queen(board, currentPosition);
-//       return myQueen.queenPossibleDirections();
+//        Bishop myBishop = new Bishop(board, currentPosition, piece);
+//        return myBishop.bishopPossibleDirections();
+        Queen myQueen = new Queen(board, currentPosition, piece);
+       return myQueen.queenPossibleDirections();
 //       King myKing = new King(board, currentPosition);
 //       return myKing.kingPossibleDirections();
 //        Pawn myPawn = new Pawn(board, currentPosition, piece);
@@ -47,8 +47,6 @@ public class PieceMoveCalculator {
 
 
     private class Bishop {//extends PieceMoveCalculator {
-
-
         private final ChessBoard board;
         private final ChessPiece piece;
         private final ChessPosition currentPosition;
@@ -75,11 +73,9 @@ public class PieceMoveCalculator {
                 if (board.getPiece(spotOnBoard) == null) {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
-                }
-                else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
+                } else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
                     break;
-                }
-                else {
+                }  else {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
                     break;
@@ -109,11 +105,9 @@ public class PieceMoveCalculator {
                 if (board.getPiece(spotOnBoard) == null) {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
-                }
-                else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
+                } else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
                     break;
-                }
-                else {
+                } else {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
                     break;
@@ -128,11 +122,9 @@ public class PieceMoveCalculator {
                 if (board.getPiece(spotOnBoard) == null) {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
-                }
-                else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
+                } else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
                     break;
-                }
-                else {
+                } else {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
                     break;
@@ -147,11 +139,9 @@ public class PieceMoveCalculator {
                 if (board.getPiece(spotOnBoard) == null) {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
-                }
-                else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
+                } else if (piece.getTeamColor().equals(board.getPiece(spotOnBoard).getTeamColor())) {
                     break;
-                }
-                else {
+                } else {
                     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                     myMoves.add(myMove);
                     break;
@@ -164,60 +154,70 @@ public class PieceMoveCalculator {
         private final ChessBoard board;
         private final ChessPosition currentPosition;
         private Collection<ChessMove> possibleMoves;
+        private final ChessPiece piece;
+        private Bishop myBishop;
+        private Rook myRook;
 
-        private Queen(ChessBoard board, ChessPosition currentPosition) {
+
+        private Queen(ChessBoard board, ChessPosition currentPosition, ChessPiece piece) {
             //super();
             this.board = board;
+            this.piece = piece;
             this.currentPosition = currentPosition;
+            this.myBishop = new Bishop(board, currentPosition, piece);
+            this.myRook = new Rook(board, currentPosition, piece);
         }
 
         private Collection<ChessMove> queenPossibleDirections() {
             int row = currentPosition.getRow();
             int col = currentPosition.getColumn();
             Collection<ChessMove> myMoves = new ArrayList<>();
+            myMoves.addAll(myBishop.bishopPossibleDirections());
+            myMoves.addAll(myRook.rookPossibleDirections());
 
-            for (int i = col+1; i <= 8; ++i) {
-                ChessPosition mySpot = new ChessPosition(row, i);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (int i = col-1; i >= 1; --i) {
-                ChessPosition mySpot = new ChessPosition(row, i);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (int i = row+1; i <= 8; ++i) {
-                ChessPosition mySpot = new ChessPosition(i, col);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (int i = row-1; i >= 1; --i) {
-                ChessPosition mySpot = new ChessPosition(i, col);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            int i = 0;
-            int j = 0;
-            for (i = row+1, j = col+1; i <=8 && j <= 8; i++, j++) {
-                ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (i = row-1, j = col-1; i >=1 && j >= 1; i--, j--) {
-                ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (i = row+1, j = col-1; i <=8 && j >= 1; i++, j--) {
-                ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
-            for (i = row-1, j = col+1; i >=1 && j <= 8; i--, j++) {
-                ChessPosition mySpot = new ChessPosition(i, j);
-                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                myMoves.add(myMove);
-            }
+
+//            for (int i = col+1; i <= 8; ++i) {
+//                ChessPosition mySpot = new ChessPosition(row, i);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (int i = col-1; i >= 1; --i) {
+//                ChessPosition mySpot = new ChessPosition(row, i);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (int i = row+1; i <= 8; ++i) {
+//                ChessPosition mySpot = new ChessPosition(i, col);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (int i = row-1; i >= 1; --i) {
+//                ChessPosition mySpot = new ChessPosition(i, col);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            int i = 0;
+//            int j = 0;
+//            for (i = row+1, j = col+1; i <=8 && j <= 8; i++, j++) {
+//                ChessPosition mySpot = new ChessPosition(i, j);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (i = row-1, j = col-1; i >=1 && j >= 1; i--, j--) {
+//                ChessPosition mySpot = new ChessPosition(i, j);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (i = row+1, j = col-1; i <=8 && j >= 1; i++, j--) {
+//                ChessPosition mySpot = new ChessPosition(i, j);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
+//            for (i = row-1, j = col+1; i >=1 && j <= 8; i--, j++) {
+//                ChessPosition mySpot = new ChessPosition(i, j);
+//                ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+//                myMoves.add(myMove);
+//            }
             return myMoves;
         }
 
@@ -226,11 +226,13 @@ public class PieceMoveCalculator {
 
         private final ChessBoard board;
         private final ChessPosition currentPosition;
+        private final ChessPiece piece;
         private Collection<ChessMove> possibleMoves;
 
-        private Rook(ChessBoard board, ChessPosition currentPosition) {
+        private Rook(ChessBoard board, ChessPosition currentPosition, ChessPiece piece) {
             //super();
             this.board = board;
+            this.piece = piece;
             this.currentPosition = currentPosition;
         }
 
