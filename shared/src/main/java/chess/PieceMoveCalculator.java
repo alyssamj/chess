@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class PieceMoveCalculator {
     private final ChessPiece piece;
@@ -19,19 +16,29 @@ public class PieceMoveCalculator {
     }
 
     public Collection<ChessMove> possibleMoves() {
-//        Rook myRook = new Rook();
-//        return myRook.rookPossibleDirections();
-//        Bishop myBishop = new Bishop(board, currentPosition, piece);
-//        return myBishop.bishopPossibleDirections();
-//        Queen myQueen = new Queen(board, currentPosition, piece);
-//       return myQueen.queenPossibleDirections();
-//       King myKing = new King(board, currentPosition, piece);
-//       return myKing.kingPossibleDirections();
-//        Knight myKnight = new Knight(board, currentPosition, piece);
-//        return myKnight.knightPossibleDirections();
-        Pawn myPawn = new Pawn(board, currentPosition, piece);
-        return myPawn.findPawnMoves();
-
+        ChessPiece.PieceType pieceType = piece.getPieceType();
+        switch (pieceType) {
+            case BISHOP:
+                Bishop myBishop = new Bishop(board, currentPosition, piece);
+                return myBishop.bishopPossibleDirections();
+            case ROOK:
+                Rook myRook = new Rook(board, currentPosition, piece);
+                return myRook.rookPossibleDirections();
+            case KING:
+                King myKing = new King(board, currentPosition, piece);
+                return myKing.kingPossibleDirections();
+            case QUEEN:
+                Queen myQueen = new Queen(board, currentPosition, piece);
+                return myQueen.queenPossibleDirections();
+            case KNIGHT:
+                Knight myKnight = new Knight(board, currentPosition, piece);
+                return myKnight.knightPossibleDirections();
+            case PAWN:
+                Pawn myPawn = new Pawn(board, currentPosition, piece);
+                return myPawn.findPawnMoves();
+            default:
+                return Collections.EMPTY_LIST;
+        }
     }
 
     @Override
