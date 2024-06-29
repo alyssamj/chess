@@ -27,10 +27,10 @@ public class PieceMoveCalculator {
 //       return myQueen.queenPossibleDirections();
 //       King myKing = new King(board, currentPosition, piece);
 //       return myKing.kingPossibleDirections();
-        Knight myKnight = new Knight(board, currentPosition, piece);
-        return myKnight.knightPossibleDirections();
-//        Pawn myPawn = new Pawn(board, currentPosition, piece);
-//        return myPawn.findPawnMoves();
+//        Knight myKnight = new Knight(board, currentPosition, piece);
+//        return myKnight.knightPossibleDirections();
+        Pawn myPawn = new Pawn(board, currentPosition, piece);
+        return myPawn.findPawnMoves();
 
     }
 
@@ -415,7 +415,6 @@ public class PieceMoveCalculator {
             return myMoves;
         }
     }
-
     private class Knight {
         private final ChessBoard board;
         private final ChessPosition currentPosition;
@@ -524,20 +523,6 @@ public class PieceMoveCalculator {
             return myMoves;
             }
         }
-        /** while (morePossibleMoves) {
-         * if (row+2 <= 8 && col+1 <=8) {
-         *     ChessPosition mySpot = new ChessPosition(row+2, col+1);
-         *     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-         *     myMoves.add(myMove);
-         * }
-         * else if (row+2 <= 8 && col-1 >= 1) {
-         *     ChessPosition mySpot = new ChessPosition(row+2, col-1);
-         *     ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-         *     myMoves.add(myMove);
-         * }
-         }
-         *
-         */
 
     private class Pawn {
         private final ChessBoard board;
@@ -551,26 +536,30 @@ public class PieceMoveCalculator {
         }
 
         private Collection<ChessMove> findPawnMoves() {
-            int row = currentPosition.getRow();;
-            int col = currentPosition.getColumn();;
+            int row = currentPosition.getRow();
+            int col = currentPosition.getColumn();
             Collection<ChessMove> myMoves = new ArrayList<>();
-          //  for (int i = 0; i < 3; i++) {
-                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                if (board.getPiece(new ChessPosition(row + 1, col)) == null) {
                     if (row == 2) {
-                        ChessPosition mySpot = new ChessPosition(row+1, col);
-                        ChessPosition moveTwo = new ChessPosition(row+2, col);
+                        ChessPosition mySpot = new ChessPosition(row + 1, col);
                         ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                        ChessMove secondMove = new ChessMove(currentPosition, moveTwo, null);
                         myMoves.add(myMove);
-                        myMoves.add(secondMove);
+                        ChessPosition moveTwo = new ChessPosition(row + 2, col);
+                        if (board.getPiece(moveTwo) == null) {
+                            ChessMove secondMove = new ChessMove(currentPosition, moveTwo, null);
+                            myMoves.add(secondMove);
+                        }
                     }
                     if (row > 2 && row < 7) {
-                        ChessPosition mySpot = new ChessPosition(row+1, col);
+                        ChessPosition mySpot = new ChessPosition(row + 1, col);
                         ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
                         myMoves.add(myMove);
                     }
+
                     if (row == 7) {
-                        ChessPosition mySpot = new ChessPosition(row+1, col);
+                        ChessPosition mySpot = new ChessPosition(row + 1, col);
                         for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
                             switch (pieceType) {
                                 case BISHOP:
@@ -580,42 +569,8 @@ public class PieceMoveCalculator {
                                     ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
                                     myMoves.add(queenMove);
                                 case ROOK:
-                                    ChessMove rookMove =new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
-                                    myMoves.add(rookMove);
-                                case KNIGHT:
-                                    ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
-                                    myMoves.add(knightMove);
-                            }
-                        }
-                    }
-            }
-                else {
-                    if (row == 7) {
-                        ChessPosition firstSpot = new ChessPosition(row-1, col);
-                        ChessMove firstMove = new ChessMove(currentPosition, firstSpot, null);
-                        myMoves.add(firstMove);
-                        ChessPosition secondSpot = new ChessPosition(row-2, col);
-                        ChessMove secondMove = new ChessMove(currentPosition, secondSpot, null);
-                        myMoves.add(secondMove);
-                    }
-                    if (row > 2 && row < 7) {
-                        ChessPosition mySpot = new ChessPosition(row-1, col);
-                        ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
-                        myMoves.add(myMove);
-                    }
-                    if (row == 2) {
-                        ChessPosition mySpot = new ChessPosition(row-1, col);
-                        for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
-                            switch (pieceType) {
-                                case QUEEN :
-                                    ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
-                                    myMoves.add(queenMove);
-                                case ROOK:
                                     ChessMove rookMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
                                     myMoves.add(rookMove);
-                                case BISHOP:
-                                    ChessMove bishopMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP);
-                                    myMoves.add(bishopMove);
                                 case KNIGHT:
                                     ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
                                     myMoves.add(knightMove);
@@ -623,12 +578,138 @@ public class PieceMoveCalculator {
                         }
                     }
                 }
+                if (board.getPiece(new ChessPosition(row + 1, col + 1)) != null) {
+                    if (board.getPiece(new ChessPosition(row + 1, col + 1)).getTeamColor() != piece.getTeamColor()) {
+                        ChessPosition mySpot = new ChessPosition(row + 1, col + 1);
+                        if (row == 7) {
+                            for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                                switch (pieceType) {
+                                    case BISHOP:
+                                        ChessMove bishopMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP);
+                                        myMoves.add(bishopMove);
+                                    case QUEEN:
+                                        ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
+                                        myMoves.add(queenMove);
+                                    case ROOK:
+                                        ChessMove rookMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
+                                        myMoves.add(rookMove);
+                                    case KNIGHT:
+                                        ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
+                                        myMoves.add(knightMove);
+                                }
+                            }
+                        } else {
+                            myMoves.add(new ChessMove(currentPosition, mySpot, null));
+                        }
+                    }
+                }
+                if (board.getPiece(new ChessPosition(row + 1, col - 1)) != null) {
+                    if (board.getPiece(new ChessPosition(row + 1, col - 1)).getTeamColor() != piece.getTeamColor()) {
+                        ChessPosition mySpot = new ChessPosition(row + 1, col - 1);
+                        if (row == 7) {
+                            for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                                switch (pieceType) {
+                                    case BISHOP:
+                                        ChessMove bishopMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP);
+                                        myMoves.add(bishopMove);
+                                    case QUEEN:
+                                        ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
+                                        myMoves.add(queenMove);
+                                    case ROOK:
+                                        ChessMove rookMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
+                                        myMoves.add(rookMove);
+                                    case KNIGHT:
+                                        ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
+                                        myMoves.add(knightMove);
+                                }
+                            }
+                        } else {
+                            myMoves.add(new ChessMove(currentPosition, mySpot, null));
+                        }
+                    }
+                }
+            }
+            else {
+                    if (board.getPiece(new ChessPosition(row-1, col)) == null) {
+                        if (row == 7) {
+                            ChessPosition firstSpot = new ChessPosition(row - 1, col);
+                            ChessMove firstMove = new ChessMove(currentPosition, firstSpot, null);
+                            myMoves.add(firstMove);
+                            ChessPosition secondSpot = new ChessPosition(row - 2, col);
+                            if (board.getPiece(secondSpot) == null) {
+                                ChessMove secondMove = new ChessMove(currentPosition, secondSpot, null);
+                                myMoves.add(secondMove);
+                            }
+                        }
+                        if (row > 2 && row < 7) {
+                            ChessPosition mySpot = new ChessPosition(row - 1, col);
+                            ChessMove myMove = new ChessMove(currentPosition, mySpot, null);
+                            myMoves.add(myMove);
+                        }
+                        if (row == 2) {
+                            ChessPosition mySpot = new ChessPosition(row - 1, col);
+                            for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                                switch (pieceType) {
+                                    case QUEEN:
+                                        ChessMove queenMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN);
+                                        myMoves.add(queenMove);
+                                    case ROOK:
+                                        ChessMove rookMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK);
+                                        myMoves.add(rookMove);
+                                    case BISHOP:
+                                        ChessMove bishopMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP);
+                                        myMoves.add(bishopMove);
+                                    case KNIGHT:
+                                        ChessMove knightMove = new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT);
+                                        myMoves.add(knightMove);
+                                }
+                            }
+                        }
+                    }
+                    if (board.getPiece(new ChessPosition(row-1, col-1)) != null) {
+                        ChessPosition mySpot = new ChessPosition(row-1, col-1);
+                        if (row == 2) {
+                            for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                                switch (pieceType){
+                                    case KNIGHT :
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT));
+                                    case QUEEN:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN));
+                                    case ROOK:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK));
+                                    case BISHOP:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP));
+                                }
+                            }
+                        } else {
+                            myMoves.add(new ChessMove(currentPosition, mySpot, null));
+                        }
+                    }
+                    if (board.getPiece(new ChessPosition(row-1, col+1)) != null) {
+                        ChessPosition mySpot = new ChessPosition(row-1, col+1);
+                        if (row == 2) {
+                            for (ChessPiece.PieceType pieceType : ChessPiece.PieceType.values()) {
+                                switch (pieceType) {
+                                    case ROOK:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.ROOK));
+                                    case QUEEN:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.QUEEN));
+                                    case BISHOP:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.BISHOP));
+                                    case KNIGHT:
+                                        myMoves.add(new ChessMove(currentPosition, mySpot, ChessPiece.PieceType.KNIGHT));
+                                }
+                            }
+                        }
+                        else {
+                            myMoves.add(new ChessMove(currentPosition, mySpot, null));
+                        }
+                    }
 
+            }
             return myMoves;
         }
-
     }
-
 }
 /** Things that need to happen
  * I need to get each piece that's on the board and show it's position
