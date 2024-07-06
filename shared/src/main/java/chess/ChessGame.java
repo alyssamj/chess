@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -78,23 +79,28 @@ public class ChessGame {
         ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
         Collection<ChessMove> availableMoves = new ArrayList<>(piece.pieceMoves(myBoard, start));
         int len = availableMoves.size();
-        int i = 1;
-        for (ChessMove available : availableMoves) {
-            if (available != move) {
-                if (i == len ) { //&& len > 1) {
-                    throw new InvalidMoveException();
+        if (len == 0) {
+            throw new InvalidMoveException();
+        }
+        if (availableMoves.contains(move)) {
+            if (piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
+                ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
+                myBoard.addPiece(move.getEndPosition(), promotionPiece);
+                myBoard.addPiece(move.getStartPosition(), null);
+            } else {
+                myBoard.addPiece(move.getEndPosition(), piece);
+                myBoard.addPiece(move.getStartPosition(), null);
+            }
+            myBoard.toString();
+            for (TeamColor color : TeamColor.values()) {
+                if (color != turn) {
+                    setTeamTurn(color);
                 }
             }
-            i++;
+        } else {
+            throw new InvalidMoveException();
         }
-        myBoard.addPiece(move.getEndPosition(), piece);
-        myBoard.addPiece(move.getStartPosition(), null);
-        myBoard.toString();
-        for (TeamColor color : TeamColor.values()) {
-            if (color != turn) {
-                setTeamTurn(color);
-            }
-        }
+
 
     }
 
