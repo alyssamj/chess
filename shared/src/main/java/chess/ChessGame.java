@@ -55,6 +55,31 @@ public class ChessGame {
         if (myBoard.getPiece(startPosition) == null) {
             return null;
         }
+        Collection<ChessPiece> allPieces = new ArrayList<>();
+        Collection<ChessPiece> potentialKingTakers = new ArrayList<>();
+        ChessPosition kingPosition = new ChessPosition(0, 0);
+        for (int i = 1; i <=8; i++) {
+            for (int j = 1; j <=8; j++) {
+                ChessPosition newSpot = new ChessPosition(i, j);
+                ChessPiece piece = myBoard.getPiece(newSpot);
+                if (piece != null) {
+                    allPieces.add(piece);
+                }
+                if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == turn) {
+                    kingPosition = newSpot;
+                }
+            }
+        }
+        for (ChessPiece piece : allPieces) {
+            Collection<ChessMove> pieceMoves = piece.pieceMoves(myBoard, );
+            if (piece.getTeamColor() != turn) {
+                for (ChessMove move : pieceMoves) {
+                    if (move.getEndPosition() == kingPosition) {
+
+                    }
+                }
+            }
+        }
         return myBoard.getPiece(startPosition).pieceMoves(myBoard, startPosition);
 
     }
