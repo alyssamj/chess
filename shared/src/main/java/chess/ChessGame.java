@@ -116,17 +116,20 @@ public class ChessGame {
         if (availableMoves.isEmpty()) {
             throw new InvalidMoveException();
         }
-        if (isInCheck(turn)) {
-            throw new InvalidMoveException();
-        }
         if (availableMoves.contains(move)) {
             if (piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
                 ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
                 myBoard.addPiece(move.getEndPosition(), promotionPiece);
                 myBoard.addPiece(move.getStartPosition(), null);
+                if (isInCheck(turn)) {
+                    throw new InvalidMoveException();
+                }
             } else {
                 myBoard.addPiece(move.getEndPosition(), piece);
                 myBoard.addPiece(move.getStartPosition(), null);
+                if (isInCheck(turn)) {
+                    throw new InvalidMoveException();
+                }
             }
             myBoard.toString();
             for (TeamColor color : TeamColor.values()) {
@@ -177,17 +180,18 @@ public class ChessGame {
 
 
     private Collection<ChessMove> checkAllPieces(TeamColor teamColor) {
-        Collection<ChessPiece> allPieces = new ArrayList<>();
+    //    Collection<ChessPiece> allPieces = new ArrayList<>();
         Collection<ChessMove> potentialKingTakers = new ArrayList<>();
-        ChessPosition kingPosition = calculateEnemyKingSpot(teamColor);
+        ChessPosition enemyKingPosition = calculateEnemyKingSpot(teamColor);
+        ChessPosition teamKingPosition = calculateOwnKingSpot(teamColor);
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition newSpot = new ChessPosition(i, j);
                 ChessPiece piece = myBoard.getPiece(newSpot);
-                if (piece != null) {
+                if (piece != null && piece.getTeamColor() != teamColor) {
                     Collection<ChessMove> pieceMoves = piece.pieceMoves(myBoard, newSpot);
                     for (ChessMove move : pieceMoves) {
-                        if (move.getEndPosition() == kingPosition && myBoard.getPiece(move.getStartPosition()).getTeamColor() != teamColor) {
+                        if (move.getEndPosition().equals(teamKingPosition)) {
                             potentialKingTakers.add(move);
                         }
                     }
