@@ -53,19 +53,25 @@ public class ChessGame {
      */
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        Collection<ChessMove> myValidMoves = new ArrayList<>();
         if (myBoard.getPiece(startPosition) == null) {
-            return null;
+            return myValidMoves;
         }
-        ChessBoard tempBoard;
-        tempBoard = new ChessBoard(myBoard);
-        this.myBoard = new ChessBoard(tempBoard);
-        //   copyOfBoard.spots[5][5] = new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING);
-        try {
-            this.makeMove(new ChessMove(startPosition, new ChessPosition(5, 5), null));
-        } catch (InvalidMoveException e) {
-            System.out.println("Not valid ALYSSA");
+//        ChessBoard tempBoard = new ChessBoard(myBoard);
+//        this.myBoard = new ChessBoard(tempBoard);
+
+        ChessPiece piece = myBoard.getPiece(startPosition);
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(this.myBoard, startPosition);
+        for (ChessMove move : possibleMoves) {
+            ChessBoard tempBoard = new ChessBoard(this.myBoard);
+            this.myBoard = new ChessBoard(tempBoard);
+            testMoves(move);
+            if (!isInCheck(piece.getTeamColor())) {
+                myValidMoves.add(move);
+            }
+            this.myBoard = new ChessBoard(tempBoard);
         }
-        this.myBoard = new ChessBoard(tempBoard);
+      //  this.myBoard = new ChessBoard(tempBoard);
 //        Collection<ChessPiece> allPieces = new ArrayList<>();
 //        Collection<ChessPiece> potentialKingTakers = new ArrayList<>();
 //        ChessPosition kingPosition = new ChessPosition(0, 0);
@@ -91,7 +97,23 @@ public class ChessGame {
 //                }
 //            }
 //        }
-        return myBoard.getPiece(startPosition).pieceMoves(myBoard, startPosition);
+        return myValidMoves;
+    }
+    public void testMoves(ChessMove move) {
+        ChessPosition start = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
+        if (myBoard.getPiece(start) != null) {
+            ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
+            if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN) && move.getPromotionPiece() != null) {
+                ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
+                myBoard.addPiece(move.getEndPosition(), promotionPiece);
+                myBoard.addPiece(move.getStartPosition(), null);
+            } else {
+                myBoard.addPiece(move.getEndPosition(), piece);
+                myBoard.addPiece(move.getStartPosition(), null);
+            }
+            //           myBoard.toString();
+        }
+      //  return move;
     }
 
     /**
@@ -156,7 +178,7 @@ public class ChessGame {
                 ChessPiece piece = myBoard.getPiece(newSpot);
                 if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
                     kingPosition = newSpot;
-                    break;
+                    return kingPosition;
                 }
             }
         }
@@ -179,7 +201,7 @@ public class ChessGame {
     }
 
 
-    private Collection<ChessMove> checkAllPieces(TeamColor teamColor) {
+    private boolean checkKingTakesPieces(TeamColor teamColor) {
     //    Collection<ChessPiece> allPieces = new ArrayList<>();
         Collection<ChessMove> potentialKingTakers = new ArrayList<>();
         ChessPosition enemyKingPosition = calculateEnemyKingSpot(teamColor);
@@ -193,6 +215,7 @@ public class ChessGame {
                     for (ChessMove move : pieceMoves) {
                         if (move.getEndPosition().equals(teamKingPosition)) {
                             potentialKingTakers.add(move);
+                            return true;
                         }
                     }
                 }
@@ -208,18 +231,45 @@ public class ChessGame {
 //                }
 //            }
 //        }
-        return potentialKingTakers;
+        return false; //potentialKingTakers;
     }
+//    private Collection<ChessMove> checkKingProtectors(TeamColor teamColor) {
+//        Collection<ChessMove> potentialKingProtectors = new ArrayList<>();
+//        ChessPosition teamKingPosition = calculateOwnKingSpot(teamColor);
+//        Collection<ChessMove> potentialKingTakers = checkKingTakesPieces(teamColor);
+//        for (int i = 1; i <= 8; i++) {
+//            for (int j = 1; j <= 8; j++) {
+//                ChessPosition newSpot = new ChessPosition(i, j);
+//                ChessPiece piece = myBoard.getPiece(newSpot);
+//                if (piece != null && piece.getTeamColor() == teamColor) {
+//                    Collection<ChessMove> pieceMoves = piece.pieceMoves(myBoard, newSpot);
+//                    for (ChessMove move : pieceMoves) {
+//                        for (ChessMove enemyMove : potentialKingTakers) {
+//                            if (move.getEndPosition().equals(enemyMove.getEndPosition())) {
+//                                potentialKingProtectors.add(move);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return potentialKingProtectors;
+//    }
 
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessMove> possibleTeamMoves = new ArrayList<>();
+   //     Collection<ChessMove> possibleTeamMoves = new ArrayList<>();
         Collection<ChessMove> possibleEnemyMoves = new ArrayList<>();
-        Collection<ChessPiece> potentialChecks = new ArrayList<>();
+     //   Collection<ChessPiece> potentialChecks = new ArrayList<>();
         ChessPosition kingPosition = calculateOwnKingSpot(teamColor);
-        possibleEnemyMoves = checkAllPieces(teamColor);
-        if (possibleEnemyMoves.isEmpty()) {
+      //  possibleEnemyMoves = checkKingTakesPieces(teamColor);
+        if (checkKingTakesPieces(teamColor)) {
+            return true;
+        } else {
             return false;
         }
+//        if (possibleEnemyMoves.isEmpty()) {
+//            return false;
+//        }
 
 //        for (int i = 1; i <= 8; i++) {
 //            for (int j = 1; j <= 8; j++) {
@@ -232,7 +282,7 @@ public class ChessGame {
 //                }
 //            }
 //        }
-        return true;
+      //  return true;
     }
 
     /**
