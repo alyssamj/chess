@@ -9,7 +9,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessPiece {
+public class ChessPiece{
 
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
@@ -18,7 +18,10 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
     }
-
+    public ChessPiece(ChessPiece pieceToCopy) {
+        this.pieceColor = pieceToCopy.pieceColor;
+        this.type = pieceToCopy.type;
+    }
     /**
      * The various different chess piece options
      */
