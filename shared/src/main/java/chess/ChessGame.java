@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -111,9 +110,7 @@ public class ChessGame {
                 myBoard.addPiece(move.getEndPosition(), piece);
                 myBoard.addPiece(move.getStartPosition(), null);
             }
-            //           myBoard.toString();
         }
-      //  return move;
     }
 
     /**
@@ -136,35 +133,22 @@ public class ChessGame {
         Collection<ChessMove> allPossibleMoves = validMoves(start);
         if (!allPossibleMoves.contains(move)) {
             throw new InvalidMoveException();
-        }
-        ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
-        Collection<ChessMove> availableMoves = new ArrayList<>(piece.pieceMoves(myBoard, start));
-        if (availableMoves.isEmpty()) {
-            throw new InvalidMoveException();
-        }
-        if (availableMoves.contains(move)) {
+        } else {
+            ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
             if (piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
                 ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
                 myBoard.addPiece(move.getEndPosition(), promotionPiece);
                 myBoard.addPiece(move.getStartPosition(), null);
-//                if (isInCheck(turn)) {
-//                    throw new InvalidMoveException();
-//                }
             } else {
                 myBoard.addPiece(move.getEndPosition(), piece);
                 myBoard.addPiece(move.getStartPosition(), null);
-//                if (isInCheck(turn)) {
-//                    throw new InvalidMoveException();
-//                }
             }
-            myBoard.toString();
             for (TeamColor color : TeamColor.values()) {
                 if (color != turn) {
                     setTeamTurn(color);
+                    break;
                 }
             }
-        } else {
-            throw new InvalidMoveException();
         }
     }
 
@@ -189,25 +173,8 @@ public class ChessGame {
         return kingPosition;
     }
 
-    private ChessPosition calculateEnemyKingSpot(TeamColor teamColor) {
-        ChessPosition kingPosition = new ChessPosition(1, 1);
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
-                ChessPosition newSpot = new ChessPosition(i, j);
-                ChessPiece piece = myBoard.getPiece(newSpot);
-                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() != teamColor) {
-                    kingPosition = newSpot;
-                    return kingPosition;
-                }
-            }
-        }
-        return kingPosition;
-    }
-
-
     private boolean checkKingTakesPieces(TeamColor teamColor) {
         Collection<ChessMove> potentialKingTakers = new ArrayList<>();
-        ChessPosition enemyKingPosition = calculateEnemyKingSpot(teamColor);
         ChessPosition teamKingPosition = calculateOwnKingSpot(teamColor);
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
@@ -250,7 +217,7 @@ public class ChessGame {
 //    }
 
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition kingPosition = calculateOwnKingSpot(teamColor);
+//        ChessPosition kingPosition = calculateOwnKingSpot(teamColor);
         if (checkKingTakesPieces(teamColor)) {
             return true;
         } else {
@@ -358,18 +325,5 @@ public class ChessGame {
                 "myBoard=" + myBoard +
                 ", turn=" + turn +
                 '}';
-    }
-
-    private class DeepCopy {
-        ChessBoard copyOfBoard;
-
-        private DeepCopy(ChessBoard board) {
-            this.copyOfBoard = new ChessBoard(board);
-        }
-
-        private ChessBoard getCopyOfBoard() {
-            return copyOfBoard;
-        }
-
     }
 }
