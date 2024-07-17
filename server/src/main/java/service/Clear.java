@@ -8,12 +8,12 @@ public class Clear {
 
 
 
-//    private final UserDAO userDAO;
-//
-//    public Clear() {
-//        UserDAO myUserDAO = new UserDAO()
-//        }
-//    }
+    private final UserDAO userDAO;
+
+    public Clear(UserDAO userDAO) {
+        this.userDAO = userDAO;
+        }
+    }
 //
 //    public void clear() {
 //        try {
