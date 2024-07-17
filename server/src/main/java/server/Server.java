@@ -1,8 +1,21 @@
 package server;
 
+import com.google.gson.Gson;
+import dataaccess.UserDAO;
+import service.*;
+import service.Requests_Responses.LoginRequest;
 import spark.*;
 
 public class Server {
+    private final Clear clearService;
+    private final UserService userService;
+    // private final GameService gameService;
+
+    public Server(Clear clearService, UserService userService) {
+        this.clearService = clearService;
+        this.userService = userService;
+       // this. gameService = gameService;
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -10,7 +23,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.clear("/db")
+        Spark.delete("/db", this::clear);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -25,8 +38,23 @@ public class Server {
     }
 
 
+    /**
+     * Pass in multiple service objects into my thingy.
+     */
+
+
     private Object clear(Request req, Response res) {
-        removeAll();
+        Clear clearservice = new Clear();
+//        clearservice.clear();
+        res.status(200);
+        return "";
+    }
+
+    private Object login(Request req, Response res) {
+     //   Handler logHandler = new Handler();
+        Gson gson = new Gson();
+        LoginRequest loginReq = gson.fromJson(req.body(), LoginRequest.class);
+        userService.login(loginReq);
     }
 
 }

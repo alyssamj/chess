@@ -3,9 +3,9 @@ package server;
 import com.google.gson.Gson;
 
 public class Handler {
-    private Handler() {};
+    public Handler() {};
 
-    public static <T> T fromJson(String json, Class<T> type) {
+    public <T> Object fromJson(String json, Class<T> type) {
         Gson gson = new Gson();
         return gson.fromJson(json, type);
     }
