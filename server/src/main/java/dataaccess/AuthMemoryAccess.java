@@ -9,7 +9,10 @@ public class AuthMemoryAccess implements AuthDAO{
 
     final private HashMap<String, AuthData> authTokens = new HashMap<>();
 
-    public AuthMemoryAccess() {}
+    public AuthMemoryAccess() {
+        AuthData testAuth = new AuthData("1234", "username");
+        authTokens.put("1234", testAuth);
+    }
 
     @Override
     public void deleteAuthToken() throws DataAccessException {

@@ -1,8 +1,10 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 import service.Requests_Responses.*;
+import java.util.Random;
 
 public class GameService {
     private final UserDAO userDAO;
@@ -20,8 +22,7 @@ public class GameService {
         String gameName = createRequest.gameName();
         CreateResult createResult;
         try {
-            AuthData auth = authDAO.verifyToken(authToken);
-            if (auth == null) {
+            if (checkAuthToken(authToken)) {
                 createResult = new CreateResult(null, "Error: unauthorized");
                 return createResult;
             }
@@ -29,12 +30,26 @@ public class GameService {
                 createResult = new CreateResult(null, "Error: bad request");
                 return createResult;
             } else {
-
+                Random random = new Random();
+                int newGameID = 0000 + random.nextInt(9999);
+                ChessGame newChessBoard = new ChessGame();
+                GameData newGame = new GameData(newGameID, null, null, gameName, newChessBoard);
+                gameDAO.createGame(newGame);
+                createResult = new CreateResult(newGameID, null);
+                return createResult;
             }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return null;
+    }
+
+    public boolean checkAuthToken(String authToken) throws DataAccessException {
+        AuthData auth = authDAO.verifyToken(authToken);
+        if (auth == null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean checkGame(String gameName) throws DataAccessException {

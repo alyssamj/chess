@@ -27,7 +27,7 @@ public class GameMemoryAccess implements GameDAO {
         return null;
     }
     @Override
-    public void createGame(String gameName, Integer gameID) throws DataAccessException {
-
+    public void createGame(GameData newGame) throws DataAccessException {
+        games.put(newGame.gameName(), newGame);
     }
 }

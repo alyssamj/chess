@@ -10,14 +10,16 @@ import spark.*;
 public class Server {
     private UserService userService;
     private Clear clearService;
-  // private GameService gameService;
+   private GameService gameService;
 
     public int run(int desiredPort) {
         final UserDAO userDAO = new UserMemoryAccess();
         final AuthDAO authDAO = new AuthMemoryAccess();
+        final GameDAO gameDAO = new GameMemoryAccess();
 
         clearService = new Clear(userDAO, authDAO);
         userService = new UserService(userDAO, authDAO);
+        gameService = new GameService(userDAO, authDAO, gameDAO);
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
@@ -27,6 +29,7 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.post("/user", this::register);
         Spark.delete("/session", this::logout);
+        Spark.post("/game", this::createGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -115,7 +118,16 @@ public class Server {
         String authToken = req.headers("authorization");
         String gameName = String.valueOf(gson.fromJson(req.body(), CreateRequest.class));
         CreateRequest createReq = new CreateRequest(authToken, gameName);
-        return null;
-
+        CreateResult createResult = gameService.createGame(createReq);
+        if (createResult.message() == null) {
+            res.status(200);
+            return gson.toJson(createResult);
+        } else if (createResult.message().contains("Error: bad request")) {
+            res.status(400);
+            return gson.toJson(createResult);
+        } else {
+            res.status(401);
+            return gson.toJson(createResult);
+        }
     }
 }
