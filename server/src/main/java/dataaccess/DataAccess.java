@@ -7,9 +7,10 @@ import java.util.HashMap;
 public class DataAccess {
     private final UserMemoryAccess userMemoryAccess;
     // private final GameMemoryAccess gameMemoryAccess;
-    // private final AuthMemoryAccess authMemoryAccess;
-    public DataAccess(UserMemoryAccess userMemoryAccess) {
+    private final AuthMemoryAccess authMemoryAccess;
+    public DataAccess(UserMemoryAccess userMemoryAccess, AuthMemoryAccess authMemoryAccess) {
         this.userMemoryAccess = userMemoryAccess;
+        this.authMemoryAccess = authMemoryAccess;
     }
 
 //    UserMemoryAccess userMemoryAccess = new UserMemoryAccess();

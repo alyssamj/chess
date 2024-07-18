@@ -7,4 +7,6 @@ public interface AuthDAO {
 
     AuthData verifyToken() throws DataAccessException;
 
+    void addAuthToken(String authToken, String username) throws DataAccessException;
+
 }

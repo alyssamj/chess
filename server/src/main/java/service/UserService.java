@@ -1,5 +1,7 @@
 package service;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import service.Requests_Responses.*;
@@ -11,26 +13,29 @@ import java.util.UUID;
 public class UserService {
 
     private final UserDAO userDAO;
+    private final AuthDAO authDAO;
 
-    public UserService(UserDAO userDAO) {
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
+        this.authDAO = authDAO;
     }
 
     public LoginResult login(LoginRequest loginRequest) {
         String username = loginRequest.username();
         String password = loginRequest.password();
+        LoginResult loginResult;
 
         try {
             UserData compareUser = userDAO.getUser(username);
             if (authenticateUser(compareUser, username, password)) {
-                UUID.randomUUID().toString();
+                String authToken = UUID.randomUUID().toString();
+                authDAO.addAuthToken(authToken, username);
+                loginResult = new LoginResult(username, authToken);
+                return loginResult;
             }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-
-
-
 
         return null;
     }
