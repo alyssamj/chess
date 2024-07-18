@@ -44,15 +44,18 @@ public class UserService {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
+        UserData newUser = new UserData(username, password, email);
 
         try {
-            UserData user = userDAO.getUser(username);
-            if (user == null) {
-                userDAO.addUser(user);
+            UserData checkForUser = userDAO.getUser(username);
+            if (checkForUser == null) {
+                userDAO.addUser(newUser);
                 String authToken = createNewAuthToken();
                 authDAO.addAuthToken(authToken, username);
                 RegisterResult registerResult = new RegisterResult(username, authToken);
                 return registerResult;
+            } else {
+
             }
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
