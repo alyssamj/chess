@@ -1,6 +1,6 @@
 import chess.*;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
+import dataaccess.DataAccess;
+import dataaccess.*;
 import server.Server;
 import service.*;
 
@@ -10,7 +10,10 @@ public class Main {
         System.out.println("♕ 240 Chess Server: " + piece);
 
         // I need a new service
-        Server server = new Server();
+        DataAccess dataAccess = new DataAccess(new UserMemoryAccess());
+        var clearService = new Clear(dataAccess);
+        var userService = new UserService(new UserMemoryAccess());
+        Server server = new Server( clearService, userService);
         server.run(8080);
     }
 }

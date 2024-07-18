@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import dataaccess.UserMemoryAccess;
@@ -8,10 +9,10 @@ public class Clear {
 
 
 
-    private final UserDAO userDAO;
+    private final DataAccess dataAccess;
 
-    public Clear(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public Clear(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
         }
     }
 //
@@ -22,4 +23,4 @@ public class Clear {
 //            throw new RuntimeException(e);
 //        }
 //    }
-}
+
