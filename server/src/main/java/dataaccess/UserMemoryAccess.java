@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class UserMemoryAccess implements UserDAO {
     public UserMemoryAccess() {
+        users.put("alyssamj02", new UserData("alyssamj02", "andilynn", "a.gmail.com"));
     }
 
     final private HashMap<String, UserData> users = new HashMap<>();

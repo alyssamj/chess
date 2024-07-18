@@ -24,7 +24,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
        // Spark.delete("/db", this::clear);
-        Spark.post("/sesssion", this::login);
+        Spark.post("/session", this::login);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -43,7 +43,6 @@ public class Server {
      * Pass in multiple service objects into my thingy.
      */
 
-
 //    private Object clear(Request req, Response res) {
 //        Clear clearservice = new Clear();
 ////        clearservice.clear();
@@ -55,9 +54,8 @@ public class Server {
      //   Handler logHandler = new Handler();
         Gson gson = new Gson();
         LoginRequest loginReq = gson.fromJson(req.body(), LoginRequest.class);
-        userService.login(loginReq);
-        LoginResult loginResult = new LoginResult("asdf", "asdf");
-        return loginResult;
+        LoginResult loginResult = userService.login(loginReq);
+        return new Gson().toJson(loginResult);
     }
 
 }
