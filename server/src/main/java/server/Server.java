@@ -1,8 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.*;
-import org.eclipse.jetty.client.HttpResponseException;
 import service.*;
 import service.Requests_Responses.*;
 import spark.*;
@@ -121,6 +121,32 @@ public class Server {
             }
         }
         catch (DataAccessException e) {
+            res.status(500);
+            return gson.toJson("message", e.getMessage().getClass());
+        }
+    }
+
+    private Object joinGame(Request req, Response res) {
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        JsonObject body = gson.fromJson(req.body(), JsonObject.class);
+        String playerColor = body.get("playerColor").getAsString();
+        Integer gameID = body.get("gameID").getAsInt();
+        JoinRequest joinReq = new JoinRequest(authToken, playerColor, gameID);
+        JoinResult joinResult = null;
+        try {
+            joinResult = gameService.joinGame(joinReq);
+            if (joinResult.message() == null) {
+                res.status(200);
+                return gson.toJson(joinResult);
+            } else if (joinResult.message().contains("Error: bad request")) {
+                res.status(400);
+                return gson.toJson(joinResult);
+            } else {
+                res.status(401);
+                return gson.toJson(joinResult);
+            }
+        } catch (DataAccessException e) {
             res.status(500);
             return gson.toJson("message", e.getMessage().getClass());
         }

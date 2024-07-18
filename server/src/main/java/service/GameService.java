@@ -52,6 +52,19 @@ public class GameService {
         return listResult;
     }
 
+    public JoinResult joinGame(JoinRequest joinRequest) throws DataAccessException {
+        String authToken = joinRequest.authToken();
+        if (checkAuthToken(authToken)) {
+            JoinResult joinResult = new JoinResult("Error: unauthorized");
+            return joinResult;
+        } else {
+
+        }
+
+
+        return null;
+    }
+
     public boolean checkAuthToken(String authToken) throws DataAccessException {
         AuthData auth = authDAO.verifyToken(authToken);
         if (auth == null) {
