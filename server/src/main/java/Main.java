@@ -1,8 +1,5 @@
 import chess.*;
-import dataaccess.DataAccess;
-import dataaccess.*;
 import server.Server;
-import service.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,10 +7,7 @@ public class Main {
         System.out.println("♕ 240 Chess Server: " + piece);
 
         // I need a new service
-        DataAccess dataAccess = new DataAccess(new UserMemoryAccess(), new AuthMemoryAccess());
-        var clearService = new Clear(dataAccess);
-        var userService = new UserService(new UserMemoryAccess(), new AuthMemoryAccess());
-        Server server = new Server(clearService, userService);
+        Server server = new Server();
         server.run(8080);
     }
 }

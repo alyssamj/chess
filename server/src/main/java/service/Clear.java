@@ -1,18 +1,17 @@
 package service;
 
-import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryAccess;
+import dataaccess.*;
 
 public class Clear {
 
 
 
-    private final DataAccess dataAccess;
+    private final UserDAO userDao;
+    private final AuthDAO authDAO;
 
-    public Clear(DataAccess dataAccess) {
-        this.dataAccess = dataAccess;
+    public Clear(UserDAO userDao, AuthDAO authDAO) {
+        this.userDao = userDao;
+        this.authDAO = authDAO;
         }
     }
 //

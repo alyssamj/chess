@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import service.Requests_Responses.*;
@@ -30,7 +29,7 @@ public class UserService {
             if (authenticateUser(compareUser, username, password)) {
                 String authToken = createNewAuthToken();
                 authDAO.addAuthToken(authToken, username);
-                loginResult = new LoginResult(username, authToken);
+                loginResult = new LoginResult(username, authToken, null);
                 return loginResult;
             }
         } catch (DataAccessException e) {
@@ -40,24 +39,28 @@ public class UserService {
         return null;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) {
+    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
+        UserData newUser = new UserData(username, password, email);
 
         try {
-            UserData user = userDAO.getUser(username);
-            if (user == null) {
-                userDAO.addUser(user);
+            UserData checkForUser = userDAO.getUser(username);
+            if (checkForUser == null) {
+                userDAO.addUser(newUser);
                 String authToken = createNewAuthToken();
                 authDAO.addAuthToken(authToken, username);
-                RegisterResult registerResult = new RegisterResult(username, authToken);
+                RegisterResult registerResult = new RegisterResult(username, authToken, null);
+                return registerResult;
+            } else {
+                RegisterResult registerResult = new RegisterResult(null, null, "Error: already taken");
                 return registerResult;
             }
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Error: bad request");
         }
-        return null;
+        //return null;
     }
 
     private boolean authenticateUser(UserData toCompare, String username, String password) {
