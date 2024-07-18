@@ -56,6 +56,8 @@ public class UserService {
             } else {
                 RegisterResult registerResult = new RegisterResult(null, null, "Error: already taken");
                 return registerResult;
+            } else {
+
             }
         } catch (DataAccessException e) {
             throw new DataAccessException("Error: bad request");
