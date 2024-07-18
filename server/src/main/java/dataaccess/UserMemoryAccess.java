@@ -11,14 +11,6 @@ public class UserMemoryAccess implements UserDAO {
 
     final private HashMap<String, UserData> users = new HashMap<>();
 
-//    private static UserMemoryAccess instance;
-//
-//    public static UserMemoryAccess getInstance() {
-//        if (instance == null) {
-//            instance = new UserMemoryAccess();
-//        }
-//        return instance;
-//    }
     @Override
     public UserData getUser(String username) throws DataAccessException {
         if (users.containsKey(username)) {

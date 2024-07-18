@@ -1,4 +1,4 @@
 package service.Requests_Responses;
 
-public record ClearResult() {
+public record ClearResult(String message) {
 }

@@ -109,4 +109,13 @@ public class Server {
             return gson.toJson(logoutResult);
         }
     }
+
+    private Object createGame(Request req, Response res) throws DataAccessException {
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        String gameName = String.valueOf(gson.fromJson(req.body(), CreateRequest.class));
+        CreateRequest createReq = new CreateRequest(authToken, gameName);
+        return null;
+
+    }
 }
