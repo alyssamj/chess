@@ -17,7 +17,7 @@ public class AuthMemoryAccess implements AuthDAO{
     }
 
     @Override
-    public AuthData verifyToken() throws DataAccessException {
+    public AuthData verifyToken(String authToken) throws DataAccessException {
         return null;
     }
 

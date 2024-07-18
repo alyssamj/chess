@@ -5,7 +5,7 @@ import model.*;
 public interface AuthDAO {
     void deleteAuthToken() throws DataAccessException;
 
-    AuthData verifyToken() throws DataAccessException;
+    AuthData verifyToken(String authToken) throws DataAccessException;
 
     void addAuthToken(String authToken, String username) throws DataAccessException;
 
