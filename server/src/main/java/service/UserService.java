@@ -56,13 +56,29 @@ public class UserService {
             } else {
                 RegisterResult registerResult = new RegisterResult(null, null, "Error: already taken");
                 return registerResult;
-            } else {
-
             }
         } catch (DataAccessException e) {
             throw new DataAccessException("Error: bad request");
         }
-        //return null;
+    }
+
+    public LogoutResult logout(LogoutRequest logoutRequest) {
+        String authToken = logoutRequest.authToken();
+        LogoutResult logoutResult;
+        try {
+            AuthData auth = authDAO.verifyToken(authToken);
+            if (auth == null) {
+                logoutResult = new LogoutResult("Error: unauthorized");
+                return logoutResult;
+            }
+            else {
+                logoutResult = new LogoutResult(null);
+                return logoutResult;
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private boolean authenticateUser(UserData toCompare, String username, String password) {

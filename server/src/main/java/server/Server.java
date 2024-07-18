@@ -26,6 +26,7 @@ public class Server {
        // Spark.delete("/db", this::clear);
         Spark.post("/session", this::login);
         Spark.post("/user", this::register);
+        Spark.delete("/session", this::logout);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -89,4 +90,23 @@ public class Server {
         }
     }
 
+    private Object logout(Request req, Response res) throws DataAccessException {
+        Gson gson = new Gson();
+        String authToken = req.headers("authorization");
+        LogoutRequest logoutRequest = new LogoutRequest(authToken);
+        LogoutResult logoutResult;
+        if (logoutRequest.authToken() == null) {
+            res.status(401);
+            logoutResult = new LogoutResult("Error: unauthorized");
+            return gson.toJson(logoutResult);
+        }
+        logoutResult = userService.logout(logoutRequest);
+        if (logoutResult.message() == null) {
+            res.status(200);
+            return gson.toJson(logoutResult);
+        } else {
+            res.status(401);
+            return gson.toJson(logoutResult);
+        }
+    }
 }
