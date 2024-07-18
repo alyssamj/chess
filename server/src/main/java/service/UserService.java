@@ -28,7 +28,7 @@ public class UserService {
         try {
             UserData compareUser = userDAO.getUser(username);
             if (authenticateUser(compareUser, username, password)) {
-                String authToken = UUID.randomUUID().toString();
+                String authToken = createNewAuthToken();
                 authDAO.addAuthToken(authToken, username);
                 loginResult = new LoginResult(username, authToken);
                 return loginResult;
@@ -40,12 +40,37 @@ public class UserService {
         return null;
     }
 
+    public RegisterResult register(RegisterRequest registerRequest) {
+        String username = registerRequest.username();
+        String password = registerRequest.password();
+        String email = registerRequest.email();
+
+        try {
+            UserData user = userDAO.getUser(username);
+            if (user == null) {
+                userDAO.addUser(user);
+                String authToken = createNewAuthToken();
+                authDAO.addAuthToken(authToken, username);
+                RegisterResult registerResult = new RegisterResult(username, authToken);
+                return registerResult;
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     private boolean authenticateUser(UserData toCompare, String username, String password) {
         if (Objects.equals(toCompare.username(), username) && Objects.equals(toCompare.password(), password)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    private String createNewAuthToken() {
+        String authToken = UUID.randomUUID().toString();
+        return authToken;
     }
 
 

@@ -31,4 +31,9 @@ public class UserMemoryAccess implements UserDAO {
         users.clear();
     }
 
+    @Override
+    public void addUser(UserData user) throws DataAccessException {
+        users.put(user.username(), user);
+    }
+
 }
