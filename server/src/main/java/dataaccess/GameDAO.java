@@ -17,7 +17,7 @@ public interface GameDAO {
 
     void addBlackUsername(Integer gameID, String username) throws DataAccessException;
 
-    void addWhiteUsername(String username) throws DataAccessException;
+    void addWhiteUsername(Integer gameID, String username) throws DataAccessException;
 
 
 

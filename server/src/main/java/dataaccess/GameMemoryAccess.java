@@ -45,24 +45,32 @@ public class GameMemoryAccess implements GameDAO {
     }
     @Override
     public void addBlackUsername(Integer gameID, String username) throws DataAccessException{
-        GameData gameToChange = games.get(gameID);
-        String gameName = gameToChange.gameName();
-        String blackUserName = username;
-        String whiteUserName = gameToChange.whiteUsername();
-        ChessGame game = gameToChange.game();
-        GameData updatedGame = new GameData(gameID, whiteUserName, blackUserName, gameName, game);
+        String playerColor = "BLACK";
+        GameData updatedGame = updateGame(gameID, username, playerColor);
         games.put(gameID, updatedGame);
     }
     @Override
-    public void addWhiteUsername(String username) throws DataAccessException {
-
+    public void addWhiteUsername(Integer gameID, String username) throws DataAccessException {
+        String playerColor = "WHITE";
+        GameData updatedGame = updateGame(gameID, username, playerColor);
+        games.put(gameID, updatedGame);
     }
 
     public GameData updateGame(Integer gameID, String username, String playerColor) throws DataAccessException {
         GameData gameToChange = games.get(gameID);
         String gameName = gameToChange.gameName();
-
-
+        ChessGame game = gameToChange.game();
+        if (playerColor == "BLACK") {
+            String blackUserName = username;
+            String whiteUserName = gameToChange.whiteUsername();
+            GameData updatedGame = new GameData(gameID, whiteUserName, blackUserName, gameName, game);
+            return updatedGame;
+        } else {
+            String whiteUserName = username;
+            String blackUserName = gameToChange.blackUsername();
+            GameData updatedGame = new GameData(gameID, whiteUserName, blackUserName, gameName, game);
+            return updatedGame;
+        }
     }
 
 }

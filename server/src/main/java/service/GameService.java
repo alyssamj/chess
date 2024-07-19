@@ -60,13 +60,14 @@ public class GameService {
             return joinResult;
         }
         String username = authDAO.returnUserName(authToken);
-        GameData potentialGame = checkGameWithID(joinRequest.gameID());
+        Boolean potentialGame = checkGameWithID(joinRequest.gameID());
+        GameData game = gameDAO.getGameWithID(joinRequest.gameID());
         if (potentialGame == null || !checkPlayerColor(playerColor)) {
             JoinResult joinResult = new JoinResult("Error: bad request");
             return joinResult;
         }
         if (playerColor == "BLACK") {
-            if (potentialGame.blackUsername() != null) {
+            if (game.blackUsername() != null) {
                 String use = "";
             }
         }
