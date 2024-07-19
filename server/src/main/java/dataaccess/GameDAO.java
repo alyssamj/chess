@@ -13,6 +13,12 @@ public interface GameDAO {
 
     void createGame(GameData newGame) throws DataAccessException;
 
+    GameData getGameWithID(Integer gameID) throws DataAccessException;
+
+    void addBlackUsername(Integer gameID, String username) throws DataAccessException;
+
+    void addWhiteUsername(String username) throws DataAccessException;
+
 
 
     }

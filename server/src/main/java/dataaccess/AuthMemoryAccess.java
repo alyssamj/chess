@@ -15,6 +15,12 @@ public class AuthMemoryAccess implements AuthDAO{
     }
 
     @Override
+    public String returnUserName(String authToken) throws DataAccessException {
+        return authTokens.get(authToken).username();
+    }
+
+
+    @Override
     public void deleteAuthToken() throws DataAccessException {
 
     }

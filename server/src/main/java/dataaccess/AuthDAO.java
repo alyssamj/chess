@@ -9,4 +9,6 @@ public interface AuthDAO {
 
     void addAuthToken(String authToken, String username) throws DataAccessException;
 
+    String returnUserName(String authToken) throws DataAccessException;
+
 }

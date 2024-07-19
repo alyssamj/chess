@@ -27,7 +27,7 @@ public class GameService {
             createResult = new CreateResult(null, "Error: unauthorized");
             return createResult;
         }
-        if (checkGame(gameName)) {
+        if (checkGameWithName(gameName)) {
             createResult = new CreateResult(null, "Error: bad request");
             return createResult;
         } else {
@@ -54,18 +54,35 @@ public class GameService {
 
     public JoinResult joinGame(JoinRequest joinRequest) throws DataAccessException {
         String authToken = joinRequest.authToken();
+        String playerColor = joinRequest.playerColor();
         if (checkAuthToken(authToken)) {
             JoinResult joinResult = new JoinResult("Error: unauthorized");
             return joinResult;
-        } else {
-
         }
-
+        String username = authDAO.returnUserName(authToken);
+        GameData potentialGame = checkGameWithID(joinRequest.gameID());
+        if (potentialGame == null || !checkPlayerColor(playerColor)) {
+            JoinResult joinResult = new JoinResult("Error: bad request");
+            return joinResult;
+        }
+        if (playerColor == "BLACK") {
+            if (potentialGame.blackUsername() != null) {
+                String use = "";
+            }
+        }
 
         return null;
     }
 
-    public boolean checkAuthToken(String authToken) throws DataAccessException {
+    private boolean checkPlayerColor(String playerColor) throws DataAccessException {
+        if (playerColor == "BLACK" || playerColor == "WHITE") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkAuthToken(String authToken) throws DataAccessException {
         AuthData auth = authDAO.verifyToken(authToken);
         if (auth == null) {
             return true;
@@ -74,7 +91,16 @@ public class GameService {
         }
     }
 
-    public boolean checkGame(String gameName) throws DataAccessException {
+    private boolean checkGameWithID(Integer gameID) throws DataAccessException {
+        GameData gameToCheck = gameDAO.getGameWithID(gameID);
+        if (gameToCheck == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean checkGameWithName(String gameName) throws DataAccessException {
         GameData gameToCheck = gameDAO.getGame(gameName);
         if (gameToCheck == null) {
             return false;
