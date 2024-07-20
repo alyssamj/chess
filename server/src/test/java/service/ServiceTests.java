@@ -187,7 +187,13 @@ class ServiceTests {
 
 
     @Test
-    void clearAll() {
+    void clearAll() throws DataAccessException {
+        ClearResult clearResult = clearService.clear();
+        assertEquals(0, gameDAO.listGames().length);
+        assertEquals(0, userDAO.returnUsersSize());
+        assertEquals(0, authDAO.authTokensSize());
+        assertNull(clearResult.message());
+
 
     }
 
