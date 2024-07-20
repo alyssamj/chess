@@ -29,6 +29,10 @@ public class AuthMemoryAccess implements AuthDAO{
         }
     }
 
+    @Override
+    public int authTokensSize() throws DataAccessException {
+        return authTokens.size();
+    }
 
     @Override
     public void deleteAuthToken(String authToken) throws DataAccessException {

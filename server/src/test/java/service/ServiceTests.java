@@ -128,6 +128,63 @@ class ServiceTests {
         System.out.println(registerResult.message());
     }
 
+    @Test
+    void logoutExistinguser() throws DataAccessException {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
+        LoginResult loginResult = userService.login(loginRequest);
+
+        LogoutRequest logoutRequest = new LogoutRequest("authToken");
+        int authSizeBefore = authDAO.authTokensSize();
+        LogoutResult logoutResult = userService.logout(logoutRequest);
+        int authSizeAfter = authDAO.authTokensSize();
+
+        assertEquals(authSizeBefore-1, authSizeAfter);
+        assertNull(logoutResult.message());
+    }
+
+    @Test
+    void logoutAuthTokenNotFound() throws DataAccessException {
+        LoginRequest loginRequest = new LoginRequest("username", "password");
+        LoginResult loginResult = userService.login(loginRequest);
+
+        LogoutRequest logoutRequest = new LogoutRequest("myAuthToken");
+        int authSizeBefore = authDAO.authTokensSize();
+        LogoutResult logoutResult = userService.logout(logoutRequest);
+        int authSizeAfter = authDAO.authTokensSize();
+
+        assertEquals(authSizeBefore, authSizeAfter);
+        assertNotNull(logoutResult.message());
+        assertEquals("Error: unauthorized", logoutResult.message());
+    }
+
+    @Test
+    void listGames() throws DataAccessException {
+        gameService.createGame(new CreateRequest("authToken", "myGame"));
+
+        ListRequest listRequest = new ListRequest("authToken");
+        int gameSizeBefore = gameDAO.listGames().length;
+        ListResult listResult = gameService.getListofGames(listRequest);
+        int gameSizeAfter = gameDAO.listGames().length;
+
+        assertNotNull(listResult.games());
+        assertNull(listResult.message());
+        assertEquals(gameSizeBefore, gameSizeAfter);
+    }
+
+    @Test
+    void wrongAuthTokenNoList() throws DataAccessException {
+        gameService.createGame(new CreateRequest("authToken", "myGame"));
+
+        ListRequest listRequest = new ListRequest("myAuthTOKEN");
+        int gameSizeBefore = gameDAO.listGames().length;
+        ListResult listResult = gameService.getListofGames(listRequest);
+        int gameSizeAFter = gameDAO.listGames().length;
+
+        assertEquals(gameSizeBefore, gameSizeAFter);
+        assertNotNull(listResult.message());
+        assertNull(listResult.games());
+    }
+
 
     @Test
     void clearAll() {
