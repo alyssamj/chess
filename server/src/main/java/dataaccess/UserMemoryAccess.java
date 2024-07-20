@@ -5,9 +5,9 @@ import model.UserData;
 import java.util.HashMap;
 
 public class UserMemoryAccess implements UserDAO {
-    public UserMemoryAccess() {
-        users.put("alyssamj02", new UserData("alyssamj02", "andilynn", "a.gmail.com"));
-    }
+//    public UserMemoryAccess() {
+//        users.put("alyssamj02", new UserData("alyssamj02", "andilynn", "a.gmail.com"));
+//    }
 
     final private HashMap<String, UserData> users = new HashMap<>();
 
@@ -19,8 +19,13 @@ public class UserMemoryAccess implements UserDAO {
         return null;
     }
 
-    public void deleteUsers() {
+    public boolean clear() {
         users.clear();
+        if (users.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

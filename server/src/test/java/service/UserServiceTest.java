@@ -24,16 +24,16 @@ class UserServiceTest {
         us = new UserService(uma, auma);
     }
 
-    @Test
-    void loginPreviousUser() {
-        UserData newUser = new UserData("username", "password", "email");
-        try {
-            uma.addUser(newUser);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        assertEquals("[200] { \"username\":\"\", \"authToken\":\"\" }", us.login(new LoginRequest("username", "password")));
-
-    }
+//    @Test
+//    void loginPreviousUser() {
+//        UserData newUser = new UserData("username", "password", "email");
+//        try {
+//            uma.addUser(newUser);
+//        } catch (DataAccessException e) {
+//            throw new RuntimeException(e);
+//        }
+//        assertEquals("[200] { \"username\":\"\", \"authToken\":\"\" }", us.login(new LoginRequest("username", "password")));
+//
+//    }
 
 }

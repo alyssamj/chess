@@ -4,7 +4,7 @@ import model.UserData;
 
 public interface UserDAO {
 
-    void deleteUsers() throws DataAccessException;
+    boolean clear() throws DataAccessException;
 
     UserData getUser(String username) throws DataAccessException;
 

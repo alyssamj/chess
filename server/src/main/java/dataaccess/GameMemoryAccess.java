@@ -20,9 +20,15 @@ public class GameMemoryAccess implements GameDAO {
     }
 
     @Override
-    public void deleteGames(String gameName) throws DataAccessException {
-
+    public boolean clear() throws DataAccessException {
+        games.clear();
+        if (games.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
     @Override
     public GameData getGame(String gameName) throws DataAccessException {
         for (Map.Entry<Integer, GameData> game : games.entrySet()) {

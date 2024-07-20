@@ -1,4 +1,4 @@
 package service.Requests_Responses;
 
-public record RegisterResult(String authToken, String username, String message) {
+public record RegisterResult(String username, String authToken, String message) {
 }

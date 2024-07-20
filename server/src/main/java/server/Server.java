@@ -9,15 +9,15 @@ import spark.*;
 
 public class Server {
     private UserService userService;
-    private Clear clearService;
-   private GameService gameService;
+    private ClearService clearService;
+    private GameService gameService;
 
     public int run(int desiredPort) {
         final UserDAO userDAO = new UserMemoryAccess();
         final AuthDAO authDAO = new AuthMemoryAccess();
         final GameDAO gameDAO = new GameMemoryAccess();
 
-        clearService = new Clear(userDAO, authDAO);
+        clearService = new ClearService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
         Spark.port(desiredPort);
@@ -32,6 +32,7 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.get("/game", this::listGames);
         Spark.put("/game", this::joinGame);
+        Spark.delete("/db", this::clear);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -50,22 +51,29 @@ public class Server {
      * Pass in multiple service objects into my thingy.
      */
 
-//    private Object clear(Request req, Response res) {
-//        Clear clearservice = new Clear();
-////        clearservice.clear();
-//        res.status(200);
-//        return "";
-//    }
+    private Object clear(Request req, Response res) {
+        Gson gson = new Gson();
+        try {
+            ClearResult  clearResult = clearService.clear();
+            if (clearResult.message() == null) {
+                res.status(200);
+                return gson.toJson(clearResult);
+            }
+        } catch (DataAccessException e) {
+            res.status(500);
+            return gson.toJson("message", e.getMessage().getClass());
+        }
+        return null;
+    }
 
 
     private Object login(Request req, Response res) {
-     //   Handler logHandler = new Handler();
         Gson gson = new Gson();
         LoginRequest loginReq = gson.fromJson(req.body(), LoginRequest.class);
         LoginResult loginResult = null;
         try {
             loginResult = userService.login(loginReq);
-            if (loginResult == null) {
+            if (loginResult.message() != null && loginResult.message().contains("unauthorized")) {
                 res.status(401);
                 return gson.toJson(loginResult);
             } else {

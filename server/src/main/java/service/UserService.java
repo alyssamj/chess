@@ -23,7 +23,8 @@ public class UserService {
         LoginResult loginResult;
 
         UserData compareUser = userDAO.getUser(username);
-        if (authenticateUser(compareUser, username, password)) {
+        boolean authenticated = authenticateUser(compareUser, username, password);
+        if (authenticated) {
             String authToken = createNewAuthToken();
             authDAO.addAuthToken(authToken, username);
             loginResult = new LoginResult(username, authToken, null);
@@ -67,7 +68,9 @@ public class UserService {
 
 
     private boolean authenticateUser(UserData toCompare, String username, String password) {
-        if (Objects.equals(toCompare.username(), username) && Objects.equals(toCompare.password(), password)) {
+        if (toCompare == null) {
+            return false;
+        } else if (toCompare.password().equals(password)){
             return true;
         } else {
             return false;
