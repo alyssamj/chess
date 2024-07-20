@@ -89,7 +89,10 @@ public class PieceMoveCalculator {
             return board.getPiece(moveSpot).getTeamColor() != piece.getTeamColor();
         }
 
-        private void lastRow(ChessPosition newSpot, ChessPosition attackSpotRight, ChessPosition attackSpotLeft, ArrayList<ChessPiece.PieceType> promotionPieces) {
+        private void lastRow(ChessPosition newSpot,
+                             ChessPosition attackSpotRight,
+                             ChessPosition attackSpotLeft,
+                             ArrayList<ChessPiece.PieceType> promotionPieces) {
             if (board.getPiece(newSpot) == null) {
                 for (ChessPiece.PieceType type : promotionPieces) {
                     pawnMoves.add(new ChessMove(currentPosition, newSpot, type));
