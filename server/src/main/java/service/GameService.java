@@ -47,8 +47,23 @@ public class GameService {
             ListResult listResult = new ListResult(null, "Error: unauthorized");
             return listResult;
         }
-        Collection<GameData> listOfGames = gameDAO.listGames();
-        ListResult listResult = new ListResult(listOfGames, null);
+        GameData[] listOfGames = gameDAO.listGames();
+        if (listOfGames == null) {
+            ListResult listResult = new ListResult(null, null);
+            return listResult;
+        }
+        ArrayListResult[] newList = new ArrayListResult[listOfGames.length];
+        ListResult listResult = new ListResult(newList, null);
+        int i = 0;
+        for (GameData game : listOfGames) {
+            Integer newGameID = game.gameID();
+            String whiteUserName = game.whiteUsername();
+            String blackUserName = game.blackUsername();
+            String gameName = game.blackUsername();
+            ArrayListResult singleGame = new ArrayListResult(newGameID, whiteUserName, blackUserName, gameName);
+            listResult.games()[i] = singleGame;
+            i++;
+        }
         return listResult;
     }
 

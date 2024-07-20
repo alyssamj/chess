@@ -11,10 +11,17 @@ public class GameMemoryAccess implements GameDAO {
 
     final private HashMap<Integer, GameData> games = new HashMap<>();
     @Override
-    public Collection<GameData> listGames() throws DataAccessException {
-        Collection<GameData> gameList = new ArrayList<>();
+    public GameData[] listGames() throws DataAccessException {
+        int sizeOfList = games.size();
+        GameData[] gameList = new GameData[sizeOfList];
+        int i = 0;
         for (Map.Entry<Integer, GameData> game : games.entrySet()) {
-            gameList.add(game.getValue());
+            gameList[i] = game.getValue();
+            i++;
+        }
+        if (gameList.length == 0) {
+            gameList = new GameData[0];
+            return gameList;
         }
         return gameList;
     }
