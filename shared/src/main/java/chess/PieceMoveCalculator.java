@@ -255,159 +255,119 @@ public class PieceMoveCalculator {
     private class Bishop {
         Collection<ChessMove> possibleBishopMoves = new ArrayList<>();
 
-        private Bishop() {}
+        private Bishop() {
+        }
 
         private Collection<ChessMove> getBishopMoves() {
             int row = currentPosition.getRow();
             int col = currentPosition.getColumn();
             int i;
             int j;
-            for (i = row+1, j = col+1; i <= 8 && j <= 8; i++, j++) {
-                ChessPosition nextSpot = new ChessPosition(i, j);
-                if (board.getPiece(nextSpot) == null) {
-                    possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    }
-                    else {
-                        break;
-                    }
+            for (i = row + 1, j = col + 1; i <= 8 && j <= 8; i++, j++) {
+                if (addToPossibleMove(i, j)) {
+                    break;
                 }
             }
-            for (i = row-1, j = col+1; i >= 1 && j <= 8; i--, j++) {
-                ChessPosition nextSpot = new ChessPosition(i, j);
-                if (board.getPiece(nextSpot) == null) {
-                    possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    } else {
-                        break;
-                    }
+            for (i = row - 1, j = col + 1; i >= 1 && j <= 8; i--, j++) {
+                if (addToPossibleMove(i, j)) {
+                    break;
                 }
             }
-            for (i = row+1, j = col-1; i <= 8 && j >= 1; i++, j--) {
-                ChessPosition nextSpot = new ChessPosition(i, j);
-                if (board.getPiece(nextSpot) == null) {
-                    possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    } else {
-                        break;
-                    }
+            for (i = row + 1, j = col - 1; i <= 8 && j >= 1; i++, j--) {
+                if (addToPossibleMove(i, j)) {
+                    break;
                 }
             }
-            for (i = row-1, j = col-1; i >=1 && j >=1; i--, j--) {
-                ChessPosition nextSpot = new ChessPosition(i, j);
-                if (board.getPiece(nextSpot) == null) {
-                    possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    } else {
-                        break;
-                    }
+            for (i = row - 1, j = col - 1; i >= 1 && j >= 1; i--, j--) {
+                if (addToPossibleMove(i, j)) {
+                    break;
                 }
             }
             return possibleBishopMoves;
         }
 
-    }
-
-    private class Rook {
-        Collection<ChessMove> rookPossibleMoves = new ArrayList<>();
-
-        private Rook() {}
-
-        private Collection<ChessMove> getRookMoves() {
-            int row = currentPosition.getRow();
-            int col = currentPosition.getColumn();
-            int i;
-            for (i = row+1; i <= 8 ; i++) {
-                ChessPosition nextSpot = new ChessPosition(i, col);
-                if (board.getPiece(nextSpot) == null) {
-                    rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    }
-                    else {
-                        break;
-                    }
+        private boolean addToPossibleMove(int i, int j) {
+            ChessPosition nextSpot = new ChessPosition(i, j);
+            if (board.getPiece(nextSpot) == null) {
+                possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
+            }
+            if (board.getPiece(nextSpot) != null) {
+                if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
+                    possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
+                    return true;
+                } else {
+                    return true;
                 }
             }
-            for (i = row-1; i >= 1; i--) {
-                ChessPosition nextSpot = new ChessPosition(i, col);
-                if (board.getPiece(nextSpot) == null) {
-                    rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    } else {
-                        break;
-                    }
-                }
-            }
-            for (i = col-1; i >= 1; i--) {
-                ChessPosition nextSpot = new ChessPosition(row, i);
-                if (board.getPiece(nextSpot) == null) {
-                    rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    } else {
-                        break;
-                    }
-                }
-            }
-            for (i = col+1; i <=8; i++) {
-                ChessPosition nextSpot = new ChessPosition(row, i);
-                if (board.getPiece(nextSpot) == null) {
-                    rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                }
-                if (board.getPiece(nextSpot) != null) {
-                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                        rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                        break;
-                    } else {
-                        break;
-                    }
-                }
-            }
-            return rookPossibleMoves;
+            return false;
         }
     }
 
-    private class Queen {
-        Collection<ChessMove> possibleQueenMoves = new ArrayList<>();
+        private class Rook {
+            Collection<ChessMove> rookPossibleMoves = new ArrayList<>();
 
-        private Queen() {}
+            private Rook() {
+            }
 
-        private Collection<ChessMove> getQueenMoves() {
-            Rook queenRook = new Rook();
-            Bishop queenBishop = new Bishop();
-            possibleQueenMoves.addAll(queenBishop.getBishopMoves());
-            possibleQueenMoves.addAll(queenRook.getRookMoves());
-            return possibleQueenMoves;
+            private Collection<ChessMove> getRookMoves() {
+                int row = currentPosition.getRow();
+                int col = currentPosition.getColumn();
+                int i;
+                for (i = row + 1; i <= 8; i++) {
+                    if (checkRookMove(i, col)) {
+                        break;
+                    }
+                }
+                for (i = row - 1; i >= 1; i--) {
+                    if (checkRookMove(i, col)) {
+                        break;
+                    }
+                }
+                for (i = col - 1; i >= 1; i--) {
+                    if (checkRookMove(row, i)) {
+                        break;
+                    }
+                }
+                for (i = col + 1; i <= 8; i++) {
+                    if (checkRookMove(row, i)) {
+                        break;
+                    }
+                }
+                return rookPossibleMoves;
+            }
+
+            private boolean checkRookMove(int i, int j) {
+                ChessPosition nextSpot = new ChessPosition(i, j);
+                if (board.getPiece(nextSpot) == null) {
+                    rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
+                }
+                if (board.getPiece(nextSpot) != null) {
+                    if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
+                        rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
+                        return true;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
-    }
+        private class Queen {
+            Collection<ChessMove> possibleQueenMoves = new ArrayList<>();
+
+            private Queen() {
+            }
+
+            private Collection<ChessMove> getQueenMoves() {
+                Rook queenRook = new Rook();
+                Bishop queenBishop = new Bishop();
+                possibleQueenMoves.addAll(queenBishop.getBishopMoves());
+                possibleQueenMoves.addAll(queenRook.getRookMoves());
+                return possibleQueenMoves;
+            }
+
+        }
 
 }
 
