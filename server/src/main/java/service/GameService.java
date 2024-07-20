@@ -1,9 +1,10 @@
 package service;
 
+import RequestsandResponses.*;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
-import service.RequestsResponses.*;
+
 
 import java.util.Random;
 

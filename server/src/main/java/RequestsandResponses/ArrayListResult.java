@@ -1,4 +1,4 @@
-package service.RequestsResponses;
+package RequestsandResponses;
 
 public record ArrayListResult(Integer gameID, String whiteUsername, String blackUsername, String gameName) {
 }

@@ -1,4 +1,4 @@
-package service.RequestsResponses;
+package RequestsandResponses;
 
 public record ListRequest(String authToken) {
 }
