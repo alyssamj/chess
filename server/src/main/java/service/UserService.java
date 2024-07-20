@@ -1,10 +1,9 @@
 package service;
 
 import dataaccess.*;
-import service.Requests_Responses.*;
+import service.RequestsResponses.*;
 import model.*;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {

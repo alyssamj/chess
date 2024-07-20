@@ -193,31 +193,8 @@ public class ChessGame {
         }
         return false;
     }
-//    private Collection<ChessMove> checkKingProtectors(TeamColor teamColor) {
-//        Collection<ChessMove> potentialKingProtectors = new ArrayList<>();
-//        ChessPosition teamKingPosition = calculateOwnKingSpot(teamColor);
-//        Collection<ChessMove> potentialKingTakers = checkKingTakesPieces(teamColor);
-//        for (int i = 1; i <= 8; i++) {
-//            for (int j = 1; j <= 8; j++) {
-//                ChessPosition newSpot = new ChessPosition(i, j);
-//                ChessPiece piece = myBoard.getPiece(newSpot);
-//                if (piece != null && piece.getTeamColor() == teamColor) {
-//                    Collection<ChessMove> pieceMoves = piece.pieceMoves(myBoard, newSpot);
-//                    for (ChessMove move : pieceMoves) {
-//                        for (ChessMove enemyMove : potentialKingTakers) {
-//                            if (move.getEndPosition().equals(enemyMove.getEndPosition())) {
-//                                potentialKingProtectors.add(move);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return potentialKingProtectors;
-//    }
 
     public boolean isInCheck(TeamColor teamColor) {
-//        ChessPosition kingPosition = calculateOwnKingSpot(teamColor);
         if (checkKingTakesPieces(teamColor)) {
             return true;
         } else {

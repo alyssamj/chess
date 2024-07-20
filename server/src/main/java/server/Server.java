@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;
 import service.*;
-import service.Requests_Responses.*;
+import service.RequestsResponses.*;
 import spark.*;
 
 public class Server {

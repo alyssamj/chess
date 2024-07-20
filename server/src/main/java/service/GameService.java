@@ -3,9 +3,8 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
-import service.Requests_Responses.*;
+import service.RequestsResponses.*;
 
-import java.util.Collection;
 import java.util.Random;
 
 public class GameService {
