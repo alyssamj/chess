@@ -41,6 +41,10 @@ public class UserService {
         String email = registerRequest.email();
         UserData newUser = new UserData(username, password, email);
         UserData checkForUser = userDAO.getUser(username);
+        if (username == null || password == null || email == null) {
+            RegisterResult registerResult = new RegisterResult(null, null, "Error: bad request");
+            return registerResult;
+        }
         if (checkForUser == null) {
             userDAO.addUser(newUser);
             String authToken = createNewAuthToken();
@@ -61,6 +65,7 @@ public class UserService {
             logoutResult = new LogoutResult("Error: unauthorized");
             return logoutResult;
         } else {
+            authDAO.deleteAuthToken(authToken);
             logoutResult = new LogoutResult(null);
             return logoutResult;
         }

@@ -62,17 +62,30 @@ public class GameService {
         String username = authDAO.returnUserName(authToken);
         Boolean potentialGame = checkGameWithID(joinRequest.gameID());
         GameData game = gameDAO.getGameWithID(joinRequest.gameID());
-        if (potentialGame == null || !checkPlayerColor(playerColor)) {
+        if (!potentialGame) {
             JoinResult joinResult = new JoinResult("Error: bad request");
             return joinResult;
         }
-        if (playerColor == "BLACK") {
-            if (game.blackUsername() != null) {
-                String use = "";
+        if (playerColor.equals("BLACK")) {
+            if (game.blackUsername() == null) {
+                gameDAO.addBlackUsername(game.gameID(), username);
+                JoinResult joinResult = new JoinResult(null);
+                return joinResult;
+            } else {
+                JoinResult joinResult = new JoinResult("Error: already taken");
+                return joinResult;
+            }
+        } else if (playerColor.equals("WHITE")) {
+            if (game.whiteUsername() == null) {
+                gameDAO.addWhiteUsername(game.gameID(), username);
+                JoinResult joinResult = new JoinResult(null);
+                return joinResult;
+            } else {
+                JoinResult joinResult = new JoinResult("Error: already taken");
+                return joinResult;
             }
         }
-
-        return null;
+        return new JoinResult("Error: bad request");
     }
 
     private boolean checkPlayerColor(String playerColor) throws DataAccessException {

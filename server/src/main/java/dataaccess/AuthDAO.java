@@ -3,7 +3,7 @@ package dataaccess;
 import model.*;
 
 public interface AuthDAO {
-    void deleteAuthToken() throws DataAccessException;
+    void deleteAuthToken(String authToken) throws DataAccessException;
 
     AuthData verifyToken(String authToken) throws DataAccessException;
 

@@ -95,11 +95,10 @@ public class Server {
                 if (result.message().contains("already taken")) {
                     res.status(403);
                     return gson.toJson(result);
+                } else {
+                    res.status(400);
+                    return gson.toJson(result);
                 }
-                res.status(400);
-                return gson.toJson(result);
-                // if error message contains a certain word, then throw that status
-                // check for error message
             }
             res.status(200);
             return new Gson().toJson(result);
@@ -139,6 +138,11 @@ public class Server {
         Gson gson = new Gson();
         String authToken = req.headers("authorization");
         JsonObject body = gson.fromJson(req.body(), JsonObject.class);
+        if (body.get("playerColor") == null || body.get("gameID") == null) {
+            JoinResult joinResult = new JoinResult("Error: bad request");
+            res.status(400);
+            return gson.toJson(joinResult);
+        }
         String playerColor = body.get("playerColor").getAsString();
         Integer gameID = body.get("gameID").getAsInt();
         JoinRequest joinReq = new JoinRequest(authToken, playerColor, gameID);
@@ -151,8 +155,11 @@ public class Server {
             } else if (joinResult.message().contains("Error: bad request")) {
                 res.status(400);
                 return gson.toJson(joinResult);
-            } else {
+            } else if (joinResult.message().contains("Error: unauthorized")){
                 res.status(401);
+                return gson.toJson(joinResult);
+            } else {
+                res.status(403);
                 return gson.toJson(joinResult);
             }
         } catch (DataAccessException e) {
