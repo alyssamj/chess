@@ -77,16 +77,17 @@ public class ChessBoard implements Cloneable{
         if (row >= 8 || col >= 8 || row < 0 || col < 0) {
             return null;
         }
-//        if (spots[row][col] == null) {
-//            return null;
-//        }
         return spots[row][col];
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessBoard that = (ChessBoard) o;
         return Objects.deepEquals(spots, that.spots);
     }
