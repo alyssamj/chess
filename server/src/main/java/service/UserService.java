@@ -1,6 +1,6 @@
 package service;
 
-import RequestsandResponses.*;
+import requestsandresponses.*;
 import dataaccess.*;
 import model.*;
 

@@ -1,6 +1,6 @@
 package server;
 
-import RequestsandResponses.*;
+import requestsandresponses.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;

@@ -1,4 +1,4 @@
-package RequestsandResponses;
+package requestsandresponses;
 
 public record RegisterRequest(String username, String password, String email) {
 }

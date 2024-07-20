@@ -1,4 +1,4 @@
-package RequestsandResponses;
+package requestsandresponses;
 
 public record CreateResult(Integer gameID, String message) {
 }
