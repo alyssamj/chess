@@ -103,14 +103,6 @@ public class GameService {
         return new JoinResult("Error: bad request");
     }
 
-    private boolean checkPlayerColor(String playerColor) throws DataAccessException {
-        if (playerColor == "BLACK" || playerColor == "WHITE") {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private boolean checkAuthToken(String authToken) throws DataAccessException {
         AuthData auth = authDAO.verifyToken(authToken);
         if (auth == null) {
