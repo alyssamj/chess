@@ -1,6 +1,8 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,9 +80,52 @@ class ServiceTests {
 
     @Test
     void joinGameWhite() throws DataAccessException {
+        ChessGame game = new ChessGame();
+        gameDAO.createGame(new GameData(1234, null, "user1", "gameName", game));
+        JoinRequest joinRequest = new JoinRequest("authToken", "WHITE", 1234);
+        JoinResult joinResult = gameService.joinGame(joinRequest);
+        assertNull(joinResult.message());
+        assertNotNull(gameDAO.getGame("gameName").whiteUsername());
+        System.out.println(gameDAO.getGame("gameName").whiteUsername());
 
+    }
 
-        JoinRequest joinRequest = new JoinRequest("authToken", "WHITE", 1);
+    @Test
+    void colorAlreadyTakenJoinGame() throws DataAccessException {
+        ChessGame game = new ChessGame();
+        gameDAO.createGame(new GameData(1234, "whiteUser", "user1", "gameName", game));
+        JoinRequest joinRequest = new JoinRequest("authToken", "WHITE", 1234);
+        JoinResult joinResult = gameService.joinGame(joinRequest);
+        assertNotNull(joinResult.message());
+        assertNotEquals(gameDAO.getGame("gameName").whiteUsername(), "username");
+    }
+
+    @Test
+    void registerUser() throws DataAccessException {
+        UserData newUser = new UserData("user", "mypassword", "gmail.com");
+        RegisterRequest registerRequest = new RegisterRequest("user", "mypasswrd", "gmail.com");
+
+        int userSizeBefore = userDAO.returnUsersSize();
+        RegisterResult registerResult = userService.register(registerRequest);
+        int userSizeAfter = userDAO.returnUsersSize();
+
+        assertEquals(userSizeBefore+1, userSizeAfter);
+        assertNull(registerResult.message());
+        assertEquals(registerRequest.username(), registerResult.username());
+        assertNotNull(registerResult.authToken());
+    }
+
+    @Test
+    void missingRegistrationInfo() throws DataAccessException {
+        RegisterRequest registerRequest = new RegisterRequest("user", null, "gmail.com");
+        int userSizeBefore = userDAO.returnUsersSize();;
+        RegisterResult registerResult = userService.register(registerRequest);
+        int userSizeAfter = userDAO.returnUsersSize();
+
+        assertEquals(userSizeBefore, userSizeAfter);
+        assertNotNull(registerResult.message());
+        assertNull(registerResult.authToken());
+        System.out.println(registerResult.message());
     }
 
 

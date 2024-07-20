@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.UserData;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class UserMemoryAccess implements UserDAO {
@@ -31,6 +32,11 @@ public class UserMemoryAccess implements UserDAO {
     @Override
     public void addUser(UserData user) throws DataAccessException {
         users.put(user.username(), user);
+    }
+
+    @Override
+    public int returnUsersSize() throws DataAccessException {
+        return users.size();
     }
 
 }
