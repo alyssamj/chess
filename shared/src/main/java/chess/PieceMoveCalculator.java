@@ -41,6 +41,22 @@ public class PieceMoveCalculator {
         }
     }
 
+    private boolean addToPossibleMove(int i, int j, Collection<ChessMove> possibleMoves) {
+        ChessPosition nextSpot = new ChessPosition(i, j);
+        if (board.getPiece(nextSpot) == null) {
+            possibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
+        }
+        if (board.getPiece(nextSpot) != null) {
+            if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
+                possibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
+                return true;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private class Pawn {
         Collection<ChessMove> pawnMoves = new ArrayList<>();
 
@@ -222,42 +238,26 @@ public class PieceMoveCalculator {
             int i;
             int j;
             for (i = row + 1, j = col + 1; i <= 8 && j <= 8; i++, j++) {
-                if (addToPossibleMove(i, j)) {
+                if (addToPossibleMove(i, j, possibleBishopMoves)) {
                     break;
                 }
             }
             for (i = row - 1, j = col + 1; i >= 1 && j <= 8; i--, j++) {
-                if (addToPossibleMove(i, j)) {
+                if (addToPossibleMove(i, j, possibleBishopMoves)) {
                     break;
                 }
             }
             for (i = row + 1, j = col - 1; i <= 8 && j >= 1; i++, j--) {
-                if (addToPossibleMove(i, j)) {
+                if (addToPossibleMove(i, j, possibleBishopMoves)) {
                     break;
                 }
             }
             for (i = row - 1, j = col - 1; i >= 1 && j >= 1; i--, j--) {
-                if (addToPossibleMove(i, j)) {
+                if (addToPossibleMove(i, j, possibleBishopMoves)) {
                     break;
                 }
             }
             return possibleBishopMoves;
-        }
-
-        private boolean addToPossibleMove(int i, int j) {
-            ChessPosition nextSpot = new ChessPosition(i, j);
-            if (board.getPiece(nextSpot) == null) {
-                possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-            }
-            if (board.getPiece(nextSpot) != null) {
-                if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                    possibleBishopMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                    return true;
-                } else {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 
@@ -272,43 +272,28 @@ public class PieceMoveCalculator {
             int col = currentPosition.getColumn();
             int i;
             for (i = row + 1; i <= 8; i++) {
-                if (checkRookMove(i, col)) {
+                if (addToPossibleMove(i, col, rookPossibleMoves)) {
                     break;
                 }
             }
             for (i = row - 1; i >= 1; i--) {
-                if (checkRookMove(i, col)) {
+                if (addToPossibleMove(i, col, rookPossibleMoves)) {
                     break;
                 }
             }
             for (i = col - 1; i >= 1; i--) {
-                if (checkRookMove(row, i)) {
+                if (addToPossibleMove(row, i, rookPossibleMoves)) {
                     break;
                 }
             }
             for (i = col + 1; i <= 8; i++) {
-                if (checkRookMove(row, i)) {
+                if (addToPossibleMove(row, i, rookPossibleMoves)) {
                     break;
                 }
             }
             return rookPossibleMoves;
         }
 
-        private boolean checkRookMove(int i, int j) {
-            ChessPosition nextSpot = new ChessPosition(i, j);
-            if (board.getPiece(nextSpot) == null) {
-                rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-            }
-            if (board.getPiece(nextSpot) != null) {
-                if (board.getPiece(nextSpot).getTeamColor() != piece.getTeamColor()) {
-                    rookPossibleMoves.add(new ChessMove(currentPosition, nextSpot, null));
-                    return true;
-                } else {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 
     private class Queen {

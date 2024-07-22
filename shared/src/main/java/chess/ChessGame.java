@@ -73,15 +73,19 @@ public class ChessGame {
     public void testMoves(ChessMove move) {
         ChessPosition start = new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn());
         if (myBoard.getPiece(start) != null) {
-            ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
-            if (piece.getPieceType().equals(ChessPiece.PieceType.PAWN) && move.getPromotionPiece() != null) {
-                ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
-                myBoard.addPiece(move.getEndPosition(), promotionPiece);
-                myBoard.addPiece(move.getStartPosition(), null);
-            } else {
-                myBoard.addPiece(move.getEndPosition(), piece);
-                myBoard.addPiece(move.getStartPosition(), null);
-            }
+            addMove(start, move);
+        }
+    }
+
+    private void addMove(ChessPosition start, ChessMove move) {
+        ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
+            ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
+            myBoard.addPiece(move.getEndPosition(), promotionPiece);
+            myBoard.addPiece(move.getStartPosition(), null);
+        } else {
+            myBoard.addPiece(move.getEndPosition(), piece);
+            myBoard.addPiece(move.getStartPosition(), null);
         }
     }
 
@@ -103,15 +107,7 @@ public class ChessGame {
         if (!allPossibleMoves.contains(move)) {
             throw new InvalidMoveException();
         } else {
-            ChessPiece piece = new ChessPiece(myBoard.getPiece(start).getTeamColor(), myBoard.getPiece(start).getPieceType());
-            if (piece.getPieceType() == ChessPiece.PieceType.PAWN && move.getPromotionPiece() != null) {
-                ChessPiece promotionPiece = new ChessPiece(turn, move.getPromotionPiece());
-                myBoard.addPiece(move.getEndPosition(), promotionPiece);
-                myBoard.addPiece(move.getStartPosition(), null);
-            } else {
-                myBoard.addPiece(move.getEndPosition(), piece);
-                myBoard.addPiece(move.getStartPosition(), null);
-            }
+            addMove(start, move);
             for (TeamColor color : TeamColor.values()) {
                 if (color != turn) {
                     setTeamTurn(color);
@@ -185,20 +181,7 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             return false;
         }
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j<=8; j++) {
-                ChessPosition newSpot = new ChessPosition(i, j);
-                ChessPiece piece = myBoard.getPiece(newSpot);
-                if (piece == null || piece.getTeamColor() != teamColor) {
-                    continue;
-                }
-                Collection<ChessMove> moves = piece.pieceMoves(myBoard, newSpot);
-                for (ChessMove move : moves) {
-                    possibleMoves.addAll(validMoves(move.getStartPosition()));
-                }
-            }
-            }
+        Collection<ChessMove> possibleMoves = isInStaleOrCheck(teamColor);
         return possibleMoves.isEmpty();
     }
 
@@ -213,6 +196,12 @@ public class ChessGame {
         if (isInCheck(teamColor)) {
             return false;
         }
+        Collection<ChessMove> possibleMoves = isInStaleOrCheck(teamColor);
+        return possibleMoves.isEmpty();
+    }
+
+
+    private Collection<ChessMove> isInStaleOrCheck(TeamColor teamColor) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j<=8; j++) {
@@ -227,7 +216,7 @@ public class ChessGame {
                 }
             }
         }
-        return possibleMoves.isEmpty();
+        return possibleMoves;
     }
 
 
