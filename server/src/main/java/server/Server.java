@@ -13,7 +13,12 @@ public class Server {
     private GameService gameService;
 
     public int run(int desiredPort) {
-        final UserDAO userDAO = new UserMemoryAccess();
+        final UserDAO userDAO;
+        try {
+            userDAO = new MySQLUserAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         final AuthDAO authDAO = new AuthMemoryAccess();
         final GameDAO gameDAO = new GameMemoryAccess();
 
