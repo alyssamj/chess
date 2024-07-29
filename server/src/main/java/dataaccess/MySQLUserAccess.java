@@ -63,12 +63,28 @@ public class MySQLUserAccess implements UserDAO {
 
     @Override
     public boolean clear() throws DataAccessException {
-        return false;
+
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
+        String getUserSQL = "SELECT password, email FROM users WHERE username=?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
+            preparedStatement.setString(1, username);
+            try (var rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    String password = rs.getString("password");
+                    String email = rs.getString("email");
+                    return new UserData(username, password, email);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+
     }
 
     @Override
