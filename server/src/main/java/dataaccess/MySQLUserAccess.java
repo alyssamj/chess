@@ -3,9 +3,12 @@ package dataaccess;
 import model.UserData;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import org.mindrot.jbcrypt.BCrypt;
+
+import static dataaccess.DatabaseManager.getConnection;
 
 public class MySQLUserAccess implements UserDAO {
 
@@ -37,7 +40,7 @@ public class MySQLUserAccess implements UserDAO {
 //            throw new DataAccessException(String.format("unable to configure database"));
 //        }
         DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
+        try (var conn = getConnection()) {
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
@@ -63,13 +66,24 @@ public class MySQLUserAccess implements UserDAO {
 
     @Override
     public boolean clear() throws DataAccessException {
-
+        String statement = "DELETE FROM users";
+        try (Connection conn = getConnection();
+        PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.executeUpdate();
+            if (returnUsersSize() == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
         String getUserSQL = "SELECT password, email FROM users WHERE username=?";
-        try (Connection conn = DatabaseManager.getConnection();
+        try (Connection conn = getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
             preparedStatement.setString(1, username);
             try (var rs = preparedStatement.executeQuery()) {
@@ -94,7 +108,7 @@ public class MySQLUserAccess implements UserDAO {
         String email = user.email();
         String insertSQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
-        try (Connection conn = DatabaseManager.getConnection();
+        try (Connection conn = getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement(insertSQL)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
@@ -107,6 +121,23 @@ public class MySQLUserAccess implements UserDAO {
 
     @Override
     public int returnUsersSize() throws DataAccessException {
+        String sizeQuery = "SELECT table_schema AS database_name, " +
+                "SUM(data_length + index_length) AS database_size " +
+                "FROM information_schema.tables " +
+                "WHERE table_schema = ? " +
+                "GROUP BY table_schema";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
+            preparedStatement.setString(1, "users"); // Set your database name here
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("database_size");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
         return 0;
     }
 }
