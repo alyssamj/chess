@@ -37,7 +37,7 @@ public class GameMemoryAccess implements GameDAO {
     }
 
     @Override
-    public GameData getGame(String gameName) throws DataAccessException {
+    public GameData getGameWithGameName(String gameName) throws DataAccessException {
         for (Map.Entry<Integer, GameData> game : games.entrySet()) {
             if (game.getValue().gameName() == gameName) {
                 return game.getValue();

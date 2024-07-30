@@ -122,7 +122,7 @@ public class GameService {
     }
 
     private boolean checkGameWithName(String gameName) throws DataAccessException {
-        GameData gameToCheck = gameDAO.getGame(gameName);
+        GameData gameToCheck = gameDAO.getGameWithGameName(gameName);
         if (gameToCheck == null) {
             return false;
         } else {

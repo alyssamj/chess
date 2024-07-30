@@ -20,7 +20,12 @@ public class Server {
             throw new RuntimeException(e);
         }
         final AuthDAO authDAO = new AuthMemoryAccess();
-        final GameDAO gameDAO = new GameMemoryAccess();
+        final GameDAO gameDAO;
+        try {
+            gameDAO =new MySQLGameAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);

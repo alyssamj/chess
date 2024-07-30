@@ -85,8 +85,8 @@ class ServiceTests {
         JoinRequest joinRequest = new JoinRequest("authToken", "WHITE", 1234);
         JoinResult joinResult = gameService.joinGame(joinRequest);
         assertNull(joinResult.message());
-        assertNotNull(gameDAO.getGame("gameName").whiteUsername());
-        System.out.println(gameDAO.getGame("gameName").whiteUsername());
+        assertNotNull(gameDAO.getGameWithGameName("gameName").whiteUsername());
+        System.out.println(gameDAO.getGameWithGameName("gameName").whiteUsername());
 
     }
 
@@ -97,7 +97,7 @@ class ServiceTests {
         JoinRequest joinRequest = new JoinRequest("authToken", "WHITE", 1234);
         JoinResult joinResult = gameService.joinGame(joinRequest);
         assertNotNull(joinResult.message());
-        assertNotEquals(gameDAO.getGame("gameName").whiteUsername(), "username");
+        assertNotEquals(gameDAO.getGameWithGameName("gameName").whiteUsername(), "username");
     }
 
     @Test
