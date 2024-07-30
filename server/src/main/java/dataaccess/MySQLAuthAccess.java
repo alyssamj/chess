@@ -18,7 +18,7 @@ public class MySQLAuthAccess implements AuthDAO {
 
     @Override
     public void deleteAuthToken(String authToken) throws DataAccessException {
-        String deleteAuthSQL = "DELETE authToken username FROM auths WHERE authToken=?";
+        String deleteAuthSQL = "DELETE FROM auths WHERE authToken=?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(deleteAuthSQL)) {
             preparedStatement.setString(1, authToken);
@@ -57,7 +57,7 @@ public class MySQLAuthAccess implements AuthDAO {
             preparedStatement.setString(2, username);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Unable to insert data into auth table", e);
+            throw new DataAccessException(e.getMessage());
         }
     }
 
@@ -69,8 +69,7 @@ public class MySQLAuthAccess implements AuthDAO {
             preparedStatement.setString(1, authToken);
             try (var rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
-                    String username = rs.getString("username");
-                    return username;
+                    return rs.getString("username");
                 } else {
                     return null;
                 }
@@ -98,18 +97,14 @@ public class MySQLAuthAccess implements AuthDAO {
 
     @Override
     public int authTokensSize() throws DataAccessException {
-        String sizeQuery = "SELECT table_schema AS database_name, " +
-                "SUM(data_length + index_length) AS database_size " +
-                "FROM information_schema.tables " +
-                "WHERE table_schema = ? " +
-                "GROUP BY table_schema";
+        String sizeQuery = "SELECT COUNT(*) AS count FROM auths";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
             preparedStatement.setString(1, "auths"); // Set your database name here
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("database_size");
+                    return rs.getInt("count");
                 }
             }
         } catch (SQLException e) {
@@ -126,8 +121,8 @@ public class MySQLAuthAccess implements AuthDAO {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
         }
     }
 
