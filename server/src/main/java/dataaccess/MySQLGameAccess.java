@@ -169,7 +169,7 @@ public class MySQLGameAccess implements GameDAO {
         String sizeQuery = "SELECT COUNT(*) AS count FROM myGames";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
-            preparedStatement.setString(1, "myGames"); // Set your database name here
+            // Set your database name here
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");

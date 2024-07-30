@@ -18,7 +18,7 @@ public class MySQLUserAccess implements UserDAO {
 
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
+       // DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -103,7 +103,6 @@ public class MySQLUserAccess implements UserDAO {
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
-            preparedStatement.setString(1, "users"); // Set your database name here
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");

@@ -81,7 +81,7 @@ public class MySQLAuthAccess implements AuthDAO {
 
     @Override
     public boolean clear() throws DataAccessException {
-        String statement = "TRUNICATE auths";
+        String statement = "DELETE FROM auths";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
@@ -102,7 +102,7 @@ public class MySQLAuthAccess implements AuthDAO {
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
-            preparedStatement.setString(1, "auths"); // Set your database name here
+            // Set your database name here
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");
@@ -115,7 +115,7 @@ public class MySQLAuthAccess implements AuthDAO {
     }
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
+   //     DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {

@@ -14,19 +14,13 @@ public class Server {
 
     public int run(int desiredPort) {
         final UserDAO userDAO;
-        try {
-            userDAO = new MySQLUserAccess();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
         final AuthDAO authDAO;
-        try {
-            authDAO = new MySQLAuthAccess();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
         final GameDAO gameDAO;
+
         try {
+            DatabaseManager.createDatabase();
+            userDAO = new MySQLUserAccess();
+            authDAO = new MySQLAuthAccess();
             gameDAO =new MySQLGameAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -67,11 +61,6 @@ public class Server {
      */
 
     private Object clear(Request req, Response res) {
-        try {
-            DatabaseManager.createDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
         Gson gson = new Gson();
         try {
             ClearResult  clearResult = clearService.clear();
@@ -191,7 +180,7 @@ public class Server {
     private Object createGame(Request req, Response res) {
         Gson gson = new Gson();
         String authToken = req.headers("authorization");
-        String gameName = String.valueOf(gson.fromJson(req.body(), CreateRequest.class));
+        String gameName = gson.fromJson(req.body(), CreateRequest.class).gameName();
         CreateRequest createReq = new CreateRequest(authToken, gameName);
         CreateResult createResult = null;
         try {
