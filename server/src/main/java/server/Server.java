@@ -19,9 +19,9 @@ public class Server {
 
         try {
             DatabaseManager.createDatabase();
+            gameDAO =new MySQLGameAccess();
             userDAO = new MySQLUserAccess();
             authDAO = new MySQLAuthAccess();
-            gameDAO =new MySQLGameAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

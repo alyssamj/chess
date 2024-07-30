@@ -59,7 +59,7 @@ public class GameService {
             Integer newGameID = game.gameID();
             String whiteUserName = game.whiteUsername();
             String blackUserName = game.blackUsername();
-            String gameName = game.blackUsername();
+            String gameName = game.gameName();
             ArrayListResult singleGame = new ArrayListResult(newGameID, whiteUserName, blackUserName, gameName);
             listResult.games()[i] = singleGame;
             i++;

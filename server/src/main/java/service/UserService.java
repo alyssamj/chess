@@ -1,5 +1,6 @@
 package service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import requestsandresponses.*;
 import dataaccess.*;
 import model.*;
@@ -74,11 +75,20 @@ public class UserService {
     private boolean authenticateUser(UserData toCompare, String username, String password) {
         if (toCompare == null) {
             return false;
-        } else if (toCompare.password().equals(password)){
-            return true;
         } else {
-            return false;
+            return BCrypt.checkpw(password, toCompare.password());
         }
+//        else if (toCompare.password().equals(password)){
+//            return true;
+//        } else {
+//            return false;
+//        }
+//        boolean verifyUser(String username, String providedClearTextPassword) {
+//            // read the previously hashed password from the database
+//            var hashedPassword = readHashedPasswordFromDatabase(username);
+//
+//            return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
+//        }
     }
 
     private String createNewAuthToken() {
