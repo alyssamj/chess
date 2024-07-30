@@ -66,7 +66,27 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public GameData getGameWithGameName(String gameName) throws DataAccessException {
-        return null;
+        String getUserSQL = "SELECT gameID, whiteUsername, blackUsername, game FROM games WHERE gameName=?";
+        try (Connection conn = getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
+            preparedStatement.setString(1, gameName);
+            try (var rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    int gameID = rs.getInt("gameID");
+                    String game = rs.getString("game");
+                    Gson gson = new Gson();
+                    ChessGame myGame;
+                    myGame = gson.fromJson(game, ChessGame.class);
+                    return new GameData(gameID, whiteUsername, blackUsername, gameName, myGame);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
