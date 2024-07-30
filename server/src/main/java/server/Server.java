@@ -19,7 +19,12 @@ public class Server {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        final AuthDAO authDAO = new AuthMemoryAccess();
+        final AuthDAO authDAO;
+        try {
+            authDAO = new MySQLAuthAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         final GameDAO gameDAO;
         try {
             gameDAO =new MySQLGameAccess();
