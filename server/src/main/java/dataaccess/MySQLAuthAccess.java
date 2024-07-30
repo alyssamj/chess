@@ -81,7 +81,7 @@ public class MySQLAuthAccess implements AuthDAO {
 
     @Override
     public boolean clear() throws DataAccessException {
-        String statement = "DELETE FROM auths";
+        String statement = "TRUNICATE auths";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
@@ -91,7 +91,8 @@ public class MySQLAuthAccess implements AuthDAO {
                 return false;
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            System.out.println("HELISLIGN:SLDNGISDGSIDHGSIDLGHSDLGH");
+            throw new DataAccessException("CLEAR AUTH ERROR MESSAGE");
         }
     }
 

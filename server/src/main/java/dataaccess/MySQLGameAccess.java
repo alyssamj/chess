@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import model.GameData;
 
 import java.sql.Connection;
@@ -18,27 +19,29 @@ public class MySQLGameAccess implements GameDAO {
         configureDatabase();
     }
 
+    private final Gson gson = new GsonBuilder().create();
+
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
+                /// PROBLEM IS HERE ON SECOND ITERATION
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
-            throw new DataAccessException(ex.getMessage());
+        } catch (SQLException e) {
+            throw new DataAccessException(gson.toJson(e.getMessage()));
         }
     }
 
     private final String[] createStatements = {
             """
-        CREATE TABLE IF NOT EXISTS games (
-            `gameID` INTEGER NOT NULL,
+        CREATE TABLE IF NOT EXISTS myGames (
+            `gameID` int NOT NULL,
             `whiteUsername` varchar(256) DEFAULT NULL,
             `blackUsername` varchar(256) DEFAULT NULL,
             `gameName` varchar(256) NOT NULL,
-            `game` longtext NOT NULL,
+            `game` LONGTEXT NOT NULL,
             PRIMARY KEY (`gameID`),
             INDEX(gameName)
             )
@@ -50,7 +53,7 @@ public class MySQLGameAccess implements GameDAO {
         int sizeOfList = gameListSize();
         GameData[] games = new GameData[sizeOfList];
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM myGames";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     int i = 0;
@@ -60,7 +63,6 @@ public class MySQLGameAccess implements GameDAO {
                         String blackUsername = rs.getString("blackUsername");
                         String gameName = rs.getString("gameName");
                         String game = rs.getString("game");
-                        Gson gson = new Gson();
                         ChessGame myGame = gson.fromJson(game, ChessGame.class);
                         games[i] = new GameData(gameID, whiteUsername, blackUsername, gameName, myGame);
                         i++;
@@ -75,7 +77,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public boolean clear() throws DataAccessException {
-        String statement = "DELETE FROM games";
+        String statement = "DELETE FROM myGames";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
@@ -85,13 +87,14 @@ public class MySQLGameAccess implements GameDAO {
                 return false;
             }
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            System.out.println("ERROR IN CLEAR GAME");
+            throw new DataAccessException("CLEAR GAME MESSAGE");
         }
     }
 
     @Override
     public GameData getGameWithGameName(String gameName) throws DataAccessException {
-        String getUserSQL = "SELECT gameID, whiteUsername, blackUsername, game FROM games WHERE gameName=?";
+        String getUserSQL = "SELECT gameID, whiteUsername, blackUsername, game FROM myGames WHERE gameName=?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
             preparedStatement.setString(1, gameName);
@@ -101,7 +104,6 @@ public class MySQLGameAccess implements GameDAO {
                     String blackUsername = rs.getString("blackUsername");
                     int gameID = rs.getInt("gameID");
                     String game = rs.getString("game");
-                    Gson gson = new Gson();
                     ChessGame myGame;
                     myGame = gson.fromJson(game, ChessGame.class);
                     return new GameData(gameID, whiteUsername, blackUsername, gameName, myGame);
@@ -124,7 +126,7 @@ public class MySQLGameAccess implements GameDAO {
         var serializer = new Gson();
         String jsonGame = serializer.toJson(game);
 
-        String insertSQL = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO myGames (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(insertSQL)) {
@@ -141,7 +143,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public GameData getGameWithID(Integer gameID) throws DataAccessException {
-        String getUserSQL = "SELECT whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
+        String getUserSQL = "SELECT whiteUsername, blackUsername, gameName, game FROM myGames WHERE gameID=?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
             preparedStatement.setInt(1, gameID);
@@ -151,7 +153,6 @@ public class MySQLGameAccess implements GameDAO {
                     String blackUsername = rs.getString("blackUsername");
                     String gameName = rs.getString("gameName");
                     String game = rs.getString("game");
-                    Gson gson = new Gson();
                     ChessGame myGame;
                     myGame = gson.fromJson(game, ChessGame.class);
                     return new GameData(gameID, whiteUsername, blackUsername, gameName, myGame);
@@ -165,16 +166,17 @@ public class MySQLGameAccess implements GameDAO {
     }
 
     public int gameListSize() throws DataAccessException {
-        String sizeQuery = "SELECT COUNT(*) AS count FROM games";
+        String sizeQuery = "SELECT COUNT(*) AS count FROM myGames";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
-            preparedStatement.setString(1, "games"); // Set your database name here
+            preparedStatement.setString(1, "myGames"); // Set your database name here
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");
                 }
             }
         } catch (SQLException e) {
+            System.out.println("ERROR IN LIST STILLLLL");
             throw new DataAccessException(e.getMessage());
         }
         return 0;
@@ -182,7 +184,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public void addBlackUsername(Integer gameID, String username) throws DataAccessException {
-        String getSQL = "UPDATE games SET blackUsername = ? WHERE gameID=? AND blackUsername IS NULL";
+        String getSQL = "UPDATE myGames SET blackUsername = ? WHERE gameID=? AND blackUsername IS NULL";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getSQL)) {
 
@@ -196,7 +198,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public void addWhiteUsername(Integer gameID, String username) throws DataAccessException {
-        String getSQL = "UPDATE games SET whiteUsername = ? WHERE gameID=? AND whiteUsername IS NULL";
+        String getSQL = "UPDATE myGames SET whiteUsername = ? WHERE gameID=? AND whiteUsername IS NULL";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getSQL)) {
 

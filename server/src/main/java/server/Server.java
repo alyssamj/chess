@@ -67,6 +67,11 @@ public class Server {
      */
 
     private Object clear(Request req, Response res) {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         Gson gson = new Gson();
         try {
             ClearResult  clearResult = clearService.clear();
