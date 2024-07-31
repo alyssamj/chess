@@ -36,7 +36,7 @@ public class MySQLGameAccess implements GameDAO {
 
     private final String[] createStatements = {
             """
-        CREATE TABLE IF NOT EXISTS myGames (
+        CREATE TABLE IF NOT EXISTS games (
             `gameID` int NOT NULL,
             `whiteUsername` varchar(256) DEFAULT NULL,
             `blackUsername` varchar(256) DEFAULT NULL,
@@ -53,7 +53,7 @@ public class MySQLGameAccess implements GameDAO {
         int sizeOfList = gameListSize();
         GameData[] games = new GameData[sizeOfList];
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM myGames";
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     int i = 0;
@@ -77,7 +77,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public boolean clear() throws DataAccessException {
-        String statement = "DELETE FROM myGames";
+        String statement = "DELETE FROM games";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
@@ -94,7 +94,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public GameData getGameWithGameName(String gameName) throws DataAccessException {
-        String getUserSQL = "SELECT gameID, whiteUsername, blackUsername, game FROM myGames WHERE gameName=?";
+        String getUserSQL = "SELECT gameID, whiteUsername, blackUsername, game FROM games WHERE gameName=?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
             preparedStatement.setString(1, gameName);
@@ -126,7 +126,7 @@ public class MySQLGameAccess implements GameDAO {
         var serializer = new Gson();
         String jsonGame = serializer.toJson(game);
 
-        String insertSQL = "INSERT INTO myGames (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        String insertSQL = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(insertSQL)) {
@@ -143,7 +143,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public GameData getGameWithID(Integer gameID) throws DataAccessException {
-        String getUserSQL = "SELECT whiteUsername, blackUsername, gameName, game FROM myGames WHERE gameID=?";
+        String getUserSQL = "SELECT whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
             preparedStatement.setInt(1, gameID);
@@ -166,7 +166,7 @@ public class MySQLGameAccess implements GameDAO {
     }
 
     public int gameListSize() throws DataAccessException {
-        String sizeQuery = "SELECT COUNT(*) AS count FROM myGames";
+        String sizeQuery = "SELECT COUNT(*) AS count FROM games";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
             // Set your database name here
@@ -184,7 +184,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public void addBlackUsername(Integer gameID, String username) throws DataAccessException {
-        String getSQL = "UPDATE myGames SET blackUsername = ? WHERE gameID=? AND blackUsername IS NULL";
+        String getSQL = "UPDATE games SET blackUsername = ? WHERE gameID=? AND blackUsername IS NULL";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getSQL)) {
 
@@ -198,7 +198,7 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public void addWhiteUsername(Integer gameID, String username) throws DataAccessException {
-        String getSQL = "UPDATE myGames SET whiteUsername = ? WHERE gameID=? AND whiteUsername IS NULL";
+        String getSQL = "UPDATE games SET whiteUsername = ? WHERE gameID=? AND whiteUsername IS NULL";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getSQL)) {
 

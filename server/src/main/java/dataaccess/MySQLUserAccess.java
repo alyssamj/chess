@@ -82,7 +82,7 @@ public class MySQLUserAccess implements UserDAO {
     @Override
     public void addUser(UserData user) throws DataAccessException {
         String username = user.username();
-        String password = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        String password = user.password();
         String email = user.email();
         String insertSQL = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
@@ -96,6 +96,8 @@ public class MySQLUserAccess implements UserDAO {
             throw new DataAccessException(e.getMessage());
         }
     }
+
+
 
     @Override
     public int returnUsersSize() throws DataAccessException {

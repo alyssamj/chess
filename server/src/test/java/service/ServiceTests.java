@@ -1,5 +1,6 @@
 package service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import requestsandresponses.*;
 import chess.ChessGame;
 import dataaccess.*;
@@ -23,7 +24,11 @@ class ServiceTests {
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
         clearService = new ClearService(userDAO, authDAO, gameDAO);
-        UserData newUser = new UserData("username", "password", "email");
+        String username = "username";
+        String password = "password";
+        String email = "email";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        UserData newUser = new UserData(username, hashedPassword, email);
         userDAO.addUser(newUser);
         authDAO.addAuthToken("authToken", "username");
 

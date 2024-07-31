@@ -36,15 +36,15 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
-        String username = registerRequest.username();
-        String password = registerRequest.password();
-        String email = registerRequest.email();
-        UserData newUser = new UserData(username, password, email);
-        UserData checkForUser = userDAO.getUser(username);
-        if (username == null || password == null || email == null) {
+        if (registerRequest.username() == null || registerRequest.password() == null || registerRequest.email() == null) {
             RegisterResult registerResult = new RegisterResult(null, null, "Error: bad request");
             return registerResult;
         }
+        String username = registerRequest.username();
+        String hashedPassword = BCrypt.hashpw(registerRequest.password(), BCrypt.gensalt());
+        String email = registerRequest.email();
+        UserData newUser = new UserData(username, hashedPassword, email);
+        UserData checkForUser = userDAO.getUser(username);
         if (checkForUser == null) {
             userDAO.addUser(newUser);
             String authToken = createNewAuthToken();
@@ -76,7 +76,8 @@ public class UserService {
         if (toCompare == null) {
             return false;
         } else {
-            return BCrypt.checkpw(password, toCompare.password());
+            var hashedPassword = toCompare.password();
+            return BCrypt.checkpw(password, hashedPassword);
         }
 //        else if (toCompare.password().equals(password)){
 //            return true;
