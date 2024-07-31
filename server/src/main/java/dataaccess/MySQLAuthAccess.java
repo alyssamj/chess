@@ -22,7 +22,10 @@ public class MySQLAuthAccess implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(deleteAuthSQL)) {
             preparedStatement.setString(1, authToken);
-            preparedStatement.executeUpdate();
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("authToken not found");
+            }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -55,7 +58,10 @@ public class MySQLAuthAccess implements AuthDAO {
              PreparedStatement preparedStatement = conn.prepareStatement(insertSQL)) {
             preparedStatement.setString(1, authToken);
             preparedStatement.setString(2, username);
-            preparedStatement.executeUpdate();
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("unable to add authToken");
+            }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -131,7 +137,7 @@ public class MySQLAuthAccess implements AuthDAO {
             """
         CREATE TABLE IF NOT EXISTS auths (
             `authToken` varchar(256) NOT NULL,
-            `username` varchar(256) DEFAULT NULL,
+            `username` varchar(256) NOT NULL,
             PRIMARY KEY (`authToken`),
             INDEX(`username`)
             )

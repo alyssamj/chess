@@ -143,6 +143,9 @@ public class MySQLGameAccess implements GameDAO {
 
     @Override
     public GameData getGameWithID(Integer gameID) throws DataAccessException {
+        if (gameID == null) {
+            throw new DataAccessException("gameID is null");
+        }
         String getUserSQL = "SELECT whiteUsername, blackUsername, gameName, game FROM games WHERE gameID=?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(getUserSQL)) {
@@ -190,7 +193,10 @@ public class MySQLGameAccess implements GameDAO {
 
             preparedStatement.setString(1, username);
             preparedStatement.setInt(2, gameID);
-            preparedStatement.executeUpdate();
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("blackUsername is already set");
+            }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -204,7 +210,10 @@ public class MySQLGameAccess implements GameDAO {
 
             preparedStatement.setString(1, username);
             preparedStatement.setInt(2, gameID);
-            preparedStatement.executeUpdate();
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("whiteUsername is already set");
+            }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
