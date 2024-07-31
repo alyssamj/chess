@@ -79,17 +79,6 @@ public class UserService {
             var hashedPassword = toCompare.password();
             return BCrypt.checkpw(password, hashedPassword);
         }
-//        else if (toCompare.password().equals(password)){
-//            return true;
-//        } else {
-//            return false;
-//        }
-//        boolean verifyUser(String username, String providedClearTextPassword) {
-//            // read the previously hashed password from the database
-//            var hashedPassword = readHashedPasswordFromDatabase(username);
-//
-//            return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
-//        }
     }
 
     private String createNewAuthToken() {
