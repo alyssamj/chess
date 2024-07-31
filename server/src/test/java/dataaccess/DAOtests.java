@@ -60,6 +60,12 @@ class DAOtests {
     }
 
     @Test
+    void clearUsers() throws DataAccessException {
+        userDAO.clear();
+        assertEquals(0, userDAO.returnUsersSize());
+    }
+
+    @Test
     void getUserPass() throws DataAccessException {
         userDAO.clear();
         userDAO.addUser(testUser);
@@ -127,7 +133,7 @@ class DAOtests {
     }
 
     @Test
-    void noGames() throws DataAccessException {
+    void noGamesToList() throws DataAccessException {
         gameDAO.clear();
 
         GameData[] myGames = gameDAO.listGames();
@@ -142,13 +148,19 @@ class DAOtests {
     }
 
     @Test
-    void getGameWithGameName() throws DataAccessException{
+    void getGameWithGameNamePass() throws DataAccessException{
         gameDAO.createGame(newGame);
         String gameName = "Test Game";
         GameData myGame = gameDAO.getGameWithGameName(gameName);
         assertEquals(1234, myGame.gameID());
         assertEquals(null, myGame.whiteUsername());
 
+    }
+
+    @Test
+    void failToGetGame() throws DataAccessException {
+        gameDAO.clear();
+        assertNull(gameDAO.getGameWithGameName("myGame"));
     }
 
     @Test
