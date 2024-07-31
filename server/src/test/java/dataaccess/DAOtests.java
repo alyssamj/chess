@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DAOtests {
+class DaoTests {
     UserDAO userDAO;
     AuthDAO authDAO;
     GameDAO gameDAO;
