@@ -98,7 +98,6 @@ public class MySQLUserAccess implements UserDAO {
     }
 
 
-
     @Override
     public int returnUsersSize() throws DataAccessException {
         String sizeQuery = "SELECT COUNT(*) AS count FROM users";

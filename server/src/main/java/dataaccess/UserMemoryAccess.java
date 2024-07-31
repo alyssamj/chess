@@ -30,7 +30,6 @@ public class UserMemoryAccess implements UserDAO {
     public void addUser(UserData user) throws DataAccessException {
         users.put(user.username(), user);
     }
-
     @Override
     public int returnUsersSize() throws DataAccessException {
         return users.size();
