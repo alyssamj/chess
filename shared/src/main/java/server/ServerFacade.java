@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
+import requestsandresponses.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +10,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
 
-
 public class ServerFacade {
 
     private final String serverUrl;
 
     public ServerFacade(String url) { serverUrl = url;}
+
+    public RegisterRequest register(UserData user)  {
+        var path = "/user";
+        return this.makeRequest("POST", path, user, RegisterRequest.class);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try {
