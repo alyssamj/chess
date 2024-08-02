@@ -26,9 +26,9 @@ public class ServerFacade {
 
     public ServerFacade(String url) { serverUrl = url;}
 
-    public RegisterRequest register(UserData user)  {
+    public RegisterResult register(UserData user)  {
         var path = "/user";
-        return this.makeRequest("POST", path, user, RegisterRequest.class);
+        return this.makeRequest("POST", path, user, RegisterResult.class);
     }
 
     public LoginRequest login(String username, String password) {
@@ -37,9 +37,18 @@ public class ServerFacade {
         return this.makeRequest("POST", path, loginRequest, LoginRequest.class);
     }
 
-    public LogoutRequest logout(String authToken) {
+    public LogoutResult logout(String authToken) {
         var path = "/session";
-        return this.makeRequest("DELETE", path, authToken, LogoutRequest.class);
+        return this.makeRequest("DELETE", path, authToken, LogoutResult.class);
+    }
+
+    public CreateResult createGame(CreateRequest createRequest) {
+        var path = "/game";
+        return this.makeRequest("POST", path, createRequest, CreateResult.class);
+    }
+
+    public JoinResult joinGame() {
+        return null;
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
@@ -48,13 +57,13 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
+            writeHeader(request, http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -67,6 +76,7 @@ public class ServerFacade {
             }
         }
     }
+
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException {
         var status = http.getResponseCode();
@@ -89,6 +99,27 @@ public class ServerFacade {
     }
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    private static void writeHeader(Object request, HttpURLConnection http) {
+        if (request instanceof CreateRequest) {
+            CreateRequest createRequest = (CreateRequest) request;
+            handleRequest(createRequest.authToken(), http);
+        } else if (request instanceof JoinRequest) {
+            JoinRequest joinRequest = (JoinRequest) request;
+            handleRequest(joinRequest.authToken(), http);
+        } else if (request instanceof LogoutRequest) {
+            LogoutRequest logoutRequest = (LogoutRequest) request;
+            handleRequest(logoutRequest.authToken(), http);
+        } else if (request instanceof ListRequest) {
+            ListRequest listRequest = (ListRequest) request;
+            handleRequest(listRequest.authToken(), http);
+        }
+    }
+
+    private static void handleRequest(String header, HttpURLConnection http) {
+        http.addRequestProperty("Content-Type", "application/json");
+        http.addRequestProperty("Authorization", header);
     }
 
 }
