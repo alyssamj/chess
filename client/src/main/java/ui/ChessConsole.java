@@ -31,6 +31,8 @@ public class ChessConsole {
 
         drawTicTacToeBoard(out);
 
+        drawHeaders(out);
+
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
@@ -147,7 +149,7 @@ public class ChessConsole {
     }
 
     private static void setColor(PrintStream out, int row, int col) {
-        if ((row) %2 == 0) {
+        if (col == 1 || col == 3 || col == 5 || col ==7) {
             printDarkSquare(out, " O ");
         } else {
             printLightSquare(out, " X ");
