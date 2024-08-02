@@ -12,6 +12,16 @@ import java.net.*;
 
 public class ServerFacade {
 
+    /*
+    Spark.post("/session", this::login);
+        Spark.post("/user", this::register);
+        Spark.delete("/session", this::logout);
+        Spark.post("/game", this::createGame);
+        Spark.get("/game", this::listGames);
+        Spark.put("/game", this::joinGame);
+        Spark.delete("/db", this::clear);
+     */
+
     private final String serverUrl;
 
     public ServerFacade(String url) { serverUrl = url;}
@@ -19,6 +29,17 @@ public class ServerFacade {
     public RegisterRequest register(UserData user)  {
         var path = "/user";
         return this.makeRequest("POST", path, user, RegisterRequest.class);
+    }
+
+    public LoginRequest login(String username, String password) {
+        var path = "/session";
+        LoginRequest loginRequest = new LoginRequest(username, password);
+        return this.makeRequest("POST", path, loginRequest, LoginRequest.class);
+    }
+
+    public LogoutRequest logout(String authToken) {
+        var path = "/session";
+        return this.makeRequest("DELETE", path, authToken, LogoutRequest.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
