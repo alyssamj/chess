@@ -47,8 +47,14 @@ public class ServerFacade {
         return this.makeRequest("POST", path, createRequest, CreateResult.class);
     }
 
-    public JoinResult joinGame() {
-        return null;
+    public JoinResult joinGame(JoinRequest joinRequest) {
+        var path = "/game";
+        return this.makeRequest("PUT", path, joinRequest, JoinResult.class);
+    }
+
+    public ListResult listGames(ListRequest listRequest) {
+        var path = "/game";
+        return this.makeRequest("GET", path, listRequest, ListResult.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
@@ -63,7 +69,7 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("Make request is failing");
         }
     }
 

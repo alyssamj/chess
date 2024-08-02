@@ -31,6 +31,7 @@ public class ChessClient {
     }
 
     public String help() {
+
         return """
                 
                 """;
