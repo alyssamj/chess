@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.*;
 import requestsandresponses.*;
 
 import java.io.IOException;
@@ -25,19 +26,20 @@ public class ServerFacade {
 
     public ServerFacade(String url) { serverUrl = url;}
 
-    public RegisterResult register(RegisterRequest registerRequest)  {
+    public RegisterResult register(UserData user)  {
         var path = "/user";
-        return this.makeRequest("POST", path, registerRequest, RegisterResult.class);
+        return this.makeRequest("POST", path, user, RegisterResult.class);
     }
 
-    public LoginResult login(LoginRequest loginRequest) {
+    public LoginRequest login(String username, String password) {
         var path = "/session";
-        return this.makeRequest("POST", path, loginRequest, LoginResult.class);
+        LoginRequest loginRequest = new LoginRequest(username, password);
+        return this.makeRequest("POST", path, loginRequest, LoginRequest.class);
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest) {
+    public LogoutResult logout(String authToken) {
         var path = "/session";
-        return this.makeRequest("DELETE", path, logoutRequest, LogoutResult.class);
+        return this.makeRequest("DELETE", path, authToken, LogoutResult.class);
     }
 
     public CreateResult createGame(CreateRequest createRequest) {
