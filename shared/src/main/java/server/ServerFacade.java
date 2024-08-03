@@ -26,14 +26,13 @@ public class ServerFacade {
 
     public ServerFacade(String url) { serverUrl = url;}
 
-    public RegisterResult register(UserData user)  {
+    public RegisterResult register(RegisterRequest registerRequest)  {
         var path = "/user";
-        return this.makeRequest("POST", path, user, RegisterResult.class);
+        return this.makeRequest("POST", path, registerRequest, RegisterResult.class);
     }
 
-    public LoginRequest login(String username, String password) {
+    public LoginRequest login(LoginRequest loginRequest) {
         var path = "/session";
-        LoginRequest loginRequest = new LoginRequest(username, password);
         return this.makeRequest("POST", path, loginRequest, LoginRequest.class);
     }
 
