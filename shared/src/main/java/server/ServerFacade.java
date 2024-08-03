@@ -67,7 +67,6 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             writeHeader(request, http);
-            writeBody(request, http);
 
             http.connect();
             throwIfNotSuccessful(http);
@@ -111,19 +110,23 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    private static void writeHeader(Object request, HttpURLConnection http) {
+    private static void writeHeader(Object request, HttpURLConnection http) throws IOException {
         if (request instanceof CreateRequest) {
             CreateRequest createRequest = (CreateRequest) request;
             handleRequest(createRequest.authToken(), http);
+            writeBody(createRequest, http);
         } else if (request instanceof JoinRequest) {
             JoinRequest joinRequest = (JoinRequest) request;
             handleRequest(joinRequest.authToken(), http);
+            writeBody(joinRequest, http);
         } else if (request instanceof LogoutRequest) {
             LogoutRequest logoutRequest = (LogoutRequest) request;
             handleRequest(logoutRequest.authToken(), http);
         } else if (request instanceof ListRequest) {
             ListRequest listRequest = (ListRequest) request;
             handleRequest(listRequest.authToken(), http);
+        } else {
+            writeBody(request, http);
         }
     }
 

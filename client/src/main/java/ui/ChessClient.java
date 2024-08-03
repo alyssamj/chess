@@ -45,10 +45,10 @@ public class ChessClient {
           //      case "quit" -> quit();
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
-         //       case "join" ->
+                case "join" -> joinGame(params);
             };
         } catch (Exception e) {
-            throw new RuntimeException("Unable to get command");
+            throw new RuntimeException("Unable to get command" + e.getMessage());
         }
     }
 
@@ -105,6 +105,7 @@ public class ChessClient {
         String password = params[1];
         LoginRequest loginRequest = new LoginRequest(username, password);
         LoginResult loginResult = server.login(loginRequest);
+        authToken = loginResult.authToken();
         return "login - press help";
     }
 
