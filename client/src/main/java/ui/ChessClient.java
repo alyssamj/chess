@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessPiece;
 import com.sun.source.tree.BreakTree;
 import requestsandresponses.*;
 import server.ServerFacade;
@@ -44,6 +45,7 @@ public class ChessClient {
           //      case "quit" -> quit();
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
+         //       case "join" ->
             };
         } catch (Exception e) {
             throw new RuntimeException("Unable to get command");
@@ -58,7 +60,7 @@ public class ChessClient {
                 observe <ID> - watch a game
                 logout - logout when finished
                 quit - stop playing chess
-                help - possbile commands
+                help - possible commands
                 """;
     }
 
@@ -140,5 +142,13 @@ public class ChessClient {
            gameNumber++;
         }
         return "";
+    }
+
+    public String joinGame(String[] params) {
+        int gameID = Integer.parseInt(params[0]);
+        String playerColor = params[1];
+        JoinRequest joinRequest = new JoinRequest(authToken, playerColor, gameID);
+        JoinResult joinResult = server.joinGame(joinRequest);
+        return "joined game";
     }
 }
