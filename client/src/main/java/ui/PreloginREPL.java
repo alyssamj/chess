@@ -17,7 +17,7 @@ public class PreloginREPL {
             String line = scanner.nextLine();
 
             try {
-                result = client.eval(line);
+                result = client.evalPreLogin(line);
                 System.out.println(result);
             } catch (Throwable e) {
                 throw e;

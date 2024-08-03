@@ -15,7 +15,7 @@ public class PostloginREPL {
             String line = scanner.nextLine();
 
             try {
-                result = client.eval(line);
+                result = client.evalPostLogin(line);
                 System.out.println(result);
             } catch (Throwable e) {
                 throw e;
