@@ -32,7 +32,7 @@ public class ChessConsole {
     }
 
 
-    public static void drawChessBoard() {
+    public void drawChessBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);

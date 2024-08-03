@@ -17,6 +17,9 @@ public class PostloginREPL {
             try {
                 result = client.evalPostLogin(line);
                 System.out.println(result);
+                if (line == "join game") {
+                    GameplayREPL gameplayREPL = new GameplayREPL(client);
+                }
             } catch (Throwable e) {
                 throw e;
             }

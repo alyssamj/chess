@@ -8,6 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 
 public class ServerFacade {
 
@@ -61,22 +65,24 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
             writeHeader(request, http);
             writeBody(request, http);
+
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
-            throw new RuntimeException("Make request is failing");
+            throw new RuntimeException("Make request is failing" + e.getMessage());
         }
     }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
+   //         http.addRequestProperty("Content-Type", "application/json");
             try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
+                reqBody.write(reqData.getBytes(StandardCharsets.UTF_8));
             }
         }
     }

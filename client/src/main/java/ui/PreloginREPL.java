@@ -19,6 +19,10 @@ public class PreloginREPL {
             try {
                 result = client.evalPreLogin(line);
                 System.out.println(result);
+                if (line.contains("register") || line.contains("login")) {
+                    PostloginREPL postloginREPL = new PostloginREPL(client);
+                    postloginREPL.run();
+                }
             } catch (Throwable e) {
                 throw e;
             }
