@@ -19,9 +19,6 @@ public class ChessConsole {
     private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
 
     // Padded characters.
-    private static final String EMPTY = " ";
-    private static final String X = "X";
-    private static final String O = "O";
 //    private String[][] myBoard;
     private static ChessBoard myBoard;
 
@@ -34,6 +31,7 @@ public class ChessConsole {
 
     public static void main(String[] args) { //drawChessBoard() {
         myBoard = new ChessBoard();
+        myBoard.resetBoard();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
@@ -53,8 +51,7 @@ public class ChessConsole {
         setBlack(out);
 
         String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h"};
-        String[] leftSide = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        out.print("    ");
+        out.print(" ");
         for (int boardCol = 0; boardCol < headers.length; ++boardCol) {
             drawHeader(out, headers[boardCol]);
         }
@@ -64,10 +61,10 @@ public class ChessConsole {
     }
 
     private static void drawHeader(PrintStream out, String headerText) {
-        out.print(SET_BG_COLOR_RED);
+        out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
 
-        out.print(" ");
+        out.print(EMPTY);
         out.print(headerText);
         out.print(" ");
     }
@@ -82,10 +79,9 @@ public class ChessConsole {
     }
 
     private static void drawChessGame(PrintStream out) {
+        for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
 
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
-            drawRowOfSquares(out);
+            drawRowOfSquares(out, boardRow);
 
             if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
                 // Draw horizontal row separator.
@@ -95,18 +91,101 @@ public class ChessConsole {
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out) {
-        for (int row = 1; row < 9; row++) {
-            for (int col = 1; col < 9; col++) {
-                ChessPiece piece = myBoard.getPiece(new ChessPosition(row, col));
-                if (row %2 == 0 && col %2 == 0) {
-
-                    printDarkSquare(out,  piece);
-                } else {
-                    printLightSquare(out, piece);
-                }
+    private static void drawRowOfSquares(PrintStream out, int row) {
+        String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
+        setBlack(out);
+        out.print(side[row-1] + " ");
+        for (int col = 1; col < 9; col++) {
+            ChessPiece piece = myBoard.getPiece(new ChessPosition(row, col));
+            if ((row + col) % 2 == 0) {
+                printDarkSquare(out, piece);
+            } else {
+                printLightSquare(out, piece);
             }
         }
+        setBlack(out);
+        out.print(" "+side[row-1]);
+        out.println();
+    }
+
+
+
+    private static void setWhite(PrintStream out) {
+        out.print(SET_BG_COLOR_WHITE);
+        out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setBlue(PrintStream out) {
+        out.print(SET_BG_COLOR_BLUE);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setBlack(PrintStream out) {
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void printLightSquare(PrintStream out, ChessPiece piece) {
+        out.print(SET_BG_COLOR_WHITE);
+        String player = getPlayerForPiece(out, piece);
+        if (piece == null) {
+            out.print("  " +EMPTY);
+        } else {
+            out.print(" " + player + " ");
+        }
+        setWhite(out);
+    }
+
+    private static String getPlayerForPiece(PrintStream out, ChessPiece piece) {
+        String stringToReturn = "";
+        if (piece == null) {
+            stringToReturn = EMPTY;
+            return stringToReturn;
+        }
+        ChessGame.TeamColor teamColor = piece.getTeamColor();
+        if (teamColor == null) {
+            stringToReturn = EMPTY;
+        }
+        else if (teamColor == ChessGame.TeamColor.BLACK) {
+            out.print(SET_TEXT_COLOR_BLACK);
+            switch (piece.getPieceType()) {
+                case QUEEN -> stringToReturn = BLACK_QUEEN;
+                case ROOK -> stringToReturn = BLACK_ROOK;
+                case KING -> stringToReturn = BLACK_KING;
+                case BISHOP -> stringToReturn = BLACK_BISHOP;
+                case KNIGHT -> stringToReturn = BLACK_KNIGHT;
+                case PAWN -> stringToReturn = BLACK_PAWN;
+            }
+        } else {
+            out.print(SET_TEXT_COLOR_LIGHT_GREY);
+            switch (piece.getPieceType()) {
+                case QUEEN -> stringToReturn = WHITE_QUEEN;
+                case ROOK -> stringToReturn = WHITE_ROOK;
+                case KING -> stringToReturn = WHITE_KING;
+                case BISHOP -> stringToReturn = WHITE_BISHOP;
+                case KNIGHT -> stringToReturn = WHITE_KNIGHT;
+                case PAWN -> stringToReturn = WHITE_PAWN;
+            }
+        }
+        return stringToReturn;
+    }
+
+    private static void printDarkSquare(PrintStream out, ChessPiece piece) {
+        out.print(SET_BG_COLOR_MAGENTA);
+        String player = getPlayerForPiece(out, piece);
+        if (piece == null) {
+            out.print("  " +EMPTY);
+        } else {
+            out.print(" " + player + " ");
+        }
+        setBlack(out);
+    }
+
+    private static boolean isEven(int number) {
+        return number % 2 == 0;
+    }
+}
+
 //        for (int squareRow = 0; squareRow < 8; squareRow++) {
 //            out.print(" "+(squareRow + 1));
 //            for (int boardCol = 0; boardCol < 8; boardCol++) {
@@ -127,8 +206,6 @@ public class ChessConsole {
 //                }
 //                setBlack(out);
 //            }
-        out.println();
-    }
 
 //    private static void drawHorizontalLine(PrintStream out) {
 //
@@ -142,83 +219,3 @@ public class ChessConsole {
 //            setBlack(out);
 //            out.println();
 //        }
-
-
-    private static void setWhite(PrintStream out) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
-
-    private static void setBlue(PrintStream out) {
-        out.print(SET_BG_COLOR_BLUE);
-        out.print(SET_TEXT_COLOR_BLUE);
-    }
-
-    private static void setBlack(PrintStream out) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
-    }
-
-    private static void printLightSquare(PrintStream out, ChessPiece piece) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_BLACK);
-        String player = getPlayerForPiece(piece);
-
-        out.print(" " + player + " ");
-
-        setWhite(out);
-    }
-
-    private static String getPlayerForPiece(ChessPiece piece) {
-        String stringToReturn = "";
-        if (piece == null) {
-            stringToReturn = EMPTY;
-            return stringToReturn;
-        }
-        ChessGame.TeamColor teamColor = piece.getTeamColor();
-        if (teamColor == null) {
-            stringToReturn = EMPTY;
-        }
-        else if (teamColor == ChessGame.TeamColor.BLACK) {
-            switch (piece.getPieceType()) {
-                case QUEEN -> stringToReturn = BLACK_QUEEN;
-                case ROOK -> stringToReturn = BLACK_ROOK;
-                case KING -> stringToReturn = BLACK_KING;
-                case BISHOP -> stringToReturn = BLACK_BISHOP;
-                case KNIGHT -> stringToReturn = BLACK_KNIGHT;
-                case PAWN -> stringToReturn = BLACK_PAWN;
-            }
-        } else {
-            switch (piece.getPieceType()) {
-                case QUEEN -> stringToReturn = WHITE_QUEEN;
-                case ROOK -> stringToReturn = WHITE_ROOK;
-                case KING -> stringToReturn = WHITE_KING;
-                case BISHOP -> stringToReturn = WHITE_BISHOP;
-                case KNIGHT -> stringToReturn = WHITE_KNIGHT;
-                case PAWN -> stringToReturn = WHITE_PAWN;
-            }
-        }
-        return stringToReturn;
-    }
-
-//    private static void setColor(PrintStream out, int row, int col) {
-//        if (col == 1 || col == 3 || col == 5 || col ==7) {
-//            printDarkSquare(out, " O ");
-//        } else {
-//            printLightSquare(out, " X ");
-//        }
-//    }
-
-    private static void printDarkSquare(PrintStream out, ChessPiece piece) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
-        String player = getPlayerForPiece(piece);
-        out.print(" " + player + " ");
-        setBlack(out);
-    }
-
-    private static boolean isEven(int number) {
-        return number % 2 == 0;
-    }
-}
-
