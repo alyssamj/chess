@@ -84,7 +84,7 @@ public class GameService {
             JoinResult joinResult = new JoinResult("Error: bad request");
             return joinResult;
         }
-        if (playerColor.equals("BLACK")) {
+        if (playerColor.equals("black")) {
             if (game.blackUsername() == null) {
                 gameDAO.addBlackUsername(game.gameID(), username);
                 JoinResult joinResult = new JoinResult(null);
@@ -93,7 +93,7 @@ public class GameService {
                 JoinResult joinResult = new JoinResult("Error: already taken");
                 return joinResult;
             }
-        } else if (playerColor.equals("WHITE")) {
+        } else if (playerColor.equals("white")) {
             if (game.whiteUsername() == null) {
                 gameDAO.addWhiteUsername(game.gameID(), username);
                 JoinResult joinResult = new JoinResult(null);
