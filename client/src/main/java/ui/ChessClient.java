@@ -43,6 +43,7 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
+       //       case "observe" -> observeGame();
                 default -> helpPost();
             };
         } catch (Exception e) {

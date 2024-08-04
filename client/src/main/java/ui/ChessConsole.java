@@ -28,29 +28,39 @@ public class ChessConsole {
 //        myBoard = new ChessBoard();
 //    }
 
+    public void whiteBoard() {
+     myBoard = new ChessBoard();
+     myBoard.resetBoard();
+     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+     out.print(ERASE_SCREEN);
+     ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
+     drawHeaders(out, teamColor);
+     drawChessBoardWhite(out);
+     drawHeaders(out, teamColor);
+     out.print(SET_BG_COLOR_BLACK);
+     out.print(SET_TEXT_COLOR_WHITE);
+    }
 
-    public static void main(String[] args) { //drawChessBoard() {
+    public void blackBoard() { //drawChessBoard() {
         myBoard = new ChessBoard();
         myBoard.resetBoard();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
+        ChessGame.TeamColor teamColor = ChessGame.TeamColor.BLACK;
+        drawHeaders(out, teamColor);
 
-        drawHeaders(out);
+        drawChessGameBlack(out);
 
-        drawChessGame(out);
-
-        drawHeaders(out);
+        drawHeaders(out, teamColor);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out) {
-
+    private static void drawHeaders(PrintStream out, ChessGame.TeamColor teamColor) {
+        String[] headers = getHeaders(teamColor);
         setBlack(out);
-
-        String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h"};
         out.print(" ");
         for (int boardCol = 0; boardCol < headers.length; ++boardCol) {
             drawHeader(out, headers[boardCol]);
@@ -58,6 +68,16 @@ public class ChessConsole {
         out.print(SET_BG_COLOR_BLACK);
 
         out.println();
+    }
+
+    private static String[] getHeaders(ChessGame.TeamColor teamColor) {
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h"};
+            return headers;
+        } else {
+            String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
+            return headers;
+        }
     }
 
     private static void drawHeader(PrintStream out, String headerText) {
@@ -78,7 +98,7 @@ public class ChessConsole {
         setBlack(out);
     }
 
-    private static void drawChessGame(PrintStream out) {
+    private static void drawChessGameBlack(PrintStream out) {
         for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
 
             drawRowOfSquares(out, boardRow);
@@ -90,6 +110,17 @@ public class ChessConsole {
             }
         }
     }
+
+    private static void drawChessBoardWhite(PrintStream out) {
+        for (int row = 8; row >= 1; row--) {
+            drawRowOfSquares(out, row);
+            if (row < BOARD_SIZE_IN_SQUARES -1) {
+                setBlack(out);
+            }
+        }
+
+    }
+
 
     private static void drawRowOfSquares(PrintStream out, int row) {
         String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
