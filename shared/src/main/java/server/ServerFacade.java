@@ -78,10 +78,19 @@ public class ServerFacade {
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            String reqData = new Gson().toJson(request);
-   //         http.addRequestProperty("Content-Type", "application/json");
-            try (OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes(StandardCharsets.UTF_8));
+            Gson gson = new Gson();
+            if (request instanceof JoinRequest) {
+                JoinRequest joinRequest = (JoinRequest) request;
+                JoinRequestBody joinRequestBody = new JoinRequestBody(joinRequest.playerColor(), joinRequest.gameID());
+                String reqData = gson.toJson(joinRequestBody);
+                try (OutputStream reqBody = http.getOutputStream()) {
+                    reqBody.write(reqData.getBytes(StandardCharsets.UTF_8));
+                }
+            } else {
+                String reqData = gson.toJson(request);
+                try (OutputStream reqBody = http.getOutputStream()) {
+                    reqBody.write(reqData.getBytes(StandardCharsets.UTF_8));
+                }
             }
         }
     }
@@ -106,6 +115,7 @@ public class ServerFacade {
         }
         return response;
     }
+
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
@@ -118,6 +128,7 @@ public class ServerFacade {
         } else if (request instanceof JoinRequest) {
             JoinRequest joinRequest = (JoinRequest) request;
             handleRequest(joinRequest.authToken(), http);
+   //         JoinRequestBody joinRequestBody = new JoinRequestBody(joinRequest.playerColor(), joinRequest.gameID());
             writeBody(joinRequest, http);
         } else if (request instanceof LogoutRequest) {
             LogoutRequest logoutRequest = (LogoutRequest) request;
@@ -130,9 +141,14 @@ public class ServerFacade {
         }
     }
 
+
+
     private static void handleRequest(String header, HttpURLConnection http) {
         http.addRequestProperty("Content-Type", "application/json");
         http.addRequestProperty("Authorization", header);
+    }
+
+    public record JoinRequestBody(String playerColor, int gameID) {
     }
 
 }

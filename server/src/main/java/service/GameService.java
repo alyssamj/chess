@@ -12,6 +12,7 @@ public class GameService {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
+    private int gameID = 1;
 
     public GameService(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
         this.userDAO = userDAO;
@@ -20,6 +21,10 @@ public class GameService {
     }
 
     public CreateResult createGame(CreateRequest createRequest) throws DataAccessException{
+        GameData[] games = gameDAO.listGames();
+        for (int i = 0; i < games.length; i++) {
+            gameID++;
+        }
         String authToken = createRequest.authToken();
         String gameName = createRequest.gameName();
         CreateResult createResult;
@@ -31,12 +36,10 @@ public class GameService {
             createResult = new CreateResult(null, "Error: bad request");
             return createResult;
         } else {
-            Random random = new Random();
-            int newGameID = 0000 + random.nextInt(9999);
             ChessGame newChessBoard = new ChessGame();
-            GameData newGame = new GameData(newGameID, null, null, gameName, newChessBoard);
+            GameData newGame = new GameData(gameID, null, null, gameName, newChessBoard);
             gameDAO.createGame(newGame);
-            createResult = new CreateResult(newGameID, null);
+            createResult = new CreateResult(gameID, null);
             return createResult;
         }
     }

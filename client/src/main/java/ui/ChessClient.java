@@ -1,7 +1,5 @@
 package ui;
 
-import chess.ChessPiece;
-import com.sun.source.tree.BreakTree;
 import requestsandresponses.*;
 import server.ServerFacade;
 
@@ -25,7 +23,7 @@ public class ChessClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 default -> helpLogin();
-      //          case "quit" -> quit();
+                case "quit" -> quit();
                 case "login" -> login(params);
                 case "register" -> register(params);
             };
@@ -42,7 +40,7 @@ public class ChessClient {
             return switch (cmd) {
                 default -> helpPost();
                 case "logout" -> logout();
-          //      case "quit" -> quit();
+                case "quit" -> quit();
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
@@ -50,6 +48,10 @@ public class ChessClient {
         } catch (Exception e) {
             throw new RuntimeException("Unable to get command" + e.getMessage());
         }
+    }
+
+    private String quit() {
+        return "quit";
     }
 
     private String helpPost() {
@@ -101,10 +103,16 @@ public class ChessClient {
     }
 
     public String login(String[] params) {
+        if (params.length != 2) {
+            return "please give both username and password";
+        }
         String username = params[0];
         String password = params[1];
         LoginRequest loginRequest = new LoginRequest(username, password);
         LoginResult loginResult = server.login(loginRequest);
+        if (loginResult.message() != null) {
+            return "unable to login. Please try again";
+        }
         authToken = loginResult.authToken();
         return "login - press help";
     }
@@ -120,7 +128,7 @@ public class ChessClient {
         ListRequest listRequest = new ListRequest(authToken);
         ListResult listResult = server.listGames(listRequest);
         StringBuilder stringBuilder = new StringBuilder();
-        int gameNumber = 1;
+       // int gameNumber = 1;
         for (ArrayListResult game : listResult.games()) {
             int gameID = game.gameID();
             String whiteUsername = game.whiteUsername();
@@ -141,18 +149,25 @@ public class ChessClient {
                         White Player: %s  
                         Black Player: %s
                   
-                    """, gameNumber, gameName, gameFull, whiteUsername, blackUsername);
+                    """, gameID, gameName, gameFull, whiteUsername, blackUsername);
            stringBuilder.append(stringToAdd);
-           gameNumber++;
+    //       gameNumber++;
         }
-        return "";
+        return stringBuilder.toString();
     }
 
     public String joinGame(String[] params) {
         int gameID = Integer.parseInt(params[0]);
         String playerColor = params[1];
+        System.out.println(playerColor);
+        if (!playerColor.contains("white") && !playerColor.contains("black")) {
+            return "invalid player color";
+        }
         JoinRequest joinRequest = new JoinRequest(authToken, playerColor, gameID);
         JoinResult joinResult = server.joinGame(joinRequest);
+        if (joinResult.message() != null) {
+            return joinResult.message();
+        }
         return "joined game";
     }
 }
