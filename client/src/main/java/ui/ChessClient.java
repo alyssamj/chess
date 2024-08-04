@@ -1,15 +1,19 @@
 package ui;
 
+import chess.ChessBoard;
 import requestsandresponses.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChessClient {
 
     private final String serverUrl;
     private final ServerFacade server;
     private String authToken;
+    public Map<Integer, Integer> gameMap = new HashMap<>();
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -43,7 +47,7 @@ public class ChessClient {
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
-       //       case "observe" -> observeGame();
+                case "observe" -> observeGame(params);
                 default -> helpPost();
             };
         } catch (Exception e) {
@@ -115,22 +119,26 @@ public class ChessClient {
             return "unable to login. Please try again";
         }
         authToken = loginResult.authToken();
-        return "login - press help";
+        return "logged in - press help";
     }
 
     public String createGame(String[] params) {
         String gameName = params[0];
         CreateRequest createRequest = new CreateRequest(authToken, gameName);
         CreateResult createResult = server.createGame(createRequest);
-        return String.valueOf(createResult.gameID());
+        return "gameID of newGame" + String.valueOf(createResult.gameID());
     }
 
     public String listGames(String[] params) {
         ListRequest listRequest = new ListRequest(authToken);
         ListResult listResult = server.listGames(listRequest);
         StringBuilder stringBuilder = new StringBuilder();
+        int gameNumber = 1;
         for (ArrayListResult game : listResult.games()) {
             int gameID = game.gameID();
+            if (!gameMap.containsKey(gameNumber)) {
+                gameMap.put(gameNumber, gameID);
+            }
             String whiteUsername = game.whiteUsername();
             String blackUsername = game.blackUsername();
             String gameName = game.gameName();
@@ -151,7 +159,7 @@ public class ChessClient {
                   
                     """, gameID, gameName, gameFull, whiteUsername, blackUsername);
            stringBuilder.append(stringToAdd);
-    //       gameNumber++;
+           gameNumber++;
         }
         return stringBuilder.toString();
     }
@@ -168,6 +176,12 @@ public class ChessClient {
         if (joinResult.message() != null) {
             return joinResult.message();
         }
-        return "joined game";
+        System.out.println("joined game - press help");
+        return "";
+    }
+
+    public String observeGame(String[] params) {
+        int gameToJoin = Integer.parseInt(params[0]);
+        return String.valueOf(gameToJoin);
     }
 }

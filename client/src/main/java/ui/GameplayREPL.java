@@ -16,10 +16,10 @@ public class GameplayREPL {
         System.out.println(printPrompt());
         while (!result.equals("quit") || !result.equals("resign")) {
             String line = scanner.nextLine();
-            chessConsole.blackBoard();
             try {
                 result = client.evalPostLogin(line);
                 System.out.println(result);
+
             } catch (Throwable e) {
                 throw e;
             }
