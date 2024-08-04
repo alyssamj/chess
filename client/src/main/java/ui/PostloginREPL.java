@@ -17,13 +17,13 @@ public class PostloginREPL {
             try {
                 result = client.evalPostLogin(line);
                 System.out.println(result);
-                if (line == "join game") {
+                if (result == "joined game") {
                     GameplayREPL gameplayREPL = new GameplayREPL(client);
+                    gameplayREPL.run();
                 }
             } catch (Throwable e) {
                 throw e;
             }
-
         }
     }
 

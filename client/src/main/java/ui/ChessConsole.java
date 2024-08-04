@@ -170,9 +170,13 @@ public class ChessConsole {
 
     private static String getPlayerForPiece(ChessPiece piece) {
         String stringToReturn = "";
+        if (piece == null) {
+            stringToReturn = EMPTY;
+            return stringToReturn;
+        }
         ChessGame.TeamColor teamColor = piece.getTeamColor();
         if (teamColor == null) {
-            stringToReturn = ERASE_SCREEN;
+            stringToReturn = EMPTY;
         }
         else if (teamColor == ChessGame.TeamColor.BLACK) {
             switch (piece.getPieceType()) {

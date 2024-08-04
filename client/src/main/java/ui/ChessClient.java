@@ -38,15 +38,15 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                default -> helpPost();
                 case "logout" -> logout();
                 case "quit" -> quit();
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
+                default -> helpPost();
             };
         } catch (Exception e) {
-            throw new RuntimeException("Unable to get command" + e.getMessage());
+            throw new RuntimeException("Unable to get command " + e.getMessage());
         }
     }
 
@@ -128,7 +128,6 @@ public class ChessClient {
         ListRequest listRequest = new ListRequest(authToken);
         ListResult listResult = server.listGames(listRequest);
         StringBuilder stringBuilder = new StringBuilder();
-       // int gameNumber = 1;
         for (ArrayListResult game : listResult.games()) {
             int gameID = game.gameID();
             String whiteUsername = game.whiteUsername();

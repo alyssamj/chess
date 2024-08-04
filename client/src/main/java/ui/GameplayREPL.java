@@ -13,6 +13,7 @@ public class GameplayREPL {
         Scanner scanner = new Scanner(System.in);
         ChessConsole chessConsole = new ChessConsole();
         var result = "";
+        System.out.println(printPrompt());
         while (!result.equals("quit") || !result.equals("resign")) {
             String line = scanner.nextLine();
             chessConsole.drawChessBoard();
@@ -27,6 +28,12 @@ public class GameplayREPL {
             }
 
         }
+    }
+
+    private static String printPrompt() {
+        return """
+                You are now playing
+                """;
     }
 }
 
