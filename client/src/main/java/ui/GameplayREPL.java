@@ -16,7 +16,7 @@ public class GameplayREPL {
         System.out.println(printPrompt());
         while (!result.equals("quit") || !result.equals("resign")) {
             String line = scanner.nextLine();
-            chessConsole.drawChessBoard();
+           // chessConsole.drawChessBoard();
             try {
 //              //  result = client.evalPostLogin(line);
 //                System.out.println(result);

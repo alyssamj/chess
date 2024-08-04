@@ -27,12 +27,13 @@ public class ChessConsole {
 
     private static Random rand = new Random();
 
-    public ChessConsole() {
+//    public ChessConsole() {
+//        myBoard = new ChessBoard();
+//    }
+
+
+    public static void main(String[] args) { //drawChessBoard() {
         myBoard = new ChessBoard();
-    }
-
-
-    public void drawChessBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
@@ -163,7 +164,7 @@ public class ChessConsole {
         out.print(SET_TEXT_COLOR_BLACK);
         String player = getPlayerForPiece(piece);
 
-        out.print(player);
+        out.print(" " + player + " ");
 
         setWhite(out);
     }
@@ -212,7 +213,7 @@ public class ChessConsole {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
         String player = getPlayerForPiece(piece);
-        out.print(player);
+        out.print(" " + player + " ");
         setBlack(out);
     }
 
