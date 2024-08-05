@@ -14,16 +14,6 @@ import java.net.URI;
 import java.net.URL;
 
 public class ServerFacade {
-
-    /*
-    Spark.post("/session", this::login);
-        Spark.post("/user", this::register);
-        Spark.delete("/session", this::logout);
-        Spark.post("/game", this::createGame);
-        Spark.get("/game", this::listGames);
-        Spark.put("/game", this::joinGame);
-        Spark.delete("/db", this::clear);
-     */
     private final int port;
 
 
@@ -132,7 +122,6 @@ public class ServerFacade {
         } else if (request instanceof JoinRequest) {
             JoinRequest joinRequest = (JoinRequest) request;
             handleRequest(joinRequest.authToken(), http);
-   //         JoinRequestBody joinRequestBody = new JoinRequestBody(joinRequest.playerColor(), joinRequest.gameID());
             writeBody(joinRequest, http);
         } else if (request instanceof LogoutRequest) {
             LogoutRequest logoutRequest = (LogoutRequest) request;

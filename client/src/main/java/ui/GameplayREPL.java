@@ -27,8 +27,9 @@ public class GameplayREPL {
         ChessConsole chessConsole = new ChessConsole();
         var result = "";
         System.out.println(printPrompt());
-        while (!result.equals("quit") || !result.equals("resign")) {
+        while (!result.contains("quit") && !result.equals("resign")) {
             String line = scanner.nextLine();
+            result = client.evalPostLogin(line);
             try {
                 if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
                     chessConsole.whiteBoard();
@@ -38,8 +39,6 @@ public class GameplayREPL {
                 } else {
                     chessConsole.whiteBoard();
                 }
-              //  result = client.evalPostLogin(line);
-             //   System.out.println(result);
 
             } catch (Throwable e) {
                 throw e;
