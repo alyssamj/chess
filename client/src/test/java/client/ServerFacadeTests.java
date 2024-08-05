@@ -172,12 +172,6 @@ public class ServerFacadeTests {
     }
 
 
-    @Test
-
-
-
-
-
     @AfterAll
     static void stopServer() {
         server.stop();
