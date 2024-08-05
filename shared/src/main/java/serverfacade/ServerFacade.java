@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 
 public class ServerFacade {
@@ -64,7 +62,7 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
-            System.out.println("Unable to process request");
+       //     System.out.println("Unable to process request");
             return null;
         //    throw new RuntimeException("Make request is failing: " + e.getMessage());
         }

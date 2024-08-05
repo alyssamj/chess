@@ -184,8 +184,4 @@ public class ChessConsole {
         }
         setBlack(out);
     }
-
-    private static boolean isEven(int number) {
-        return number % 2 == 0;
-    }
 }

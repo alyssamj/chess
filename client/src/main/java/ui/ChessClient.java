@@ -44,7 +44,7 @@ public class ChessClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "logout" -> logout();
-                case "quit" -> quit();
+                case "quit"-> quit();
                 case "create" -> createGame(params);
                 case "list" -> listGames(params);
                 case "join" -> joinGame(params);
@@ -61,17 +61,20 @@ public class ChessClient {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "quit" -> quit();
-                default -> quit();
-            };
+            switch (cmd) {
+                case "quit":
+                    logout();
+                    return quit();
+                default:
+                    return quit();
+            }
         } catch (Exception e) {
             throw new RuntimeException("Unable to register command" + e.getMessage());
         }
     }
 
     private String quit() {
-        return "quit";
+        return "you have quit";
     }
 
     private String helpPost() {
