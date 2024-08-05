@@ -16,9 +16,9 @@ public class PreloginREPL {
     public void run() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
+        System.out.print("Welcome to chess: press help\n");
         while (!result.equals("quit")) {
             loggedIn = false;
-            printPrompt();
             String line = scanner.nextLine();
 
             try {
@@ -36,13 +36,4 @@ public class PreloginREPL {
         }
         loggedIn = false;
     }
-
-    private void printPrompt() {
-        System.out.println("register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n");
-        System.out.println("login <USERNAME> <PASSWORD> - to play chess\n");
-        System.out.println("quit - stop playing chess\n");
-        System.out.println("help - possible commands\n");
-    }
-
-
 }

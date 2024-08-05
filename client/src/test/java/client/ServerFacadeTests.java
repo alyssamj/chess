@@ -168,6 +168,9 @@ public class ServerFacadeTests {
         var listResult = facade.listGames(listRequest);
 
         assertNull(listResult);
+        userDAO.clear();
+        gameDAO.clear();
+        authDAO.clear();
     }
 
 

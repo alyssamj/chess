@@ -12,12 +12,13 @@ public class GameplayREPL {
     public GameplayREPL(ChessClient client, String playerColor) {
         this.client = client;
         //this.username = username;
-        if (playerColor.equals("black")) {
-            teamColor = ChessGame.TeamColor.BLACK;
-        } else if (playerColor.equals("white")){
-            teamColor = ChessGame.TeamColor.WHITE;
-        } else {
+        if (playerColor == null) {
             teamColor = null;
+        }
+        else if (playerColor.equals("black")) {
+            teamColor = ChessGame.TeamColor.BLACK;
+        } else{
+            teamColor = ChessGame.TeamColor.WHITE;
         }
 
     }
@@ -31,15 +32,15 @@ public class GameplayREPL {
             String line = scanner.nextLine();
             result = client.evalGamePlay(line);
             try {
-                if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
+                if (teamColor == null) {
                     chessConsole.whiteBoard();
-                } else if (teamColor.equals(ChessGame.TeamColor.BLACK)) {
                     chessConsole.blackBoard();
-
-                } else {
-                    chessConsole.whiteBoard();
                 }
-
+                else if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
+                    chessConsole.whiteBoard();
+                } else {
+                    chessConsole.blackBoard();
+                }
             } catch (Throwable e) {
                 throw e;
             }
@@ -49,7 +50,7 @@ public class GameplayREPL {
 
     private static String printPrompt() {
         return """
-                You are now playing
+                Press help to see chess game
                 """;
     }
 }

@@ -13,7 +13,7 @@ public class PostloginREPL {
     public void run() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit") && !result.equals("logout")) {
+        while (!result.equals("quit") && !result.equals("logged out")) {
             String line = scanner.nextLine();
 
             try {

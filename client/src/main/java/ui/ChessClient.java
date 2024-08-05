@@ -99,6 +99,9 @@ public class ChessClient {
     public String logout() {
         LogoutRequest logoutRequest = new LogoutRequest(authToken);
         LogoutResult logoutResult = server.logout(logoutRequest);
+        if (logoutResult == null) {
+            return "error logging out";
+        }
         if (logoutResult.message() != null) {
             return logoutResult.message();
         }
@@ -145,7 +148,10 @@ public class ChessClient {
         String gameName = params[0];
         CreateRequest createRequest = new CreateRequest(authToken, gameName);
         CreateResult createResult = server.createGame(createRequest);
-        return "gameID of newGame" + String.valueOf(createResult.gameID());
+        if (createResult == null) {
+            return "unable to create game";
+        }
+        return "gameID of " + gameName + ": "  + String.valueOf(createResult.gameID());
     }
 
     public String listGames(String[] params) {
@@ -153,8 +159,12 @@ public class ChessClient {
         ListResult listResult = server.listGames(listRequest);
         StringBuilder stringBuilder = new StringBuilder();
         int gameNumber = 1;
-        for (ArrayListResult game : listResult.games()) {
-            int gameID = game.gameID();
+        //for (ArrayListResult game : listResult.games()) {
+             for (int i = 0; i < listResult.games().length; i++) {
+                    ArrayListResult game = listResult.games()[0] ;
+                    int gameID = i+1;
+
+//            int gameID = game.gameID();
             if (!gameMap.containsKey(gameNumber)) {
                 gameMap.put(gameNumber, gameID);
             }
@@ -184,6 +194,9 @@ public class ChessClient {
     }
 
     public String joinGame(String[] params) {
+        if (!isInteger(params[0])) {
+            return "invalid gameID";
+        }
         int gameID = Integer.parseInt(params[0]);
         String playerColor = params[1];
         System.out.println(playerColor);
@@ -192,6 +205,9 @@ public class ChessClient {
         }
         JoinRequest joinRequest = new JoinRequest(authToken, playerColor, gameID);
         JoinResult joinResult = server.joinGame(joinRequest);
+        if (joinResult == null) {
+            return "unable to join game";
+        }
         if (joinResult.message() != null) {
             return joinResult.message();
         }
@@ -200,6 +216,13 @@ public class ChessClient {
 
     public String observeGame(String[] params) {
         int gameToJoin = Integer.parseInt(params[0]);
-        return String.valueOf(gameToJoin);
+        return "now observing game " + String.valueOf(gameToJoin);
+    }
+
+    private static boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        return str.matches("-?\\d+");
     }
 }
