@@ -11,12 +11,14 @@ import java.util.Map;
 public class ChessClient {
 
     private final String serverUrl;
+    private final int port;
     private final ServerFacade server;
     private String authToken;
     public Map<Integer, Integer> gameMap = new HashMap<>();
 
-    public ChessClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+    public ChessClient(String serverUrl, int port) {
+        this.port = port;
+        server = new ServerFacade(port);
         this.serverUrl = serverUrl;
     }
 
@@ -99,6 +101,9 @@ public class ChessClient {
         String email = params[2];
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
         RegisterResult registerResult = server.register(registerRequest);
+        if (registerResult == null) {
+            return "please try again";
+        }
         authToken = registerResult.authToken();
         if (authToken != null) {
             String[] loginParams = {params[0], params[1]};
@@ -109,17 +114,18 @@ public class ChessClient {
 
     public String login(String[] params) {
         if (params.length != 2) {
-            return "please give both username and password";
+            return "please only give username and password";
         }
         String username = params[0];
         String password = params[1];
         LoginRequest loginRequest = new LoginRequest(username, password);
         LoginResult loginResult = server.login(loginRequest);
-        if (loginResult.message() != null) {
+        if (loginResult == null) {
             return "unable to login. Please try again";
         }
         authToken = loginResult.authToken();
         return "logged in - press help";
+
     }
 
     public String createGame(String[] params) {
@@ -176,8 +182,7 @@ public class ChessClient {
         if (joinResult.message() != null) {
             return joinResult.message();
         }
-        System.out.println("joined game - press help");
-        return "";
+        return "joined game as " + playerColor +" - press help";
     }
 
     public String observeGame(String[] params) {

@@ -24,10 +24,12 @@ public class ServerFacade {
         Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clear);
      */
+    private final int port;
 
-    private final String serverUrl;
 
-    public ServerFacade(String url) { serverUrl = url;}
+    public ServerFacade(int port) {
+        this.port = port;
+    }
 
     public RegisterResult register(RegisterRequest user)  {
         var path = "/user";
@@ -61,7 +63,7 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {
         try {
-            URL url = (new URI(serverUrl + path)).toURL();
+            URL url = new URL("http", "localhost", port, path);
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
@@ -72,7 +74,9 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception e) {
-            throw new RuntimeException("Make request is failing" + e.getMessage());
+            System.out.println("Unable to process request");
+            return null;
+        //    throw new RuntimeException("Make request is failing: " + e.getMessage());
         }
     }
 

@@ -8,6 +8,7 @@ import service.*;
 import spark.*;
 
 public class Server {
+    private int port;
     private UserService userService;
     private ClearService clearService;
     private GameService gameService;
@@ -18,6 +19,7 @@ public class Server {
         final GameDAO gameDAO;
 
         try {
+            System.out.println("Server started on port: " + this.port);
             DatabaseManager.createDatabase();
             gameDAO =new MySQLGameAccess();
             userDAO = new MySQLUserAccess();

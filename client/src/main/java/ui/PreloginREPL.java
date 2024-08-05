@@ -1,25 +1,31 @@
 package ui;
 
+import model.UserData;
+
 import java.util.Scanner;
 
 public class PreloginREPL {
     private final ChessClient client;
+    private boolean loggedIn = false;
+    private UserData user = null;
 
-    public PreloginREPL(String serverUrl) {
-        client = new ChessClient(serverUrl);
+    public PreloginREPL(String serverUrl, int port) {
+        client = new ChessClient(serverUrl, port);
     }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
+            loggedIn = false;
             printPrompt();
             String line = scanner.nextLine();
 
             try {
                 result = client.evalPreLogin(line);
                 System.out.println(result);
-                if (line.contains("register") || line.contains("login")) {
+                if (result.contains("logged in") || result.contains("registered")) {
+                    loggedIn = true;
                     PostloginREPL postloginREPL = new PostloginREPL(client);
                     postloginREPL.run();
                 }
@@ -28,6 +34,7 @@ public class PreloginREPL {
             }
 
         }
+        loggedIn = false;
     }
 
     private void printPrompt() {

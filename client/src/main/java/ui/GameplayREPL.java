@@ -1,12 +1,25 @@
 package ui;
 
+import chess.ChessGame;
+
 import java.util.Scanner;
 
 public class GameplayREPL {
     private final ChessClient client;
+   // private final String username;
+    private final ChessGame.TeamColor teamColor;
 
-    public GameplayREPL(ChessClient client) {
+    public GameplayREPL(ChessClient client, String playerColor) {
         this.client = client;
+        //this.username = username;
+        if (playerColor.equals("black")) {
+            teamColor = ChessGame.TeamColor.BLACK;
+        } else if (playerColor.equals("white")){
+            teamColor = ChessGame.TeamColor.WHITE;
+        } else {
+            teamColor = null;
+        }
+
     }
 
     public void run() {
@@ -17,8 +30,16 @@ public class GameplayREPL {
         while (!result.equals("quit") || !result.equals("resign")) {
             String line = scanner.nextLine();
             try {
-                result = client.evalPostLogin(line);
-                System.out.println(result);
+                if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
+                    chessConsole.whiteBoard();
+                } else if (teamColor.equals(ChessGame.TeamColor.BLACK)) {
+                    chessConsole.blackBoard();
+
+                } else {
+                    chessConsole.whiteBoard();
+                }
+              //  result = client.evalPostLogin(line);
+             //   System.out.println(result);
 
             } catch (Throwable e) {
                 throw e;
