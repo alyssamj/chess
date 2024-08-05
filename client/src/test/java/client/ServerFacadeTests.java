@@ -127,18 +127,53 @@ public class ServerFacadeTests {
     @Test
     void joinGame() throws Exception {
         var authData = facade.register(registerRequest);
-        int sizeBefore = gameDAO.listGames().length;
         CreateRequest createRequest = new CreateRequest(authData.authToken(), "game");
         var creation = facade.createGame(createRequest);
-        int sizeAfter = gameDAO.listGames().length;
-        JoinRequest joinRequest = new JoinRequest(authData.authToken(), registerRequest.username(), creation.gameID());
+        JoinRequest joinRequest = new JoinRequest(authData.authToken(), "black", creation.gameID());
         var joiningGame = facade.joinGame(joinRequest);
 
         assertEquals(joiningGame.getClass(), JoinResult.class);
-        //assertNull(joiningGame.message());
-
-
+        assertNull(joiningGame.message());
     }
+
+    @Test
+    void teamColorAlreadyTaken() throws Exception {
+        var authData = facade.register(registerRequest);
+        CreateRequest createRequest = new CreateRequest(authData.authToken(), "game");
+        var creation = facade.createGame(createRequest);
+        JoinRequest joinRequest = new JoinRequest(authData.authToken(), "black", creation.gameID());
+        var joiningGame = facade.joinGame(joinRequest);
+        var joinAgain = facade.joinGame(joinRequest);
+
+        assertNull(joinAgain);
+    }
+
+    @Test
+    void listGames() throws Exception {
+        var authData = facade.register(registerRequest);
+        CreateRequest createRequest = new CreateRequest(authData.authToken(), "game");
+        var creation = facade.createGame(createRequest);
+        ListRequest listRequest = new ListRequest(authData.authToken());
+        var listResult = facade.listGames(listRequest);
+
+        assertNotNull(listResult);
+        assertNull(listResult.message());
+    }
+
+    @Test
+    void invalidAuthTokenForList() throws Exception {
+        var authData = facade.register(registerRequest);
+        CreateRequest createRequest = new CreateRequest(authData.authToken(), "game");
+        var creation = facade.createGame(createRequest);
+        ListRequest listRequest = new ListRequest("asdbda;sldkfj");
+        var listResult = facade.listGames(listRequest);
+
+        assertNull(listResult);
+    }
+
+
+    @Test
+
 
 
 
