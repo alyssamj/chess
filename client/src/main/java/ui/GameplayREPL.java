@@ -29,7 +29,7 @@ public class GameplayREPL {
         System.out.println(printPrompt());
         while (!result.contains("quit") && !result.equals("resign")) {
             String line = scanner.nextLine();
-            result = client.evalPostLogin(line);
+            result = client.evalGamePlay(line);
             try {
                 if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
                     chessConsole.whiteBoard();
