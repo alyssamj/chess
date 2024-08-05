@@ -72,7 +72,7 @@ public class GameService {
 
     public JoinResult joinGame(JoinRequest joinRequest) throws DataAccessException {
         String authToken = joinRequest.authToken();
-        String playerColor = joinRequest.playerColor();
+        String playerColor = joinRequest.playerColor().toLowerCase();
         if (checkAuthToken(authToken)) {
             JoinResult joinResult = new JoinResult("Error: unauthorized");
             return joinResult;

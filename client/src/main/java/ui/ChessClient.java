@@ -1,8 +1,7 @@
 package ui;
 
-import chess.ChessBoard;
 import requestsandresponses.*;
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;

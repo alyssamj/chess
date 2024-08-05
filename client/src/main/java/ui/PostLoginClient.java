@@ -1,6 +1,6 @@
 package ui;
 
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 
