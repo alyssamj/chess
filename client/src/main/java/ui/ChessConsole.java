@@ -60,7 +60,7 @@ public class ChessConsole {
     }
 
     private static String[] getHeaders(ChessGame.TeamColor teamColor) {
-        if (teamColor == ChessGame.TeamColor.BLACK) {
+        if (teamColor == ChessGame.TeamColor.WHITE) {
             String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h"};
             return headers;
         } else {
@@ -79,6 +79,15 @@ public class ChessConsole {
     }
 
     private static void drawChessGameBlack(PrintStream out) {
+        for (int row = 8; row >= 1; row--) {
+            drawRowOfSquares(out, row);
+            if (row < BOARD_SIZE_IN_SQUARES -1) {
+                setBlack(out);
+            }
+        }
+    }
+
+    private static void drawChessBoardWhite(PrintStream out) {
         for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
 
             drawRowOfSquares(out, boardRow);
@@ -87,16 +96,6 @@ public class ChessConsole {
                 setBlack(out);
             }
         }
-    }
-
-    private static void drawChessBoardWhite(PrintStream out) {
-        for (int row = 8; row >= 1; row--) {
-            drawRowOfSquares(out, row);
-            if (row < BOARD_SIZE_IN_SQUARES -1) {
-                setBlack(out);
-            }
-        }
-
     }
 
 

@@ -74,7 +74,7 @@ public class ChessClient {
     }
 
     private String quit() {
-        return "you have quit";
+        return "quit";
     }
 
     private String helpPost() {
@@ -108,7 +108,7 @@ public class ChessClient {
         if (logoutResult.message() != null) {
             return logoutResult.message();
         }
-        return "logged out";
+        return "logged out - press help to see commands";
     }
 
     public String register(String[] params) {
