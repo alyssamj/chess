@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -30,6 +32,18 @@ public class WebSocketService {
         ChessGame chessGame = gameData.game();
         return chessGame;
     }
+
+    public String makeMove(ChessMove move, Integer gameID) throws DataAccessException {
+        GameData game = gameDAO.getGameWithID(gameID);
+        ChessGame chessGame = game.game();
+        try {
+            chessGame.makeMove(move);
+        } catch (InvalidMoveException e) {
+            return "Unable to make move";
+        }
+        return "Move successful";
+    }
+
 
     public String getUsername(String authToken) throws DataAccessException {
         String username = authDAO.returnUserName(authToken);
