@@ -34,7 +34,11 @@ public class Server {
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
-        webSocketService = new WebSocketService(userDAO, authDAO, gameDAO);
+        try {
+            webSocketService = new WebSocketService(userDAO, authDAO, gameDAO);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         webSocketHandler = new WebsocketHandler(webSocketService);
 
         Spark.port(desiredPort);

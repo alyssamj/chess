@@ -17,16 +17,22 @@ public class WebSocketService {
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
 
-    public WebSocketService(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
+    public WebSocketService(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) throws DataAccessException {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
+        gameDAO.createGame(new GameData(0, null, null, "mygame", new ChessGame()));
     }
 
 
     public ChessGame connect(Integer gameID) throws DataAccessException {
-        GameData gamData = gameDAO.getGameWithID(gameID);
-        ChessGame chessGame = gamData.game();
+        GameData gameData = gameDAO.getGameWithID(gameID);
+        ChessGame chessGame = gameData.game();
         return chessGame;
+    }
+
+    public String getUsername(String authToken) throws DataAccessException {
+        String username = authDAO.returnUserName(authToken);
+        return username;
     }
 }
