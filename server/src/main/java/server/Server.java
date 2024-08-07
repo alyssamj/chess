@@ -1,23 +1,26 @@
 package server;
 
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import requestsandresponses.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;
 import service.*;
 import spark.*;
+import websocket.WebsocketHandler;
 
 public class Server {
     private int port;
     private UserService userService;
     private ClearService clearService;
     private GameService gameService;
+    private WebsocketHandler webSocketHandler;
+    private WebSocketService webSocketService;
 
     public int run(int desiredPort) {
         final UserDAO userDAO;
         final AuthDAO authDAO;
         final GameDAO gameDAO;
-
         try {
             System.out.println("Server started on port: " + this.port);
             DatabaseManager.createDatabase();
@@ -31,12 +34,16 @@ public class Server {
         clearService = new ClearService(userDAO, authDAO, gameDAO);
         userService = new UserService(userDAO, authDAO);
         gameService = new GameService(userDAO, authDAO, gameDAO);
+        webSocketService = new WebSocketService(userDAO, authDAO, gameDAO);
+        webSocketHandler = new WebsocketHandler(webSocketService);
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-       // Spark.delete("/db", this::clear);
+        Spark.webSocket("/ws", webSocketHandler);
+
         Spark.post("/session", this::login);
         Spark.post("/user", this::register);
         Spark.delete("/session", this::logout);
