@@ -18,14 +18,8 @@ public class PostloginREPL {
             String line = scanner.nextLine();
 
             try {
-                result = client.evalPostLogin(line);
-                if (result instanceof String) {
-                    System.out.println(result);
-                } else if (result instanceof GameplayREPL) {
-
-                }
                 if (line.contains("join")) {
-                    GameplayREPL gameplayREPL = client.evalPostLogin(line);
+                    GameplayREPL gameplayREPL = (GameplayREPL) client.evalPostLogin(line);
                    // if (result.contains("joined game") || result.contains("now observing game")) {
                         String playerColor = null;
                         if (result.contains("black")) {
@@ -36,10 +30,7 @@ public class PostloginREPL {
                         gameplayREPL.run();
                   //  }
                 } else {
-                    if (client.evalPostLogin(line).getClass() == String.class) {
-                        result = client.evalPostLogin(line);
-                        System.out.println(result);
-                    }
+                    result = client.evalPostLogin(line).toString();
                 }
             } catch(Throwable e){
                 throw e;

@@ -3,9 +3,9 @@ package websocket.messages;
 import chess.ChessGame;
 
 public class LoadGameMessage extends ServerMessage {
-    public final Object game;
+    public final ChessGame game;
 
-    public LoadGameMessage(Object game) {
+    public LoadGameMessage(ChessGame game) {
         super(ServerMessageType.LOAD_GAME);
         this.game = game;
     }

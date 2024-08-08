@@ -28,7 +28,7 @@ public class PreloginREPL {
             String line = scanner.nextLine();
 
             try {
-                result = client.evalPreLogin(line);
+                result = client.evalPreLogin(line).toString();
                 System.out.println(result);
                 if (result.contains("logged in") || result.contains("registered")) {
                     loggedIn = true;

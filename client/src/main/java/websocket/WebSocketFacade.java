@@ -1,10 +1,14 @@
 package websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.commands.MakeMove;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -15,6 +19,7 @@ public class WebSocketFacade extends Endpoint {
 
     Session session;
     MessageHandler messageHandler;
+    private ChessGame chessGame;
 
     public WebSocketFacade(String url, MessageHandler messageHandler) {
         try {
@@ -38,6 +43,14 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) {
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        switch(serverMessage.getServerMessageType()) {
+            case LOAD_GAME -> chessGame = new Gson().fromJson(message, LoadGameMessage.class).getGame();
+        }
+    }
+
     public void connectToGame(Integer gameID, String authToken) {
         try {
             var userCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
@@ -45,6 +58,10 @@ public class WebSocketFacade extends Endpoint {
         } catch (Exception ex) {
             throw new RuntimeException(ex.getMessage());
         }
+    }
+
+    public ChessGame getChessGame() {
+        return chessGame;
     }
 
     public void makeMove(String authToken, Integer gameID, ChessMove move) {

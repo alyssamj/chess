@@ -9,16 +9,18 @@ import java.util.Scanner;
 
 public class GameplayREPL implements MessageHandler{
     private ChessClient client;
-    private ChessGame.TeamColor teamColor;
+    public ChessGame.TeamColor teamColor;
     private WebSocketFacade webSocketFacade;
     private MessageHandler messageHandler;
-    private String serverUrl;
-    private int gameID;
+    public String serverUrl;
+    public int gameID;
+    public String authToken;
 
     public GameplayREPL(ChessClient client, String playerColor, String serverUrl, int gameID, String authToken) {
         this.client = client;
         this.serverUrl = serverUrl;
         this.gameID = gameID;
+        this.authToken = authToken;
         messageHandler = new MessageHandler() {
             @Override
             public void notify(Notification notification) {
@@ -39,7 +41,7 @@ public class GameplayREPL implements MessageHandler{
     public void run() {
         Scanner scanner = new Scanner(System.in);
         ChessConsole chessConsole = new ChessConsole();
-        GameClient gameClient = new GameClient(webSocketFacade, messageHandler, chessGame, )
+        GameClient gameClient = new GameClient(webSocketFacade, messageHandler, client, this);
         var result = "";
         System.out.println(printPrompt());
         if (teamColor == null) {
@@ -53,7 +55,7 @@ public class GameplayREPL implements MessageHandler{
         }
         while (!result.contains("quit") && !result.equals("resign")) {
             String line = scanner.nextLine();
-            result = client.evalGamePlay(line);
+            result = client.evalGamePlay(line).toString();
             try {
                 if (teamColor == null) {
                     chessConsole.whiteBoard();

@@ -12,27 +12,35 @@ public class GameClient {
     private MessageHandler messageHandler;
     private ChessClient client;
     private ChessGame chessGame;
+    private GameplayREPL gameplayREPL;
 
-    public GameClient(WebSocketFacade webSocketFacade, MessageHandler messageHandler, ChessClient client, ChessGame chessGame) {
+    public GameClient(WebSocketFacade webSocketFacade, MessageHandler messageHandler, ChessClient client, GameplayREPL gameplayREPL) {
         this.webSocketFacade = webSocketFacade;
         this.messageHandler = messageHandler;
         this.client = client;
-        this.chessGame = chessGame;
+        this.gameplayREPL = gameplayREPL;
     }
 
 
-    public String evalGamePlay(String input) {
+    public Object evalGamePlay(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "connect" -> connect(params);
                 case "move" -> makeMove(params);
                 default -> help();
             };
         } catch (RuntimeException e) {
             throw e;
         }
+    }
+
+    public ChessGame connect(String[] params) {
+        webSocketFacade.connectToGame(gameplayREPL.gameID, gameplayREPL.authToken);
+        if (chessGame == null)
+        return chessGame;
     }
 
     public String makeMove(String[] params) {
@@ -45,6 +53,7 @@ public class GameClient {
         int row = startPosition.charAt(1);
         Character column = startPosition.charAt(0);
         int col = 0;
+        if ()
         switch (column) {
             case 'a' : row = 1;
             case 'b' : row = 2;
