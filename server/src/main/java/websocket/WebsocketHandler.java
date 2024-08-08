@@ -33,7 +33,7 @@ public class WebsocketHandler {
 
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
         switch (userGameCommand.getCommandType()) {
             case CONNECT -> {
@@ -42,6 +42,12 @@ public class WebsocketHandler {
             case MAKE_MOVE ->{
                 MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
                 makeMove(makeMove.getMove(), userGameCommand.getGameID(), userGameCommand.getAuthToken(), session);
+            }
+            case LEAVE -> {
+                leaveGame(userGameCommand.getAuthToken(), userGameCommand.getGameID(), session);
+            }
+            case RESIGN -> {
+                resign(userGameCommand.getAuthToken(), userGameCommand.getGameID(), session);
             }
         }
     }
@@ -62,18 +68,44 @@ public class WebsocketHandler {
         }
     }
 
-    private void makeMove(ChessMove chessMove, Integer gameID, String authToken, Session session) throws DataAccessException {
+    private void makeMove(ChessMove chessMove, Integer gameID, String authToken, Session session) throws DataAccessException, IOException {
         String username = webSocketService.getUsername(authToken);
-        String result = webSocketService.makeMove(chessMove, gameID);
-        var notification = new Notification(result);
         try {
+            String result = webSocketService.makeMove(chessMove, gameID);
+            var notification = new Notification(result);
+            var message = String.format("%s has made the move: %s", username, chessMove);
+            var broadcast = new Notification(message);
             notify(session, notification);
+            broadcast(session, broadcast);
         } catch (IOException e) {
-            var error = new ErrorMessage(result);
+            var error = new ErrorMessage("unable to make move");
+            notify(session, error);
         }
-
-
     }
+
+    private void leaveGame(String authToken, Integer gameID, Session session) throws DataAccessException, IOException {
+        String username = webSocketService.getUsername(authToken);
+        try {
+            String result = webSocketService.leaveGame(gameID, username);
+            var notification = new Notification("You have left the game");
+            var message = String.format("%s has left the game", username);
+            var broadcastMessage = new Notification(message);
+            notify(session, notification);
+            broadcast(session, broadcastMessage);
+        } catch (IOException e) {
+            var error = new ErrorMessage("unable to leave game");
+            notify(session, error);
+        }
+    }
+
+    private void resign(String authToken, Integer gameID, Session session) throws DataAccessException, IOException {
+        String username = webSocketService.getUsername(authToken);
+        String message = String.format("%s has resigned", username);
+        var broadcastMessage = new Notification(message);
+        broadcast(null, broadcastMessage);
+    }
+
+
 
     private <T extends ServerMessage> void notify(Session session, T message) throws IOException {
         Gson gson = new Gson();

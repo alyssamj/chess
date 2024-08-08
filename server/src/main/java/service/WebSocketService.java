@@ -23,7 +23,7 @@ public class WebSocketService {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
-        gameDAO.createGame(new GameData(0, null, null, "mygame", new ChessGame()));
+      //  gameDAO.createGame(new GameData(0, null, null, "mygame", new ChessGame()));
     }
 
 
@@ -43,6 +43,17 @@ public class WebSocketService {
         }
         return "Move successful";
     }
+
+    public String leaveGame(Integer gameID, String username) throws DataAccessException {
+        GameData game = gameDAO.getGameWithID(gameID);
+        if (gameDAO.getWhiteUsername(gameID) == username) {
+            gameDAO.addWhiteUsername(gameID, null);
+        } else if (gameDAO.getBlackUsername(gameID) == username) {
+            gameDAO.addBlackUsername(gameID, null);
+        }
+        return "";
+    }
+
 
 
     public String getUsername(String authToken) throws DataAccessException {

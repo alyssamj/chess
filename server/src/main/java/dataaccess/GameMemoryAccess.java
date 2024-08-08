@@ -10,6 +10,8 @@ public class GameMemoryAccess implements GameDAO {
     }
 
     final private HashMap<Integer, GameData> games = new HashMap<>();
+
+
     @Override
     public GameData[] listGames() throws DataAccessException {
         int sizeOfList = games.size();
@@ -67,6 +69,16 @@ public class GameMemoryAccess implements GameDAO {
         String playerColor = "WHITE";
         GameData updatedGame = updateGame(gameID, username, playerColor);
         games.put(gameID, updatedGame);
+    }
+
+    @Override
+    public String getBlackUsername(Integer gameID) throws DataAccessException {
+        return "";
+    }
+
+    @Override
+    public String getWhiteUsername(Integer gameID) throws DataAccessException {
+        return "";
     }
 
     public GameData updateGame(Integer gameID, String username, String playerColor) throws DataAccessException {

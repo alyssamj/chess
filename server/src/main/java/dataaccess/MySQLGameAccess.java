@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 //import static dataaccess.DatabaseManager.getConnection;
 
@@ -217,5 +216,41 @@ public class MySQLGameAccess implements GameDAO {
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    @Override
+    public String getBlackUsername(Integer gameID) throws DataAccessException {
+        String getSQL = "SELECT blackUsername FROM games WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(getSQL)) {
+            preparedStatement.setInt(1, gameID);
+            try (var rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    String blackUsername = rs.getString("blackUsername");
+                    return blackUsername;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return "";
+    }
+
+    @Override
+    public String getWhiteUsername(Integer gameID) throws DataAccessException {
+        String getSQL = "SELECT whiteUsername FROM games WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(getSQL)) {
+            preparedStatement.setInt(1, gameID);
+            try (var rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    String whiteUsername = rs.getString("whiteUsername");
+                    return whiteUsername;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return "";
     }
 }
