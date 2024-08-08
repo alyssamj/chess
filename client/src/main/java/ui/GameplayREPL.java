@@ -1,17 +1,31 @@
 package ui;
 
 import chess.ChessGame;
+import websocket.MessageHandler;
+import websocket.WebSocketFacade;
+import websocket.messages.Notification;
 
 import java.util.Scanner;
 
-public class GameplayREPL {
-    private final ChessClient client;
-   // private final String username;
-    private final ChessGame.TeamColor teamColor;
+public class GameplayREPL implements MessageHandler{
+    private ChessClient client;
+    private ChessGame.TeamColor teamColor;
+    private WebSocketFacade webSocketFacade;
+    private MessageHandler messageHandler;
+    private String serverUrl;
+    private int gameID;
 
-    public GameplayREPL(ChessClient client, String playerColor) {
+    public GameplayREPL(ChessClient client, String playerColor, String serverUrl, int gameID, String authToken) {
         this.client = client;
-        //this.username = username;
+        this.serverUrl = serverUrl;
+        this.gameID = gameID;
+        messageHandler = new MessageHandler() {
+            @Override
+            public void notify(Notification notification) {
+                printPrompt();
+            }
+        };
+        webSocketFacade = new WebSocketFacade(serverUrl, messageHandler);
         if (playerColor == null) {
             teamColor = null;
         }
@@ -20,14 +34,23 @@ public class GameplayREPL {
         } else{
             teamColor = ChessGame.TeamColor.WHITE;
         }
-
     }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
         ChessConsole chessConsole = new ChessConsole();
+        GameClient gameClient = new GameClient(webSocketFacade, messageHandler, chessGame, )
         var result = "";
         System.out.println(printPrompt());
+        if (teamColor == null) {
+            chessConsole.whiteBoard();
+            chessConsole.blackBoard();
+        }
+        else if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
+            chessConsole.whiteBoard();
+        } else {
+            chessConsole.blackBoard();
+        }
         while (!result.contains("quit") && !result.equals("resign")) {
             String line = scanner.nextLine();
             result = client.evalGamePlay(line);
@@ -48,10 +71,15 @@ public class GameplayREPL {
         }
     }
 
-    private static String printPrompt() {
+    public static String printPrompt() {
         return """
-                Press help to see chess game
+                Enter command to see board;
                 """;
+    }
+
+    @Override
+    public void notify(Notification notification) {
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + notification.getMessage());
     }
 }
 

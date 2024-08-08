@@ -2,6 +2,8 @@ package ui;
 
 import requestsandresponses.*;
 import serverfacade.ServerFacade;
+import websocket.MessageHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,7 +23,7 @@ public class ChessClient {
         this.serverUrl = serverUrl;
     }
 
-    public String evalPreLogin(String input) {
+    public Object evalPreLogin(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
@@ -37,7 +39,7 @@ public class ChessClient {
         }
     }
 
-    public String evalPostLogin(String input) {
+    public Object evalPostLogin(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
@@ -56,7 +58,7 @@ public class ChessClient {
         }
     }
 
-    public String evalGamePlay(String input) {
+    public Object evalGamePlay(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
@@ -73,11 +75,11 @@ public class ChessClient {
         }
     }
 
-    private String quit() {
+    private Object quit() {
         return "quit";
     }
 
-    private String helpPost() {
+    private Object helpPost() {
         return """
                 create <GAMENAME> - create a new game
                 list - list games
@@ -89,7 +91,7 @@ public class ChessClient {
                 """;
     }
 
-    public String helpLogin() {
+    public Object helpLogin() {
 
         return """
         register <USERNAME> <PASSWORD> <EMAIL> - to create an account
@@ -99,7 +101,7 @@ public class ChessClient {
         """;
     }
 
-    public String logout() {
+    public Object logout() {
         LogoutRequest logoutRequest = new LogoutRequest(authToken);
         LogoutResult logoutResult = server.logout(logoutRequest);
         if (logoutResult == null) {
@@ -111,7 +113,7 @@ public class ChessClient {
         return "logged out - press help to see commands";
     }
 
-    public String register(String[] params) {
+    public Object register(String[] params) {
         if (params.length < 3) {
             return "Error: need username, password and email";
         }
@@ -131,7 +133,7 @@ public class ChessClient {
         return "registered - press help";
     }
 
-    public String login(String[] params) {
+    public Object login(String[] params) {
         if (params.length != 2) {
             return "please only give username and password";
         }
@@ -147,7 +149,7 @@ public class ChessClient {
 
     }
 
-    public String createGame(String[] params) {
+    public Object createGame(String[] params) {
         String gameName = params[0];
         CreateRequest createRequest = new CreateRequest(authToken, gameName);
         CreateResult createResult = server.createGame(createRequest);
@@ -157,7 +159,7 @@ public class ChessClient {
         return "gameID of " + gameName + ": "  + String.valueOf(createResult.gameID());
     }
 
-    public String listGames(String[] params) {
+    public Object listGames(String[] params) {
         ListRequest listRequest = new ListRequest(authToken);
         ListResult listResult = server.listGames(listRequest);
         StringBuilder stringBuilder = new StringBuilder();
@@ -196,7 +198,7 @@ public class ChessClient {
         return stringBuilder.toString();
     }
 
-    public String joinGame(String[] params) {
+    public Object joinGame(String[] params) {
         if (!isInteger(params[0])) {
             return "invalid gameID";
         }
@@ -214,10 +216,11 @@ public class ChessClient {
         if (joinResult.message() != null) {
             return joinResult.message();
         }
-        return "joined game as " + playerColor +" - press help";
+        GameplayREPL gameplayREPL = new GameplayREPL(this, playerColor, serverUrl, gameID, authToken);
+        return gameplayREPL;
     }
 
-    public String observeGame(String[] params) {
+    public Object observeGame(String[] params) {
         int gameToJoin = Integer.parseInt(params[0]);
         return "now observing game " + String.valueOf(gameToJoin);
     }
