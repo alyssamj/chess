@@ -31,6 +31,12 @@ public class WebsocketHandler {
         this.webSocketService = webSocketService;
     }
 
+    @OnWebSocketConnect
+    public void onConnect(Session session) {
+
+    }
+
+
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException {
@@ -52,7 +58,7 @@ public class WebsocketHandler {
         }
     }
 
-    private void connect(String authToken, Integer gameID, Session session) {
+    private void connect(String authToken, Integer gameID, Session session) throws IOException {
         Set<Session> sessions = sessionsMap.getOrDefault(gameID, new HashSet<>());
         sessions.add(session);
         sessionsMap.put(gameID, sessions);
@@ -65,6 +71,7 @@ public class WebsocketHandler {
             broadcast(session, notification);
         } catch (IOException | DataAccessException e) {
             var error = new ErrorMessage("Unable to connect to game");
+            notify(session, error);
         }
     }
 
