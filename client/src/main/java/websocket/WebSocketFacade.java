@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.commands.MakeMove;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
@@ -52,6 +53,9 @@ public class WebSocketFacade extends Endpoint {
             case NOTIFICATION:
                 Notification notification = new Gson().fromJson(message, Notification.class);
                 String myMessage = notification.getMessage();
+            case ERROR:
+                ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
+                String errorMessage = error.getMessage();
         }
     }
 

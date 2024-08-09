@@ -116,6 +116,7 @@ public class GameplayREPL implements MessageHandler{
         } catch (Exception ex) {
             String message = "Unable to connect to the game. Please try again";
         }
+        chessGame = webSocketFacade.getChessGame();
     }
 
     public void makeMove(String[] params) {
@@ -137,9 +138,11 @@ public class GameplayREPL implements MessageHandler{
         ChessPosition endPos = new ChessPosition(endRow, endCol);
         if (chessBoard.getPiece(startPos) != null) {
             ChessMove chessMove = new ChessMove(startPos, endPos, checkForPawn(startPos, endPos, upgradePiece));
+            webSocketFacade.makeMove(authToken, gameID, chessMove);
         } else {
             System.out.println("no piece found at location");
         }
+        chessGame = webSocketFacade.getChessGame();
     }
 
 

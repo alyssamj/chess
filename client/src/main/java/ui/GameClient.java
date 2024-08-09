@@ -28,7 +28,7 @@ public class GameClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "connect" -> connect(params);
-                case "move" -> makeMove(gameplayREPL.authToken, gameplayREPL.gameID, );
+           //     case "move" -> makeMove(gameplayREPL.authToken, gameplayREPL.gameID, );
                 default -> help();
             };
         } catch (RuntimeException e) {

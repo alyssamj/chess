@@ -7,6 +7,7 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import static ui.EscapeSequences.*;
 
@@ -18,6 +19,13 @@ public class ChessConsole {
 
     public ChessConsole(ChessBoard chessBoard) {
         this.myBoard = chessBoard;
+    }
+
+    public void highlightWhiteMoves() {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+        drawHeaders(out, ChessGame.TeamColor.WHITE);
+
     }
 
 
@@ -98,6 +106,11 @@ public class ChessConsole {
         }
     }
 
+    private void highLightChessBoardWhite(PrintStream out, ArrayList<ChessPosition> legalMoves) {
+
+
+    }
+
 
     private  void drawRowOfSquares(PrintStream out, int row) {
         String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
@@ -138,6 +151,13 @@ public class ChessConsole {
         }
         setWhite(out);
     }
+
+    private static void printLightHighlightSquare(PrintStream out, ChessPiece piece) {
+        out.print(SET_BG_COLOR_YELLOW);
+        out.print(" "+EMPTY);
+        setWhite(out);
+    }
+
 
     private static String getPlayerForPiece(PrintStream out, ChessPiece piece) {
         String stringToReturn = "";
