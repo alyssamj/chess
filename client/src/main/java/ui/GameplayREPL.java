@@ -1,33 +1,30 @@
 package ui;
 
-import chess.ChessGame;
+import chess.*;
 import websocket.MessageHandler;
 import websocket.WebSocketFacade;
 import websocket.messages.Notification;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class GameplayREPL implements MessageHandler{
     private ChessClient client;
     public ChessGame.TeamColor teamColor;
-    private WebSocketFacade webSocketFacade;
-    private MessageHandler messageHandler;
     public String serverUrl;
     public int gameID;
     public String authToken;
+    private ChessGame chessGame;
+    private ChessBoard chessBoard;
+    private ChessConsole chessConsole;
+    public WebSocketFacade webSocketFacade;
 
     public GameplayREPL(ChessClient client, String playerColor, String serverUrl, int gameID, String authToken) {
         this.client = client;
         this.serverUrl = serverUrl;
         this.gameID = gameID;
         this.authToken = authToken;
-        messageHandler = new MessageHandler() {
-            @Override
-            public void notify(Notification notification) {
-                printPrompt();
-            }
-        };
-        webSocketFacade = new WebSocketFacade(serverUrl, messageHandler);
+        webSocketFacade = new WebSocketFacade(serverUrl, this);
         if (playerColor == null) {
             teamColor = null;
         }
@@ -38,10 +35,13 @@ public class GameplayREPL implements MessageHandler{
         }
     }
 
+    public WebSocketFacade getWebSocketFacade() {
+        return webSocketFacade;
+    }
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        ChessConsole chessConsole = new ChessConsole();
-        GameClient gameClient = new GameClient(webSocketFacade, messageHandler, client, this);
+        chessConsole = new ChessConsole(chessBoard);
         var result = "";
         System.out.println(printPrompt());
         if (teamColor == null) {
@@ -73,6 +73,17 @@ public class GameplayREPL implements MessageHandler{
         }
     }
 
+    private void redrawChessBoard(ChessGame.TeamColor playerColor) {
+        if (playerColor == null) {
+            chessConsole.blackBoard();
+            chessConsole.whiteBoard();
+        } else if (playerColor == ChessGame.TeamColor.WHITE) {
+            chessConsole.whiteBoard();
+        } else if (playerColor == ChessGame.TeamColor.BLACK) {
+            chessConsole.blackBoard();
+        }
+    }
+
     public static String printPrompt() {
         return """
                 Enter command to see board;
@@ -83,5 +94,109 @@ public class GameplayREPL implements MessageHandler{
     public void notify(Notification notification) {
         System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + notification.getMessage());
     }
+
+    public void evalGamePlay(String input) {
+        try {
+            var tokens = input.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            switch (cmd) {
+                case "connect" -> connect(params);
+                case "move" -> makeMove(params);
+                default -> help();
+            };
+        } catch (RuntimeException e) {
+            throw e;
+        }
+    }
+
+    public void connect(String[] params) {
+        try {
+            webSocketFacade.connectToGame(gameID, authToken);
+        } catch (Exception ex) {
+            String message = "Unable to connect to the game. Please try again";
+        }
+    }
+
+    public void makeMove(String[] params) {
+        if (params.length < 2) {
+            System.out.println("Error: Invalid move command. Please try again");
+        }
+        String startPosition = params[0];
+        String endPosition = params[1];
+        String upgradePiece = params[2];
+
+        int startRow = startPosition.charAt(1);
+        Character startColumn = startPosition.charAt(0);
+        int startCol = getColumn(startColumn);
+        ChessPosition startPos = new ChessPosition(startRow, startCol);
+
+        int endRow = endPosition.charAt(1);
+        Character endColumn = endPosition.charAt(0);
+        int endCol = getColumn(endColumn);
+        ChessPosition endPos = new ChessPosition(endRow, endCol);
+        if (chessBoard.getPiece(startPos) != null) {
+            ChessMove chessMove = new ChessMove(startPos, endPos, checkForPawn(startPos, endPos, upgradePiece));
+        } else {
+            System.out.println("no piece found at location");
+        }
+    }
+
+
+
+    private ChessPiece.PieceType checkForPawn(ChessPosition startPosition, ChessPosition endPosition, String upgradePiece) {
+        if (chessBoard.getPiece(startPosition) == null) {
+            return null;
+        } else if (chessBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (chessBoard.getPiece(startPosition).getTeamColor() == ChessGame.TeamColor.WHITE && endPosition.getRow() == 8) {
+                return checkForPawn(startPosition, endPosition, upgradePiece);
+            }
+            else if (chessBoard.getPiece(startPosition).getTeamColor() == ChessGame.TeamColor.BLACK && endPosition.getRow() == 1) {
+                return checkForPawn(startPosition, endPosition, upgradePiece);
+            }
+        }
+        return null;
+    }
+
+    private ChessPiece.PieceType upgradePiece(String upgradePiece, String playerColor) {
+        String upgrade = upgradePiece.toLowerCase();
+        return switch (upgrade) {
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            default -> null;
+        };
+    }
+
+
+
+    private int getColumn(Character column) {
+        int col = 0;
+        switch (column) {
+            case 'a' : col = 1;
+            case 'b' : col = 2;
+            case 'c' : col = 3;
+            case 'd' : col = 4;
+            case 'e' : col = 5;
+            case 'f' : col = 6;
+            case 'g' : col = 7;
+            case 'h' : col = 8;
+        }
+        return col;
+    }
+
+    public void help() {
+        System.out.println("""
+                redraw - redraw chess board
+                leave - leave game
+                move <START> <END> - make a move
+                resign - forfeit the game
+                highlight - shows legal moves
+                help - possible commands
+                """);
+    }
+
 }
+
 

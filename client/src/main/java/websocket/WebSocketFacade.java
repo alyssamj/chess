@@ -47,7 +47,11 @@ public class WebSocketFacade extends Endpoint {
     public void onMessage(Session session, String message) {
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         switch(serverMessage.getServerMessageType()) {
-            case LOAD_GAME -> chessGame = new Gson().fromJson(message, LoadGameMessage.class).getGame();
+            case LOAD_GAME:
+                chessGame = new Gson().fromJson(message, LoadGameMessage.class).getGame();
+            case NOTIFICATION:
+                Notification notification = new Gson().fromJson(message, Notification.class);
+                String myMessage = notification.getMessage();
         }
     }
 

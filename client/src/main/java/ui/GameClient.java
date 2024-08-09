@@ -1,24 +1,23 @@
 package ui;
 
-import chess.ChessGame;
-import chess.ChessPosition;
+import chess.*;
 import websocket.MessageHandler;
 import websocket.WebSocketFacade;
+import websocket.commands.MakeMove;
 
 import java.util.Arrays;
 
 public class GameClient {
     private WebSocketFacade webSocketFacade;
-    private MessageHandler messageHandler;
-    private ChessClient client;
-    private ChessGame chessGame;
     private GameplayREPL gameplayREPL;
+    private ChessClient client;
+    private ChessBoard chessBoard;
+    private ChessGame chessGame;
 
-    public GameClient(WebSocketFacade webSocketFacade, MessageHandler messageHandler, ChessClient client, GameplayREPL gameplayREPL) {
+    public GameClient(WebSocketFacade webSocketFacade, GameplayREPL messageHandler, ChessClient client) {
         this.webSocketFacade = webSocketFacade;
-        this.messageHandler = messageHandler;
+        this.gameplayREPL = messageHandler;
         this.client = client;
-        this.gameplayREPL = gameplayREPL;
     }
 
 
@@ -29,7 +28,7 @@ public class GameClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "connect" -> connect(params);
-                case "move" -> makeMove(params);
+                case "move" -> makeMove(gameplayREPL.authToken, gameplayREPL.gameID, );
                 default -> help();
             };
         } catch (RuntimeException e) {
@@ -39,33 +38,58 @@ public class GameClient {
 
     public ChessGame connect(String[] params) {
         webSocketFacade.connectToGame(gameplayREPL.gameID, gameplayREPL.authToken);
-        if (chessGame == null)
+        if (chessGame == null) {
+            return null;
+        }
+        chessBoard = chessGame.getBoard();
         return chessGame;
     }
 
-    public String makeMove(String[] params) {
-        if (params.length < 2) {
-            return "Error: Invalid move command. Please try again";
+    public void makeMove(String authToken, Integer gameID, ChessMove move) {
+        try {
+            webSocketFacade.makeMove(authToken, gameID, move);
+        } catch (Exception e) {
+            throw new RuntimeException("Error sending move:");
         }
-        String startPosition = params[0];
-        String endPosition = params[1];
+    }
 
-        int row = startPosition.charAt(1);
-        Character column = startPosition.charAt(0);
+    private ChessPiece checkForPawn(ChessPosition startPosition, ChessPosition endPosition, String upgradePiece) {
+       if (chessBoard.getPiece(startPosition) == null) {
+           return null;
+       } else if (chessBoard.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.PAWN) {
+           if (chessBoard.getPiece(startPosition).getTeamColor() == ChessGame.TeamColor.WHITE && endPosition.getRow() == 8) {
+
+           }
+       }
+        return null;
+    }
+
+    private ChessPiece.PieceType upgradePiece(String upgradePiece, String playerColor) {
+        String upgrade = upgradePiece.toLowerCase();
+        return switch (upgrade) {
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            default -> null;
+        };
+    }
+
+
+
+    private int getColumn(Character column) {
         int col = 0;
-        if ()
         switch (column) {
-            case 'a' : row = 1;
-            case 'b' : row = 2;
-            case 'c' : row = 3;
-            case 'd' : row = 4;
-            case 'e' : row = 5;
-            case 'f' : row = 6;
-            case 'g' : row = 7;
-            case 'h' : row = 8;
+            case 'a' : col = 1;
+            case 'b' : col = 2;
+            case 'c' : col = 3;
+            case 'd' : col = 4;
+            case 'e' : col = 5;
+            case 'f' : col = 6;
+            case 'g' : col = 7;
+            case 'h' : col = 8;
         }
-
-        return "";
+        return col;
     }
 
     public String help() {

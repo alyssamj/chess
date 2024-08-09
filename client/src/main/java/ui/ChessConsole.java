@@ -14,12 +14,14 @@ import static ui.EscapeSequences.*;
 public class ChessConsole {
 
     private static final int BOARD_SIZE_IN_SQUARES = 8;
+    private ChessBoard myBoard;
 
-    private static ChessBoard myBoard;
+    public ChessConsole(ChessBoard chessBoard) {
+        this.myBoard = chessBoard;
+    }
+
 
     public void whiteBoard() {
-     myBoard = new ChessBoard();
-     myBoard.resetBoard();
      var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
      out.print(ERASE_SCREEN);
      ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
@@ -31,8 +33,6 @@ public class ChessConsole {
     }
 
     public void blackBoard() { //drawChessBoard() {
-        myBoard = new ChessBoard();
-        myBoard.resetBoard();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
@@ -78,7 +78,7 @@ public class ChessConsole {
         out.print(" ");
     }
 
-    private static void drawChessGameBlack(PrintStream out) {
+    private  void drawChessGameBlack(PrintStream out) {
         for (int row = 8; row >= 1; row--) {
             drawRowOfSquares(out, row);
             if (row < BOARD_SIZE_IN_SQUARES -1) {
@@ -87,7 +87,7 @@ public class ChessConsole {
         }
     }
 
-    private static void drawChessBoardWhite(PrintStream out) {
+    private void drawChessBoardWhite(PrintStream out) {
         for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
 
             drawRowOfSquares(out, boardRow);
@@ -99,7 +99,7 @@ public class ChessConsole {
     }
 
 
-    private static void drawRowOfSquares(PrintStream out, int row) {
+    private  void drawRowOfSquares(PrintStream out, int row) {
         String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
         setBlack(out);
         out.print(side[row-1] + " ");

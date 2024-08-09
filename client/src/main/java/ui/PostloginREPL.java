@@ -1,5 +1,8 @@
 package ui;
 
+import websocket.MessageHandler;
+import websocket.WebSocketFacade;
+
 import java.util.Scanner;
 
 public class PostloginREPL {
@@ -27,6 +30,7 @@ public class PostloginREPL {
                         } else if (result.contains("white")) {
                             playerColor = "white";
                         }
+                        GameClient gameClient = new GameClient(gameplayREPL.getWebSocketFacade(), gameplayREPL, client);
                         gameplayREPL.run();
                   //  }
                 } else {
