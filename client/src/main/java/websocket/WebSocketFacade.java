@@ -3,6 +3,8 @@ package websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.commands.MakeMove;
 import websocket.commands.UserGameCommand;
@@ -30,32 +32,29 @@ public class WebSocketFacade extends Endpoint {
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
-
-            //set message handler
-            this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
-                @Override
-                public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
-                    messageHandler.notify(notification);
-                }
-            });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new RuntimeException(ex.getMessage());
         }
     }
+
+    @OnWebSocketConnect
+    public void onConnect(Session session) {}
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         switch(serverMessage.getServerMessageType()) {
             case LOAD_GAME:
-                chessGame = new Gson().fromJson(message, LoadGameMessage.class).getGame();
+                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                messageHandler.loadGame(loadGameMessage);
+                break;
             case NOTIFICATION:
                 Notification notification = new Gson().fromJson(message, Notification.class);
-                String myMessage = notification.getMessage();
+                messageHandler.notify(notification);
+                break;
             case ERROR:
-                ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
-                String errorMessage = error.getMessage();
+                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+                messageHandler.error(errorMessage);
         }
     }
 

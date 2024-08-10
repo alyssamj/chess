@@ -1,10 +1,16 @@
 package ui;
 
 import chess.*;
+import com.google.gson.Gson;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.MessageHandler;
 import websocket.WebSocketFacade;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
+import javax.websocket.Session;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -42,6 +48,7 @@ public class GameplayREPL implements MessageHandler{
     public void run() {
         Scanner scanner = new Scanner(System.in);
         webSocketFacade.connectToGame(gameID, authToken);
+        chessBoard = chessGame.getBoard();
         chessConsole = new ChessConsole(chessBoard);
         var result = "";
         System.out.println(printPrompt());
@@ -96,6 +103,16 @@ public class GameplayREPL implements MessageHandler{
         System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + notification.getMessage());
     }
 
+    @Override
+    public void error(ErrorMessage errorMessage) {
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage.getMessage());
+    }
+
+    @Override
+    public void loadGame(LoadGameMessage loadGameMessage) {
+        this.chessGame = loadGameMessage.getGame();
+    }
+
     public void evalGamePlay(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
@@ -108,6 +125,27 @@ public class GameplayREPL implements MessageHandler{
             };
         } catch (RuntimeException e) {
             throw e;
+        }
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) {
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        switch(serverMessage.getServerMessageType()) {
+            case LOAD_GAME:
+                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                chessGame = loadGameMessage.getGame();
+                break;
+            case NOTIFICATION:
+                Notification notification = new Gson().fromJson(message, Notification.class);
+                String myMessage = notification.getMessage();
+                notify(notification);
+                break;
+            case ERROR:
+                ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
+                String errorMessage = error.getMessage();
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage);
+                break;
         }
     }
 
