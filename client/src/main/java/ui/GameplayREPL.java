@@ -41,6 +41,7 @@ public class GameplayREPL implements MessageHandler{
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
+        webSocketFacade.connectToGame(gameID, authToken);
         chessConsole = new ChessConsole(chessBoard);
         var result = "";
         System.out.println(printPrompt());
@@ -115,6 +116,7 @@ public class GameplayREPL implements MessageHandler{
             webSocketFacade.connectToGame(gameID, authToken);
         } catch (Exception ex) {
             String message = "Unable to connect to the game. Please try again";
+            System.out.println(message);
         }
         chessGame = webSocketFacade.getChessGame();
     }

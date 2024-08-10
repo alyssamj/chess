@@ -165,10 +165,9 @@ public class ChessClient {
         StringBuilder stringBuilder = new StringBuilder();
         int gameNumber = 1;
         //for (ArrayListResult game : listResult.games()) {
-             for (int i = 0; i < listResult.games().length; i++) {
-                    ArrayListResult game = listResult.games()[0] ;
-                    int gameID = i+1;
-
+        for (int i = 0; i < listResult.games().length; i++) {
+            ArrayListResult game = listResult.games()[i];
+            int gameID = game.gameID();
 //            int gameID = game.gameID();
             if (!gameMap.containsKey(gameNumber)) {
                 gameMap.put(gameNumber, gameID);
@@ -179,7 +178,7 @@ public class ChessClient {
             String gameFull;
             if (blackUsername != null && whiteUsername != null) {
                 gameFull = "Full Game";
-            } else if (blackUsername != null && whiteUsername == null)  {
+            } else if (blackUsername != null && whiteUsername == null) {
                 gameFull = "White Player Available";
             } else if (blackUsername == null && whiteUsername != null) {
                 gameFull = "Black Player Available";
@@ -190,10 +189,10 @@ public class ChessClient {
                     %d: %s  - %s
                         White Player: %s  
                         Black Player: %s
-                  
+                                      
                     """, gameID, gameName, gameFull, whiteUsername, blackUsername);
-           stringBuilder.append(stringToAdd);
-           gameNumber++;
+            stringBuilder.append(stringToAdd);
+            gameNumber++;
         }
         return stringBuilder.toString();
     }

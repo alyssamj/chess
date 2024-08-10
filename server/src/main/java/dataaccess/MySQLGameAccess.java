@@ -171,14 +171,12 @@ public class MySQLGameAccess implements GameDAO {
         String sizeQuery = "SELECT COUNT(*) AS count FROM games";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sizeQuery)) {
-            // Set your database name here
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");
                 }
             }
         } catch (SQLException e) {
-            System.out.println("ERROR IN LIST STILLLLL");
             throw new DataAccessException(e.getMessage());
         }
         return 0;

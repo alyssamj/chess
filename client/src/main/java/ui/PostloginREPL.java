@@ -16,25 +16,32 @@ public class PostloginREPL {
     }
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        var result = "";
-        while (!result.equals("quit") && !result.equals("logged out")) {
+        Object result = "";
+        while (!result.equals("quit") && !result.equals("logged out - press help to see commands")) {
             String line = scanner.nextLine();
-
+            result = client.evalPostLogin(line);
             try {
                 if (line.contains("join")) {
-                    GameplayREPL gameplayREPL = (GameplayREPL) client.evalPostLogin(line);
-                   // if (result.contains("joined game") || result.contains("now observing game")) {
+                    if (result instanceof GameplayREPL) {
+                        // if (result.contains("joined game") || result.contains("now observing game")) {
                         String playerColor = null;
-                        if (result.contains("black")) {
+                        if (line.contains("black")) {
                             playerColor = "black";
-                        } else if (result.contains("white")) {
+                        } else if (line.contains("white")) {
                             playerColor = "white";
                         }
+                        GameplayREPL gameplayREPL = (GameplayREPL) result;
                         GameClient gameClient = new GameClient(gameplayREPL.getWebSocketFacade(), gameplayREPL, client);
                         gameplayREPL.run();
-                  //  }
+                    }
+                    else {
+                        System.out.println((String) result);
+                    }
+                } else if(line.contains("quit")) {
+                    result = "quit";
                 } else {
-                    result = client.evalPostLogin(line).toString();
+                    result = (String) result;
+                    System.out.println(result);
                 }
             } catch(Throwable e){
                 throw e;
