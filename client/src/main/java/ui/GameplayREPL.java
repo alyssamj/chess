@@ -48,6 +48,14 @@ public class GameplayREPL implements MessageHandler{
     public void run() {
         Scanner scanner = new Scanner(System.in);
         webSocketFacade.connectToGame(gameID, authToken);
+        while (chessGame == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         chessBoard = chessGame.getBoard();
         chessConsole = new ChessConsole(chessBoard);
         var result = "";
@@ -80,6 +88,8 @@ public class GameplayREPL implements MessageHandler{
 
         }
     }
+
+   // private void
 
     private void redrawChessBoard(ChessGame.TeamColor playerColor) {
         if (playerColor == null) {

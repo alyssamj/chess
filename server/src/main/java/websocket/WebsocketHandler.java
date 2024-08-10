@@ -116,7 +116,7 @@ public class WebsocketHandler {
 
     private <T extends ServerMessage> void notify(Session session, T message) throws IOException {
         Gson gson = new Gson();
-        String messageJson = gson.toJson(message.toString());
+        String messageJson = gson.toJson(message);
         if (session.isOpen()) {
             session.getRemote().sendString(messageJson);
         }

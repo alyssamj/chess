@@ -3,6 +3,7 @@ package websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -38,7 +39,10 @@ public class WebSocketFacade extends Endpoint {
     }
 
     @OnWebSocketConnect
-    public void onConnect(Session session) {}
+    public void onConnect(Session session) {
+        this.session = session;
+        System.out.println("CONNCTD TO WBSOCKT");
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
@@ -101,5 +105,10 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+
+    @OnWebSocketClose
+    public void onClose(int statusCode, String reason) {
+        System.out.println("CLOSED");
     }
 }
