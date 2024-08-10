@@ -33,36 +33,61 @@ public class WebSocketFacade extends Endpoint {
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
+
+            this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    switch(serverMessage.getServerMessageType()) {
+                        case LOAD_GAME:
+                            LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                            messageHandler.loadGame(loadGameMessage);
+                            break;
+                        case NOTIFICATION:
+                            Notification notification = new Gson().fromJson(message, Notification.class);
+                            messageHandler.notify(notification);
+                            break;
+                        case ERROR:
+                            ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+                            messageHandler.error(errorMessage);
+                            break;
+                    }
+                }
+            });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new RuntimeException(ex.getMessage());
         }
     }
 
-    @OnWebSocketConnect
-    public void onConnect(Session session) {
-        this.session = session;
-        System.out.println("CONNCTD TO WBSOCKT");
-    }
+//    @OnWebSocketConnect
+//    public void onConnect(Session session) {
+//        this.session = session;
+//        System.out.println("CONNCTD TO WBSOCKT");
+//    }
 
-    @OnWebSocketMessage
-    public void onMessage(Session session, String message) {
-        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-        switch(serverMessage.getServerMessageType()) {
-            case LOAD_GAME:
-                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-                messageHandler.loadGame(loadGameMessage);
-                break;
-            case NOTIFICATION:
-                Notification notification = new Gson().fromJson(message, Notification.class);
-                messageHandler.notify(notification);
-                break;
-            case ERROR:
-                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-                messageHandler.error(errorMessage);
-        }
-    }
+//    @OnWebSocketMessage
+//    public void onMessage(Session session, String message) {
+//        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+//        switch(serverMessage.getServerMessageType()) {
+//            case LOAD_GAME:
+//                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+//                messageHandler.loadGame(loadGameMessage);
+//                break;
+//            case NOTIFICATION:
+//                Notification notification = new Gson().fromJson(message, Notification.class);
+//                messageHandler.notify(notification);
+//                break;
+//            case ERROR:
+//                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+//                messageHandler.error(errorMessage);
+//                break;
+//        }
+//    }
 
     public void connectToGame(Integer gameID, String authToken) {
+        if (this.session == null || !this.session.isOpen()) {
+            throw new IllegalStateException("websocket session is not open.");
+        }
         try {
             var userCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(userCommand));

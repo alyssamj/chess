@@ -55,7 +55,6 @@ public class GameplayREPL implements MessageHandler{
                 Thread.currentThread().interrupt();
             }
         }
-
         chessBoard = chessGame.getBoard();
         chessConsole = new ChessConsole(chessBoard);
         var result = "";
