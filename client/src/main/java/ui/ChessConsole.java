@@ -53,7 +53,7 @@ public class ChessConsole {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
-        ChessGame.TeamColor teamColor = ChessGame.TeamColor.BLACK;
+        ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
         drawHeaders(out, teamColor);
 
         drawChessGameBlack(out);
@@ -96,20 +96,20 @@ public class ChessConsole {
     }
 
     private  void drawChessGameBlack(PrintStream out) {
-        for (int row = 8; row >= 1; row--) {
-            drawRowOfSquares(out, row);
-            if (row < BOARD_SIZE_IN_SQUARES -1) {
+        for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
+
+            drawRowOfSquares(out, boardRow);
+
+            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
                 setBlack(out);
             }
         }
     }
 
     private void drawChessBoardWhite(PrintStream out) {
-        for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
-            drawRowOfSquares(out, boardRow);
-
-            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
+        for (int row = 8; row >= 1; row--) {
+            drawRowOfSquares(out, row);
+            if (row < BOARD_SIZE_IN_SQUARES -1) {
                 setBlack(out);
             }
         }
@@ -161,7 +161,8 @@ public class ChessConsole {
 
 
     private  void drawRowOfSquares(PrintStream out, int row) {
-        String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
+       // String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
+        String[] side = {"1", "2", "3", "4", "5", "6", "7", "8"};
         setBlack(out);
         out.print(side[row-1] + " ");
         for (int col = 1; col < 9; col++) {
@@ -258,4 +259,9 @@ public class ChessConsole {
         }
         setBlack(out);
     }
+
+    public void updateChessBoard(ChessBoard chessBoard) {
+        myBoard = chessBoard;
+    }
+
 }
