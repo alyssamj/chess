@@ -71,19 +71,19 @@ public class GameplayREPL implements MessageHandler{
         while (!result.contains("quit") && !result.equals("resign")) {
             String line = scanner.nextLine();
             result = client.evalGamePlay(line).toString();
-            try {
-                if (teamColor == null) {
-                    chessConsole.whiteBoard();
-                    chessConsole.blackBoard();
-                }
-                else if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
-                    chessConsole.whiteBoard();
-                } else {
-                    chessConsole.blackBoard();
-                }
-            } catch (Throwable e) {
-                throw e;
-            }
+//            try {
+//                if (teamColor == null) {
+//                    chessConsole.whiteBoard();
+//                    chessConsole.blackBoard();
+//                }
+//                else if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
+//                    chessConsole.whiteBoard();
+//                } else {
+//                    chessConsole.blackBoard();
+//                }
+//            } catch (Throwable e) {
+//                throw e;
+//            }
 
         }
     }
@@ -130,6 +130,9 @@ public class GameplayREPL implements MessageHandler{
             switch (cmd) {
                 case "connect" -> connect(params);
                 case "move" -> makeMove(params);
+                case "redraw" -> redrawChessBoard(teamColor);
+                case "resign" -> resign();
+                case "leave" -> leave();
                 default -> help();
             };
         } catch (RuntimeException e) {
@@ -188,10 +191,14 @@ public class GameplayREPL implements MessageHandler{
         if (chessBoard.getPiece(startPos) != null) {
             ChessMove chessMove = new ChessMove(startPos, endPos, checkForPawn(startPos, endPos, upgradePiece));
             webSocketFacade.makeMove(authToken, gameID, chessMove);
+            try {
+                chessGame.makeMove(chessMove);
+            } catch (InvalidMoveException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             System.out.println("no piece found at location");
         }
-        chessGame = webSocketFacade.getChessGame();
     }
 
 
@@ -220,6 +227,19 @@ public class GameplayREPL implements MessageHandler{
             default -> null;
         };
     }
+
+    private void resign() {
+        webSocketFacade.resign(authToken, gameID);
+    }
+
+    private void leave() {
+        try {
+            webSocketFacade.leaveGame(authToken, gameID);
+        } catch (Exception e) {
+            System.out.println("unable to leave game");
+        }
+    }
+
 
 
 
