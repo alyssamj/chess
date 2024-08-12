@@ -2,7 +2,6 @@ package ui;
 
 import chess.*;
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.MessageHandler;
 import websocket.WebSocketFacade;
 import websocket.messages.ErrorMessage;
@@ -10,7 +9,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 
-import javax.websocket.Session;
+import javax.websocket.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -229,27 +228,6 @@ public class GameplayREPL implements MessageHandler{
             throw e;
         }
         return "";
-    }
-
-    @OnWebSocketMessage
-    public void onMessage(Session session, String message) {
-        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-        switch(serverMessage.getServerMessageType()) {
-            case LOAD_GAME:
-                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-                chessGame = loadGameMessage.getGame();
-                break;
-            case NOTIFICATION:
-                Notification notification = new Gson().fromJson(message, Notification.class);
-                String myMessage = notification.getMessage();
-                notify(notification);
-                break;
-            case ERROR:
-                ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
-                String errorMessage = error.getMessage();
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage);
-                break;
-        }
     }
 
     public String connect(String[] params) {
