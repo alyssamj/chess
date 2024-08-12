@@ -84,7 +84,7 @@ public class WebsocketHandler {
             if (session.isOpen()) {
                 notify(session, loadedGame);
             }
-            broadcast(session, notification);
+            broadcast(session, notification, gameID);
         } catch (DataAccessException e) {
             var error = new ErrorMessage("Unable to connect to game");
             notify(session, error);
@@ -143,15 +143,15 @@ public class WebsocketHandler {
             game = webSocketService.connect(gameID);
             String afterMove = check(game, blackUsername, whiteUsername);
             LoadGameMessage loadGame = new LoadGameMessage(game);
-            broadcast(session, loadGame);
+            broadcast(session, loadGame, gameID);
             notify(session, loadGame);
             String message = String.format("%s has made the move: %s", username, chessMove);
             Notification broadcast = new Notification(message);
-            broadcast(session, broadcast);
+            broadcast(session, broadcast, gameID);
             if (!afterMove.equals("")) {
                 String broadcastMessage = afterMove;
                 Notification notification = new Notification(broadcastMessage);
-                broadcast(null, notification);
+                broadcast(null, notification, gameID);
             }
         } catch (IOException e) {
             var error = new ErrorMessage("unable to make move");
@@ -197,7 +197,7 @@ public class WebsocketHandler {
             Notification broadcastMessage = new Notification(message);
             LoadGameMessage loadedGame = new LoadGameMessage(webSocketService.connect(gameID));
             //              notify(session, notification);
-            broadcast(session, broadcastMessage);
+            broadcast(session, broadcastMessage, gameID);
             //             broadcast(session, loadedGame);
         } catch (IOException e) {
             var error = new ErrorMessage("unable to leave game");
@@ -231,7 +231,7 @@ public class WebsocketHandler {
             Notification broadcastMessage = new Notification(message);
             String individiual = "You have resigned";
             Notification individualMessage = new Notification(individiual);
-            broadcast(session, broadcastMessage);
+            broadcast(session, broadcastMessage, gameID);
             notify(session, individualMessage);
         }
         //   broadcast(session, loadGameMessage);
@@ -241,50 +241,49 @@ public class WebsocketHandler {
     private boolean checkForUsername(GameData gameData, String username) {
         if (!Objects.equals(username, gameData.blackUsername()) && !Objects.equals(username, gameData.whiteUsername())) {
             return false;
-            } else {
-                return true;
-            }
-        }
-
-
-        private boolean checkForNullValues (String authToken,int gameID, Session session) throws IOException {
-            if (!webSocketService.getAuth(authToken) || !webSocketService.getGameID(gameID)) {
-                String error = "Unable to connect to game";
-                ErrorMessage errorMessage = new ErrorMessage(error);
-                notify(session, errorMessage);
-                return false;
-            }
+        } else {
             return true;
         }
+    }
 
 
-        private <T extends ServerMessage > void notify (Session session, T message) throws IOException {
-            Gson gson = new Gson();
-            String messageJson = gson.toJson(message);
+    private boolean checkForNullValues(String authToken, int gameID, Session session) throws IOException {
+        if (!webSocketService.getAuth(authToken) || !webSocketService.getGameID(gameID)) {
+            String error = "Unable to connect to game";
+            ErrorMessage errorMessage = new ErrorMessage(error);
+            notify(session, errorMessage);
+            return false;
+        }
+        return true;
+    }
+
+
+    private <T extends ServerMessage> void notify(Session session, T message) throws IOException {
+        Gson gson = new Gson();
+        String messageJson = gson.toJson(message);
+        if (session.isOpen()) {
+            session.getRemote().sendString(messageJson);
+        }
+    }
+
+
+    private <T extends ServerMessage> void broadcast(Session exceptThisSession, T serverMessage, int gameID) throws
+            IOException {
+        Gson gson = new Gson();
+        String messageJson = gson.toJson(serverMessage);
+        var removeList = new ArrayList<Session>();
+        Set<Session> sessions = sessionsMap.get(gameID);
+        for (Session session : sessions) {
             if (session.isOpen()) {
-                session.getRemote().sendString(messageJson);
-            }
-        }
-
-
-        private <T extends ServerMessage > void broadcast (Session exceptThisSession, T serverMessage) throws
-        IOException {
-            Gson gson = new Gson();
-            String messageJson = gson.toJson(serverMessage);
-            var removeList = new ArrayList<Session>();
-            for (var set : sessionsMap.values()) {
-                for (Session session : set) {
-                    if (session.isOpen()) {
-                        if (session != exceptThisSession) {
-                            session.getRemote().sendString(messageJson);
-                        }
-                    } else {
-                        removeList.add(session);
-                    }
+                if (!session.equals(exceptThisSession)) {
+                    session.getRemote().sendString(messageJson);
                 }
-            }
-            for (Session session : removeList) {
-                sessionsMap.values().forEach(sessions -> sessions.remove(session));
+            } else {
+                removeList.add(session);
             }
         }
+        for (Session session : removeList) {
+            sessionsMap.values().forEach(sessions1 -> sessions.remove(session));
+        }
+    }
 }
