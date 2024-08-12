@@ -3,10 +3,7 @@ package websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import javax.websocket.*;
 import websocket.commands.LeaveGame;
 import websocket.commands.MakeMove;
 import websocket.commands.UserGameCommand;
@@ -15,7 +12,6 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 
-import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -133,10 +129,5 @@ public class WebSocketFacade extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-    }
-
-    @OnWebSocketClose
-    public void onClose(int statusCode, String reason) {
-        System.out.println("CLOSED");
     }
 }

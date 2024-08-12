@@ -85,8 +85,9 @@ public class GameplayREPL implements MessageHandler{
             chessConsole.blackBoard();
         }
         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
-        while (!result.contains("leave")) {
-            String line = scanner.nextLine();
+        String line = scanner.nextLine();
+        while (!result.contains("leave") && !line.contains("leave")) {
+           line = scanner.nextLine();
             if (state == StateOfPlayer.OBSERVER) {
                 result = observeEval(line);
             } else {
