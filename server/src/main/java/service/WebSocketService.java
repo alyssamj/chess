@@ -60,4 +60,28 @@ public class WebSocketService {
         String username = authDAO.returnUserName(authToken);
         return username;
     }
+
+    public boolean getGameID(int gameID) {
+        try {
+            if (gameDAO.getGameWithID(gameID) == null) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (DataAccessException e) {
+            return false;
+        }
+    }
+
+    public boolean getAuth(String authToken) {
+        try {
+            if (authDAO.verifyToken(authToken) == null) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (DataAccessException e) {
+            return false;
+        }
+    }
 }
