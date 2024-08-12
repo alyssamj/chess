@@ -77,6 +77,9 @@ public class Server {
         Gson gson = new Gson();
         try {
             ClearResult  clearResult = clearService.clear();
+            if (clearResult == null) {
+                return "";
+            }
             if (clearResult.message() == null) {
                 res.status(200);
                 return gson.toJson(clearResult);

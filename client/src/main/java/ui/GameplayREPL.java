@@ -48,11 +48,13 @@ public class GameplayREPL implements MessageHandler{
      //   this.state = StateOfPlayer.PLAYER;
         if (playerColor == null) {
             teamColor = null;
-        }
-        else if (playerColor.equals("black")) {
-            teamColor = ChessGame.TeamColor.BLACK;
-        } else{
-            teamColor = ChessGame.TeamColor.WHITE;
+        } else {
+            playerColor.toLowerCase();
+            if (playerColor.equals("black")) {
+                teamColor = ChessGame.TeamColor.BLACK;
+            } else {
+                teamColor = ChessGame.TeamColor.WHITE;
+            }
         }
     }
 
@@ -329,7 +331,7 @@ public class GameplayREPL implements MessageHandler{
 
     private String resign() {
         try {
-            webSocketFacade.resign(authToken, gameID);
+            webSocketFacade.resign(authToken, gameID, teamColor);
         } catch (Exception e) {
             System.out.println("Something went wrong. Please try again");
         }
@@ -338,7 +340,7 @@ public class GameplayREPL implements MessageHandler{
 
     private String leave() {
         try {
-            webSocketFacade.leaveGame(authToken, gameID);
+            webSocketFacade.leaveGame(authToken, gameID, teamColor);
         } catch (Exception e) {
             System.out.println("unable to leave game");
         }

@@ -7,6 +7,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import websocket.commands.LeaveGame;
 import websocket.commands.MakeMove;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -110,19 +111,20 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void leaveGame(String authToken, Integer gameID) {
+    public void leaveGame(String authToken, Integer gameID, ChessGame.TeamColor teamColor) {
         try {
-            var userCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
-            this.session.getBasicRemote().sendText(new Gson().toJson(userCommand));
+            LeaveGame leaveGame = new LeaveGame(authToken, gameID, teamColor);
+            this.session.getBasicRemote().sendText(new Gson().toJson(leaveGame));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public void resign(String authToken, Integer gameID) {
+    public void resign(String authToken, Integer gameID, ChessGame.TeamColor teamColor) {
         try {
-            var userCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
-            this.session.getBasicRemote().sendText(new Gson().toJson(userCommand));
+         //   var userCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+            LeaveGame leaveGame = new LeaveGame(authToken, gameID, teamColor);
+            this.session.getBasicRemote().sendText(new Gson().toJson(leaveGame));
         } catch (Exception e) {
             System.out.println("Unable to resign");
         }

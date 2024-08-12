@@ -64,6 +64,11 @@ public class WebSocketService {
         gameDAO.updateGame(gameID, game.game());
     }
 
+    public GameData getGameData(Integer gameID) throws DataAccessException {
+        GameData gameData = gameDAO.getGameWithID(gameID);
+        return  gameData;
+    }
+
 
 
 
