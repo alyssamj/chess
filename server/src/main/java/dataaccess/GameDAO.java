@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.*;
 
 public interface GameDAO {
@@ -20,4 +21,10 @@ public interface GameDAO {
     String getBlackUsername(Integer gameID) throws DataAccessException;
 
     String getWhiteUsername(Integer gameID) throws DataAccessException;
+
+    void clearBlackUsername(Integer gameID) throws DataAccessException;
+
+    void clearWhiteUsername(Integer gameID) throws DataAccessException;
+
+    void updateGame(Integer gameID, ChessGame game) throws DataAccessException;
 }

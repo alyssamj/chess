@@ -251,4 +251,58 @@ public class MySQLGameAccess implements GameDAO {
         }
         return "";
     }
+
+    @Override
+    public void clearBlackUsername(Integer gameID) throws DataAccessException {
+        String updateSQL = "UPDATE games SET blackUsername = NULL WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(updateSQL)) {
+
+            preparedStatement.setInt(1, gameID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("No game found with gameID: " + gameID);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void clearWhiteUsername(Integer gameID) throws DataAccessException {
+        String updateSQL = "UPDATE games SET whiteUsername = NULL WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(updateSQL)) {
+
+            preparedStatement.setInt(1, gameID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("No game found with gameID: " + gameID);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateGame(Integer gameID, ChessGame game) throws DataAccessException {
+        String updateSQL = "UPDATE games SET game = ? WHERE gameID = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(updateSQL)) {
+
+            var serializer = new Gson();
+            String jsonGame = serializer.toJson(game);
+
+            preparedStatement.setString(1, jsonGame);
+            preparedStatement.setInt(2, gameID);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new DataAccessException("No game found with the provided gameID or no update needed");
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error updating game: " + e.getMessage());
+        }
+    }
 }

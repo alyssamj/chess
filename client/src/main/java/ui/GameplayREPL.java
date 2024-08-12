@@ -24,6 +24,20 @@ public class GameplayREPL implements MessageHandler{
     private ChessBoard chessBoard;
     private ChessConsole chessConsole;
     public WebSocketFacade webSocketFacade;
+    public StateOfPlayer state;
+
+
+    public enum StateOfPlayer {
+        PLAYER,
+        OBSERVER
+    }
+
+    public StateOfPlayer getState() {
+        return state;
+    }
+    public void setState(StateOfPlayer state) {
+        this.state = state;
+    }
 
     public GameplayREPL(ChessClient client, String playerColor, String serverUrl, int gameID, String authToken) {
         this.client = client;
@@ -31,6 +45,7 @@ public class GameplayREPL implements MessageHandler{
         this.gameID = gameID;
         this.authToken = authToken;
         webSocketFacade = new WebSocketFacade(serverUrl, this);
+     //   this.state = StateOfPlayer.PLAYER;
         if (playerColor == null) {
             teamColor = null;
         }
@@ -60,7 +75,6 @@ public class GameplayREPL implements MessageHandler{
         var result = "";
         System.out.println(printPrompt());
         if (teamColor == null) {
-            chessConsole.whiteBoard();
             chessConsole.blackBoard();
         }
         else if (teamColor.equals(ChessGame.TeamColor.WHITE)) {
@@ -71,7 +85,11 @@ public class GameplayREPL implements MessageHandler{
         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
         while (!result.contains("leave")) {
             String line = scanner.nextLine();
-            result = evalGamePlay(line);
+            if (state == StateOfPlayer.OBSERVER) {
+                result = observeEval(line);
+            } else {
+                result = evalGamePlay(line);
+            }
 //            try {
 //                if (teamColor == null) {
 //                    chessConsole.whiteBoard();
@@ -109,43 +127,62 @@ public class GameplayREPL implements MessageHandler{
             observeBoardHelp();
             String line = scanner.nextLine();
             result = evalGamePlay(line);
-            if (result.contains("highlight")) {
+            if (line.contains("highlight")) {
 
-            } else if (result.contains("redraw")) {
+            } else if (line.contains("redraw")) {
 
             }
+            observeBoard.updateChessBoard(chessGame.myBoard);
         }
     }
 
+    private String observeEval(String input) {
+        try {
+            var tokens = input.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "connect" -> connect(params);
+                case "highlight" -> observeHighlight(params[0]);
+                case "redraw" -> observeRedraw();
+                case "leave" -> leave();
+                default -> observeBoardHelp();
+            };
+        } catch (Exception e) {
+            System.out.println("Something went wrong, please try again");
+        }
+        return "";
+    }
 
-    private void observeBoardHelp() {
+
+
+    private String observeBoardHelp() {
         System.out.println("""
                 redraw - redraws board
                 highlight <POSITION> - highlights available moves for piece at position
                 """);
+        return "";
     }
 
-    private void observeRedraw() {
+    private String observeRedraw() {
         chessConsole.whiteBoard();
+        return  "";
     }
 
-    private void observeHighlight() {
-
+    private String observeHighlight(String input) {
+        return "";
     }
 
 
-
-   // private void
-
-    private void redrawChessBoard(ChessGame.TeamColor playerColor) {
+    private String redrawChessBoard(ChessGame.TeamColor playerColor) {
         if (playerColor == null) {
-            chessConsole.blackBoard();
             chessConsole.whiteBoard();
         } else if (playerColor == ChessGame.TeamColor.WHITE) {
             chessConsole.whiteBoard();
         } else if (playerColor == ChessGame.TeamColor.BLACK) {
             chessConsole.blackBoard();
         }
+        return "";
     }
 
     public static String printPrompt() {
@@ -212,7 +249,7 @@ public class GameplayREPL implements MessageHandler{
         }
     }
 
-    public void connect(String[] params) {
+    public String connect(String[] params) {
         try {
             webSocketFacade.connectToGame(gameID, authToken);
         } catch (Exception ex) {
@@ -220,11 +257,17 @@ public class GameplayREPL implements MessageHandler{
             System.out.println(message);
         }
         chessGame = webSocketFacade.getChessGame();
+        return "";
     }
 
-    public void makeMove(String[] params) {
+    public String makeMove(String[] params) {
+        if (chessGame.getState() == ChessGame.GameState.GAME_OVER) {
+            System.out.println("Game is already over");
+            return "";
+        }
         if (params.length < 2) {
             System.out.println("Error: Invalid move command. Please try again");
+            return "";
         }
         String startPosition = params[0];
         String endPosition = params[1];
@@ -239,7 +282,7 @@ public class GameplayREPL implements MessageHandler{
 
         if (chessBoard.getPiece(startPos) != null) {
             ChessMove chessMove = new ChessMove(startPos, endPos, checkForPawn(startPos, endPos, upgradePiece));
-            webSocketFacade.makeMove(authToken, gameID, chessMove);
+            webSocketFacade.makeMove(authToken, gameID, chessMove, teamColor);
             try {
                 chessGame.makeMove(chessMove);
             } catch (InvalidMoveException e) {
@@ -248,6 +291,7 @@ public class GameplayREPL implements MessageHandler{
         } else {
             System.out.println("no piece found at location");
         }
+        return "";
     }
 
     private ChessPosition getPosition(String startPosition) {
@@ -283,12 +327,13 @@ public class GameplayREPL implements MessageHandler{
         };
     }
 
-    private void resign() {
+    private String resign() {
         try {
             webSocketFacade.resign(authToken, gameID);
         } catch (Exception e) {
             System.out.println("Something went wrong. Please try again");
         }
+        return "";
     }
 
     private String leave() {
@@ -315,7 +360,7 @@ public class GameplayREPL implements MessageHandler{
         return col;
     }
 
-    public void help() {
+    public String help() {
         System.out.println("""
                 redraw - redraw chess board
                 leave - leave game
@@ -324,8 +369,8 @@ public class GameplayREPL implements MessageHandler{
                 highlight - shows legal moves
                 help - possible commands
                 """);
+        return "";
     }
-
 }
 
 

@@ -31,6 +31,7 @@ public class PostloginREPL {
                             playerColor = "white";
                         }
                         GameplayREPL gameplayREPL = (GameplayREPL) result;
+                        gameplayREPL.setState(GameplayREPL.StateOfPlayer.PLAYER);
                         GameClient gameClient = new GameClient(gameplayREPL.getWebSocketFacade(), gameplayREPL, client);
                         gameplayREPL.run();
                     }
@@ -39,6 +40,7 @@ public class PostloginREPL {
                     }
                 } else if (line.contains("observe")) {
                     GameplayREPL gameplayREPL = (GameplayREPL) result;
+                    gameplayREPL.setState(GameplayREPL.StateOfPlayer.OBSERVER);
                     gameplayREPL.run();
                 } else if(line.contains("quit")) {
                     result = "quit";

@@ -13,10 +13,20 @@ import java.util.Objects;
 public class ChessGame {
     public ChessBoard myBoard = new ChessBoard();
     public TeamColor turn;
+    public GameState state;
 
     public ChessGame() {
         setTeamTurn(TeamColor.WHITE);
         this.myBoard.resetBoard();
+        this.state = GameState.IN_PROGRESS;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
     }
 
     /**
@@ -25,6 +35,12 @@ public class ChessGame {
     public TeamColor getTeamTurn() {
         return turn;
     }
+
+    public enum GameState {
+        GAME_OVER,
+        IN_PROGRESS
+    }
+
 
     /**
      * Set's which teams turn it is
@@ -182,7 +198,11 @@ public class ChessGame {
             return false;
         }
         Collection<ChessMove> possibleMoves = isInStaleOrCheck(teamColor);
-        return possibleMoves.isEmpty();
+        if (possibleMoves.isEmpty()) {
+            setState(GameState.GAME_OVER);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -197,7 +217,11 @@ public class ChessGame {
             return false;
         }
         Collection<ChessMove> possibleMoves = isInStaleOrCheck(teamColor);
-        return possibleMoves.isEmpty();
+        if (possibleMoves.isEmpty()) {
+            setState(GameState.GAME_OVER);
+            return true;
+        }
+        return false;
     }
 
 

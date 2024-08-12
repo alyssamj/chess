@@ -46,13 +46,24 @@ public class WebSocketService {
 
     public String leaveGame(Integer gameID, String username) throws DataAccessException {
         GameData game = gameDAO.getGameWithID(gameID);
-        if (gameDAO.getWhiteUsername(gameID) == username) {
-            gameDAO.addWhiteUsername(gameID, null);
-        } else if (gameDAO.getBlackUsername(gameID) == username) {
-            gameDAO.addBlackUsername(gameID, null);
+        if (gameDAO.getWhiteUsername(gameID) == null || gameDAO.getBlackUsername(gameID) == null){
+            return "";
+            }
+        else if (gameDAO.getWhiteUsername(gameID).equals(username)){
+                gameDAO.clearWhiteUsername(gameID);
+        }
+        else if (gameDAO.getBlackUsername(gameID).equals(username)) {
+            gameDAO.clearBlackUsername(gameID);
         }
         return "";
     }
+
+    public void resign(Integer gameID) throws DataAccessException {
+        GameData game = gameDAO.getGameWithID(gameID);
+        game.game().setState(ChessGame.GameState.GAME_OVER);
+        gameDAO.updateGame(gameID, game.game());
+    }
+
 
 
 

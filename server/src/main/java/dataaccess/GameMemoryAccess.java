@@ -81,6 +81,21 @@ public class GameMemoryAccess implements GameDAO {
         return "";
     }
 
+    @Override
+    public void clearBlackUsername(Integer gameID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void clearWhiteUsername(Integer gameID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void updateGame(Integer gameID, ChessGame game) throws DataAccessException {
+
+    }
+
     public GameData updateGame(Integer gameID, String username, String playerColor) throws DataAccessException {
         GameData gameToChange = games.get(gameID);
         String gameName = gameToChange.gameName();
