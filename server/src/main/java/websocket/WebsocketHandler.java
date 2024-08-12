@@ -99,10 +99,11 @@ public class WebsocketHandler {
         GameData gameData = webSocketService.getGameData(gameID);
         String blackUsername = gameData.blackUsername();
         String whiteUsername = gameData.whiteUsername();
-        if (blackUsername.equals(username)) {
-            teamColor = ChessGame.TeamColor.BLACK;
+        ChessGame.TeamColor playerColor;
+        if (username.equals(blackUsername)) {
+            playerColor = ChessGame.TeamColor.BLACK;
         } else if (username.equals(whiteUsername)) {
-            teamColor = ChessGame.TeamColor.WHITE;
+            playerColor = ChessGame.TeamColor.WHITE;
         } else {
             ErrorMessage errorMessage = new ErrorMessage("Cannot make moves");
             notify(session, errorMessage);
@@ -117,23 +118,22 @@ public class WebsocketHandler {
                 ErrorMessage errorMessage = new ErrorMessage(error);
                 notify(session, errorMessage);
                 return;
-            } else if (!check(game, blackUsername, whiteUsername).equals("")) {
+            }  if (!check(game, blackUsername, whiteUsername).equals("")) {
                 String message = "Game is over";
-                Notification notification = new Notification(message);
-              //  LoadGameMessage loadGameMessage = new LoadGameMessage(game);
+                ErrorMessage notification = new ErrorMessage(message);
                 notify(session, notification);
                 return;
-            } else if (!game.validMoves(chessMove.getStartPosition()).contains(chessMove)) {
+            } if (!game.validMoves(chessMove.getStartPosition()).contains(chessMove)) {
                 String error = "Chess move is not valid";
                 ErrorMessage errorMessage = new ErrorMessage(error);
                 notify(session, errorMessage);
                 return;
-           } else if (!teamColor.equals(piece.getTeamColor())) {
+           }  if (!playerColor.equals(piece.getTeamColor())) {
                 String error = "Piece is not your color";
                 ErrorMessage errorMessage = new ErrorMessage(error);
                 notify(session, errorMessage);
                 return;
-            } else if (!teamColor.equals(turnColor)) {
+            } if (!playerColor.equals(turnColor)) {
                 String error = "Not your turn";
                 ErrorMessage errorMessage = new ErrorMessage(error);
                 notify(session, errorMessage);
@@ -143,15 +143,15 @@ public class WebsocketHandler {
             game = webSocketService.connect(gameID);
             String afterMove = check(game, blackUsername, whiteUsername);
             LoadGameMessage loadGame = new LoadGameMessage(game);
-            broadcast(null, loadGame);
+            broadcast(session, loadGame);
+            notify(session, loadGame);
+            String message = String.format("%s has made the move: %s", username, chessMove);
+            Notification broadcast = new Notification(message);
+            broadcast(session, broadcast);
             if (!afterMove.equals("")) {
-                String broadcastMessage = String.format("%s has made the move: %s - %s", username, chessMove, afterMove);
+                String broadcastMessage = afterMove;
                 Notification notification = new Notification(broadcastMessage);
                 broadcast(null, notification);
-            } else {
-                String message = String.format("%s has made the move: %s", username, chessMove);
-                Notification broadcast = new Notification(message);
-                broadcast(session, broadcast);
             }
         } catch (IOException e) {
             var error = new ErrorMessage("unable to make move");
@@ -161,14 +161,20 @@ public class WebsocketHandler {
 
     private String check(ChessGame game, String blackUsername, String whiteUsername) {
         if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            game.setState(ChessGame.GameState.GAME_OVER);
             return blackUsername + "is in checkmate";
         } else if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
+            game.setState(ChessGame.GameState.GAME_OVER);
             return whiteUsername + "is in checkmate";
         } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
             return blackUsername + "is in check";
         } else if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
             return whiteUsername + "is in check";
         } else if (game.isInStalemate(ChessGame.TeamColor.BLACK)) {
+            game.setState(ChessGame.GameState.GAME_OVER);
+            return "game is in stalemate";
+        } else if (game.isInStalemate(ChessGame.TeamColor.WHITE)) {
+            game.setState(ChessGame.GameState.GAME_OVER);
             return "game is in stalemate";
         }
         return "";

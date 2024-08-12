@@ -38,6 +38,7 @@ public class WebSocketService {
         ChessGame chessGame = game.game();
         try {
             chessGame.makeMove(move);
+            gameDAO.updateGame(gameID, chessGame);
         } catch (InvalidMoveException e) {
             return "Unable to make move";
         }

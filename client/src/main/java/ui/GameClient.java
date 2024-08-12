@@ -45,9 +45,9 @@ public class GameClient {
         return chessGame;
     }
 
-    public void makeMove(String authToken, Integer gameID, ChessMove move) {
+    public void makeMove(String authToken, Integer gameID, ChessMove move, ChessGame.TeamColor teamColor) {
         try {
-            webSocketFacade.makeMove(authToken, gameID, move);
+            webSocketFacade.makeMove(authToken, gameID, move, teamColor);
         } catch (Exception e) {
             throw new RuntimeException("Error sending move:");
         }
