@@ -37,6 +37,9 @@ public class PostloginREPL {
                     else {
                         System.out.println((String) result);
                     }
+                } else if (line.contains("observe")) {
+                    GameplayREPL gameplayREPL = (GameplayREPL) result;
+                    gameplayREPL.run();
                 } else if(line.contains("quit")) {
                     result = "quit";
                 } else {

@@ -91,6 +91,50 @@ public class GameplayREPL implements MessageHandler{
         System.out.println("You have left the game");
     }
 
+    public void runObserve() {
+        Scanner scanner = new Scanner(System.in);
+        webSocketFacade.connectToGame(gameID, authToken);
+        while (chessGame == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        chessBoard = chessGame.getBoard();
+        ChessConsole observeBoard = new ChessConsole(chessBoard);
+        observeBoard.whiteBoard();
+        var result = "";
+        while (!result.contains("leave")) {
+            observeBoardHelp();
+            String line = scanner.nextLine();
+            result = evalGamePlay(line);
+            if (result.contains("highlight")) {
+
+            } else if (result.contains("redraw")) {
+
+            }
+        }
+    }
+
+
+    private void observeBoardHelp() {
+        System.out.println("""
+                redraw - redraws board
+                highlight <POSITION> - highlights available moves for piece at position
+                """);
+    }
+
+    private void observeRedraw() {
+        chessConsole.whiteBoard();
+    }
+
+    private void observeHighlight() {
+
+    }
+
+
+
    // private void
 
     private void redrawChessBoard(ChessGame.TeamColor playerColor) {
@@ -125,7 +169,7 @@ public class GameplayREPL implements MessageHandler{
 
     @Override
     public void loadGame(LoadGameMessage loadGameMessage) {
-        this.chessGame = loadGameMessage.getGame();
+        this.chessGame = loadGameMessage.game;
     }
 
     public String evalGamePlay(String input) {
@@ -190,26 +234,28 @@ public class GameplayREPL implements MessageHandler{
         }
         upgradePiece = null;
 
-        int startRow =  Character.getNumericValue(startPosition.charAt(1));
-        Character startColumn = startPosition.charAt(0);
-        int startCol = getColumn(startColumn);
-        ChessPosition startPos = new ChessPosition(startRow, startCol);
+        ChessPosition startPos = getPosition(startPosition);
+        ChessPosition endPos = getPosition(endPosition);
 
-        int endRow = endPosition.charAt(1);
-        Character endColumn = endPosition.charAt(0);
-        int endCol = getColumn(endColumn);
-        ChessPosition endPos = new ChessPosition(endRow, endCol);
         if (chessBoard.getPiece(startPos) != null) {
             ChessMove chessMove = new ChessMove(startPos, endPos, checkForPawn(startPos, endPos, upgradePiece));
             webSocketFacade.makeMove(authToken, gameID, chessMove);
             try {
                 chessGame.makeMove(chessMove);
             } catch (InvalidMoveException e) {
-                throw new RuntimeException(e);
+                System.out.println("invalid move. Try again");
             }
         } else {
             System.out.println("no piece found at location");
         }
+    }
+
+    private ChessPosition getPosition(String startPosition) {
+        int startRow =  Character.getNumericValue(startPosition.charAt(1));
+        Character startColumn = startPosition.charAt(0);
+        int startCol = getColumn(startColumn);
+        ChessPosition startPos = new ChessPosition(startRow, startCol);
+        return startPos;
     }
 
     private ChessPiece.PieceType checkForPawn(ChessPosition startPosition, ChessPosition endPosition, String upgradePiece) {
@@ -238,7 +284,11 @@ public class GameplayREPL implements MessageHandler{
     }
 
     private void resign() {
-        webSocketFacade.resign(authToken, gameID);
+        try {
+            webSocketFacade.resign(authToken, gameID);
+        } catch (Exception e) {
+            System.out.println("Something went wrong. Please try again");
+        }
     }
 
     private String leave() {

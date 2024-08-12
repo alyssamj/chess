@@ -67,9 +67,11 @@ public class WebsocketHandler {
             var message = String.format("%s has entered the game", webSocketService.getUsername(authToken));
             var notification = new Notification(message);
             var loadedGame = new LoadGameMessage(chessGame);
-            notify(session, loadedGame);
+            if (session.isOpen()) {
+                notify(session, loadedGame);
+            }
             broadcast(session, notification);
-        } catch (IOException | DataAccessException e) {
+        } catch (DataAccessException e) {
             var error = new ErrorMessage("Unable to connect to game");
             notify(session, error);
         }
@@ -110,6 +112,7 @@ public class WebsocketHandler {
         String message = String.format("%s has resigned", username);
         var broadcastMessage = new Notification(message);
         broadcast(null, broadcastMessage);
+        sessionsMap.remove(gameID);
     }
 
 

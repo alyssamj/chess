@@ -37,6 +37,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
+                    System.out.println("Received message: " + message);
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                     switch(serverMessage.getServerMessageType()) {
                         case LOAD_GAME:
@@ -86,7 +87,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void connectToGame(Integer gameID, String authToken) {
         if (this.session == null || !this.session.isOpen()) {
-            throw new IllegalStateException("websocket session is not open.");
+            System.out.println("session isn't open. Please try again.");;
         }
         try {
             var userCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
@@ -123,7 +124,7 @@ public class WebSocketFacade extends Endpoint {
             var userCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(userCommand));
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            System.out.println("Unable to resign");
         }
     }
 
