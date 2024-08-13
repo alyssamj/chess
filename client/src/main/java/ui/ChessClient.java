@@ -198,6 +198,9 @@ public class ChessClient {
     }
 
     public Object joinGame(String[] params) {
+        if (params.length < 2) {
+            return "Please provide both gameID and color";
+        }
         if (!isInteger(params[0])) {
             return "invalid gameID";
         }
@@ -221,7 +224,8 @@ public class ChessClient {
 
     public Object observeGame(String[] params) {
         int gameToJoin = Integer.parseInt(params[0]);
-        return "now observing game " + String.valueOf(gameToJoin);
+        GameplayREPL gameplayREPL = new GameplayREPL(this, null, serverUrl, gameToJoin, authToken);
+        return gameplayREPL;
     }
 
     private static boolean isInteger(String str) {

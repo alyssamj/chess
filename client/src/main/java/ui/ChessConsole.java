@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -21,20 +18,20 @@ public class ChessConsole {
         this.myBoard = chessBoard;
     }
 
-    public void highlightWhiteMoves(ArrayList<ChessPosition> legalMoves) {
+    public void highlightWhiteMoves(ArrayList<ChessMove> legalMoves) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
         drawHeaders(out, ChessGame.TeamColor.WHITE);
-        highLightChessBoardWhite(out,legalMoves);
+        highLightChessBoardWhite(out, convertMoves(legalMoves));
         drawHeaders(out, ChessGame.TeamColor.WHITE);
     }
 
-    public void highlighDarkMoves(ArrayList<ChessPosition> legalMoves) {
+    public void highlighDarkMoves(ArrayList<ChessMove> legalMoves) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-        drawHeaders(out, ChessGame.TeamColor.BLACK);
-        highLightChessBoardDark(out, legalMoves);
-        drawHeaders(out, ChessGame.TeamColor.BLACK);
+        drawHeaders(out, ChessGame.TeamColor.WHITE);
+        highLightChessBoardDark(out, convertBlackMoves(legalMoves));
+        drawHeaders(out, ChessGame.TeamColor.WHITE);
     }
 
 
@@ -115,50 +112,44 @@ public class ChessConsole {
         }
     }
 
+    private ArrayList<ChessPosition> convertMoves(ArrayList<ChessMove> legalMoves) {
+        ArrayList<ChessPosition> legalPositions = new ArrayList<>();
+        for (ChessMove move : legalMoves) {
+            legalPositions.add(move.getEndPosition());
+        }
+        return legalPositions;
+    }
+
+    private ArrayList<ChessPosition> convertBlackMoves(ArrayList<ChessMove> legalMoves) {
+        ArrayList<ChessPosition> legalPositions = new ArrayList<>();
+        for (ChessMove move : legalMoves) {
+            int row = 9 - move.getEndPosition().getRow();
+            int col = move.getEndPosition().getColumn();
+            ChessPosition position = new ChessPosition(row, col);
+            legalPositions.add(position);
+        }
+        return legalPositions;
+    }
+
+
+
     private void highLightChessBoardWhite(PrintStream out, ArrayList<ChessPosition> legalMoves) {
-        for (int row =1; row < 9; row++) {
-            for (int col = 1; col < 9; col++) {
-                ChessPosition square = new ChessPosition(row, col);
-                ChessPiece piece = myBoard.getPiece(new ChessPosition(row, col));
-                if (legalMoves.contains(square)) {
-                    if ((row + col) % 2 == 0) {
-                        printLightHighlightSquare(out, piece);
-                    } else {
-                        printDarkHighlightSquare(out, piece);
-                    }
-                } else {
-                    if ((row+col)%2 == 0) {
-                        printLightSquare(out, piece);
-                    } else {
-                        printDarkSquare(out, piece);
-                    }
-                }
+        for (int row = 8; row >= 1; row--) {
+            highlightRowOfSquare(out, row, legalMoves);
+            if (row < BOARD_SIZE_IN_SQUARES -1) {
+                setBlack(out);
             }
         }
     }
 
     private void highLightChessBoardDark(PrintStream out, ArrayList<ChessPosition> legalMoves) {
-        for (int row =9; row > 1; row--) {
-            for (int col = 9; col > 9; col--) {
-                ChessPosition square = new ChessPosition(row, col);
-                ChessPiece piece = myBoard.getPiece(new ChessPosition(row, col));
-                if (legalMoves.contains(square)) {
-                    if ((row + col) % 2 == 0) {
-                        printLightHighlightSquare(out, piece);
-                    } else {
-                        printDarkHighlightSquare(out, piece);
-                    }
-                } else {
-                    if ((row+col)%2 == 0) {
-                        printLightSquare(out, piece);
-                    } else {
-                        printDarkSquare(out, piece);
-                    }
-                }
+        for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES; ++boardRow) {
+            highlightRowOfSquare(out, boardRow, legalMoves);
+            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
+                setBlack(out);
             }
         }
     }
-
 
     private  void drawRowOfSquares(PrintStream out, int row) {
        // String[] side = {"8", "7", "6", "5", "4", "3", "2", "1"};
@@ -178,7 +169,32 @@ public class ChessConsole {
         out.println();
     }
 
+    private void highlightRowOfSquare(PrintStream out, int row, ArrayList<ChessPosition> legalMoves) {
+        String[] side = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        setBlack(out);
+        out.print(side[row-1] + " ");
+        for (int col = 1; col < 9; col++) {
+            ChessPosition position = new ChessPosition(row, col);
+            ChessPiece piece = myBoard.getPiece(position);
+            if ((row + col) % 2 == 0) {
+                if (legalMoves.contains(position)) {
+                    printDarkHighlightSquare(out, piece);
+                } else {
+                    printDarkSquare(out, piece);
+                }
+            } else {
+                if (legalMoves.contains(position)) {
+                    printLightHighlightSquare(out, piece);
+                } else {
+                    printLightSquare(out, piece);
+                }
+            }
+        }
+        setBlack(out);
+        out.print(" "+side[row-1]);
+        out.println();
 
+    }
 
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
@@ -203,13 +219,13 @@ public class ChessConsole {
 
     private static void printLightHighlightSquare(PrintStream out, ChessPiece piece) {
         out.print(SET_BG_COLOR_YELLOW);
-        out.print(" "+EMPTY);
+        out.print("  "+EMPTY);
         setWhite(out);
     }
 
     private static void printDarkHighlightSquare(PrintStream out, ChessPiece piece) {
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(" "+ EMPTY);
+        out.print(SET_BG_COLOR_BLUE);
+        out.print("  "+ EMPTY);
         setBlack(out);
     }
 

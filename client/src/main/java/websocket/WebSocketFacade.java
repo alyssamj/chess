@@ -34,7 +34,6 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new javax.websocket.MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    System.out.println("Received message: " + message);
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                     switch(serverMessage.getServerMessageType()) {
                         case LOAD_GAME:
@@ -43,11 +42,11 @@ public class WebSocketFacade extends Endpoint {
                             break;
                         case NOTIFICATION:
                             Notification notification = new Gson().fromJson(message, Notification.class);
-                            messageHandler.notify(notification);
+                            messageHandler.printMessage(notification.getMessage());
                             break;
                         case ERROR:
                             ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-                            messageHandler.error(errorMessage);
+                            messageHandler.printMessage(errorMessage.getMessage());
                             break;
                     }
                 }
@@ -56,31 +55,6 @@ public class WebSocketFacade extends Endpoint {
             throw new RuntimeException(ex.getMessage());
         }
     }
-
-//    @OnWebSocketConnect
-//    public void onConnect(Session session) {
-//        this.session = session;
-//        System.out.println("CONNCTD TO WBSOCKT");
-//    }
-
-//    @OnWebSocketMessage
-//    public void onMessage(Session session, String message) {
-//        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-//        switch(serverMessage.getServerMessageType()) {
-//            case LOAD_GAME:
-//                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-//                messageHandler.loadGame(loadGameMessage);
-//                break;
-//            case NOTIFICATION:
-//                Notification notification = new Gson().fromJson(message, Notification.class);
-//                messageHandler.notify(notification);
-//                break;
-//            case ERROR:
-//                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-//                messageHandler.error(errorMessage);
-//                break;
-//        }
-//    }
 
     public void connectToGame(Integer gameID, String authToken) {
         if (this.session == null || !this.session.isOpen()) {
@@ -118,7 +92,6 @@ public class WebSocketFacade extends Endpoint {
 
     public void resign(String authToken, Integer gameID, ChessGame.TeamColor teamColor) {
         try {
-         //   var userCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
             LeaveGame leaveGame = new LeaveGame(authToken, gameID, teamColor);
             this.session.getBasicRemote().sendText(new Gson().toJson(leaveGame));
         } catch (Exception e) {

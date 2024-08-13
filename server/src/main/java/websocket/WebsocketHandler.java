@@ -91,7 +91,8 @@ public class WebsocketHandler {
         }
     }
 
-    private void makeMove(ChessMove chessMove, Integer gameID, String authToken, Session session, ChessGame.TeamColor teamColor) throws DataAccessException, IOException {
+    private void makeMove(ChessMove chessMove, Integer gameID, String authToken, Session session, ChessGame.TeamColor teamColor)
+            throws DataAccessException, IOException {
         if (!checkForNullValues(authToken, gameID, session)) {
             return;
         }
@@ -102,7 +103,8 @@ public class WebsocketHandler {
         ChessGame.TeamColor playerColor;
         if (username.equals(blackUsername)) {
             playerColor = ChessGame.TeamColor.BLACK;
-        } else if (username.equals(whiteUsername)) {
+        }
+        if (username.equals(whiteUsername)) {
             playerColor = ChessGame.TeamColor.WHITE;
         } else {
             ErrorMessage errorMessage = new ErrorMessage("Cannot make moves");
@@ -234,8 +236,6 @@ public class WebsocketHandler {
             broadcast(session, broadcastMessage, gameID);
             notify(session, individualMessage);
         }
-        //   broadcast(session, loadGameMessage);
-        //   sessionsMap.remove(gameID);
     }
 
     private boolean checkForUsername(GameData gameData, String username) {

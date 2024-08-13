@@ -23,16 +23,8 @@ public class PostloginREPL {
             try {
                 if (line.contains("join")) {
                     if (result instanceof GameplayREPL) {
-                        // if (result.contains("joined game") || result.contains("now observing game")) {
-                        String playerColor = null;
-                        if (line.contains("black")) {
-                            playerColor = "black";
-                        } else if (line.contains("white")) {
-                            playerColor = "white";
-                        }
                         GameplayREPL gameplayREPL = (GameplayREPL) result;
                         gameplayREPL.setState(GameplayREPL.StateOfPlayer.PLAYER);
-                        GameClient gameClient = new GameClient(gameplayREPL.getWebSocketFacade(), gameplayREPL, client);
                         gameplayREPL.run();
                     }
                     else {
